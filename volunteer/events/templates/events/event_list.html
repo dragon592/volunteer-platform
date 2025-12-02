@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мероприятия</title>
+</head>
+<body>
+    <h1>Список волонтёрских мероприятий</h1>
+
+    {% for event in events %}
+        <div>
+            <h2>{{ event.title }}</h2>
+            <p>{{ event.description }}</p>
+            <p>{{ event.date }}</p>
+            <p>{{ event.location }}</p>
+        </div>
+        <hr>
+    {% endfor %}
+</body>
+</html>
