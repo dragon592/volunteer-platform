@@ -1,5 +1,10 @@
+# Python
 __pycache__/
 *.pyc
+
+# Django
 db.sqlite3
+
 .env
+
 venv/
