@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Поиск волонтёров — ВолонтёрХаб{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="font-display text-3xl font-bold text-gray-800 mb-8">Найти волонтёров</h1>
+    
+    <div class="grid lg:grid-cols-4 gap-8">
+        <!-- Filters Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+                <h3 class="font-display font-semibold text-gray-800 mb-4">Фильтры</h3>
+                
+                <form method="GET">
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-medium mb-3">Навыки</label>
+                        <div class="space-y-2 max-h-64 overflow-y-auto">
+                            {% for skill in form.skills %}
+                            <label class="flex items-center p-2 rounded-lg hover:bg-forest-50 cursor-pointer transition-colors">
+                                {{ skill.tag }}
+                                <span class="ml-2 text-gray-700 text-sm">{{ skill.choice_label }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-medium mb-2">Город</label>
+                        {{ form.city }}
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-forest-600 text-white py-2.5 rounded-xl font-semibold hover:bg-forest-700 transition-all">
+                        Применить
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Results -->
+        <div class="lg:col-span-3">
+            <div class="mb-4 text-gray-600">
+                Найдено волонтёров: <span class="font-semibold">{{ volunteers.count }}</span>
+            </div>
+            
+            {% if volunteers %}
+            <div class="grid md:grid-cols-2 gap-6">
+                {% for profile in volunteers %}
+                <a href="{% url 'volunteer_profile' profile.pk %}" class="bg-white rounded-2xl shadow-md p-6 card-hover block">
+                    <div class="flex items-start">
+                        <div class="w-16 h-16 bg-gradient-to-br from-forest-400 to-forest-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mr-4 flex-shrink-0">
+                            {{ profile.user.first_name|first|upper }}{{ profile.user.last_name|first|upper }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-display font-bold text-lg text-gray-800 truncate">
+                                {{ profile.user.get_full_name }}
+                            </h3>
+                            {% if profile.city %}
+                            <p class="text-gray-500 text-sm flex items-center mt-1">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                </svg>
+                                {{ profile.city }}
+                            </p>
+                            {% endif %}
+                            
+                            {% if profile.skills.exists %}
+                            <div class="flex flex-wrap gap-1 mt-3">
+                                {% for skill in profile.skills.all|slice:":4" %}
+                                <span class="bg-forest-100 text-forest-700 px-2 py-0.5 rounded text-xs font-medium">{{ skill.name }}</span>
+                                {% endfor %}
+                                {% if profile.skills.count > 4 %}
+                                <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">+{{ profile.skills.count|add:"-4" }}</span>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if profile.bio %}
+                    <p class="text-gray-600 text-sm mt-4 line-clamp-2">{{ profile.bio }}</p>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white rounded-3xl shadow-xl p-12 text-center">
+                <svg class="w-24 h-24 text-gray-300 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <h3 class="font-display text-2xl font-bold text-gray-800 mb-2">Волонтёры не найдены</h3>
+                <p class="text-gray-600">Попробуйте изменить фильтры поиска</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

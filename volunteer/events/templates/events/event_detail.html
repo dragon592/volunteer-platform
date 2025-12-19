@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} — ВолонтёрХаб{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Breadcrumb -->
+    <div class="mb-6">
+        <a href="{% url 'event_list' %}" class="text-forest-600 hover:text-forest-800 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Назад к событиям
+        </a>
+    </div>
+    
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <!-- Hero Image -->
+        <div class="h-64 md:h-80 bg-gradient-to-br from-forest-400 to-forest-600 relative">
+            {% if event.image_url %}
+            <img src="{{ event.image_url }}" alt="{{ event.title }}" class="w-full h-full object-cover">
+            {% else %}
+            <div class="absolute inset-0 flex items-center justify-center">
+                <svg class="w-32 h-32 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="p-8 md:p-12">
+            <!-- Title and Meta -->
+            <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+                <div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800 mb-4">{{ event.title }}</h1>
+                    <div class="flex flex-wrap gap-4 text-gray-600">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ event.date|date:"d F Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            {{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Status Badge -->
+                <div class="flex flex-col items-end gap-2">
+                    <div class="{% if event.is_full %}bg-red-100 text-red-700{% else %}bg-forest-100 text-forest-700{% endif %} px-4 py-2 rounded-full font-semibold">
+                        {% if event.is_full %}
+                            Мест нет
+                        {% else %}
+                            {{ event.spots_left }} из {{ event.max_volunteers }} мест
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skills -->
+            {% if event.required_skills.exists %}
+            <div class="mb-8">
+                <h3 class="font-display font-semibold text-gray-800 mb-3">Требуемые навыки:</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for skill in event.required_skills.all %}
+                    <span class="bg-sunset-100 text-sunset-700 px-4 py-2 rounded-full font-medium">{{ skill.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Description -->
+            <div class="prose max-w-none mb-8">
+                <h3 class="font-display font-semibold text-gray-800 mb-3">Описание:</h3>
+                <p class="text-gray-600 whitespace-pre-line">{{ event.description }}</p>
+            </div>
+            
+            <!-- Organizer -->
+            <div class="bg-gray-50 rounded-2xl p-6 mb-8">
+                <h3 class="font-display font-semibold text-gray-800 mb-3">Организатор:</h3>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-forest-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                        {{ event.organizer.first_name|first|upper }}{{ event.organizer.last_name|first|upper }}
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800">{{ event.organizer.get_full_name }}</div>
+                        <div class="text-gray-500 text-sm">{{ event.organizer.email }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex flex-wrap gap-4">
+                {% if user.is_authenticated %}
+                    {% if user == event.organizer %}
+                        <a href="{% url 'event_edit' event.pk %}" class="bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
+                            Редактировать
+                        </a>
+                        <a href="{% url 'event_manage' event.pk %}" class="bg-sunset-500 text-white px-8 py-3 rounded-xl font-semibold hover:bg-sunset-600 transition-all shadow-lg hover:shadow-xl">
+                            Управление заявками ({{ event.registrations.count }})
+                        </a>
+                    {% elif user_registration %}
+                        <div class="bg-gray-100 px-8 py-3 rounded-xl font-semibold text-gray-600">
+                            {% if user_registration.status == 'pending' %}
+                                Заявка на рассмотрении
+                            {% elif user_registration.status == 'approved' %}
+                                ✓ Вы записаны
+                            {% elif user_registration.status == 'rejected' %}
+                                Заявка отклонена
+                            {% else %}
+                                Запись отменена
+                            {% endif %}
+                        </div>
+                        {% if user_registration.status in 'pending,approved' %}
+                        <a href="{% url 'event_cancel_registration' event.pk %}" class="border-2 border-red-500 text-red-500 px-8 py-3 rounded-xl font-semibold hover:bg-red-50 transition-all">
+                            Отменить запись
+                        </a>
+                        {% endif %}
+                    {% elif can_register %}
+                        <a href="{% url 'event_register' event.pk %}" class="bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
+                            Записаться
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
+                        Войдите, чтобы записаться
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
