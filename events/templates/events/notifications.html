@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Уведомления — Open Hearts{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="font-display text-3xl font-bold text-gray-800">Уведомления</h1>
+            <p class="text-gray-600 mt-2">
+                {% if filter_type == 'unread' %}
+                    Непрочитанные уведомления
+                {% elif filter_type == 'read' %}
+                    Прочитанные уведомления
+                {% else %}
+                    Все уведомления
+                {% endif %}
+            </p>
+        </div>
+        {% if unread_count > 0 and filter_type != 'read' %}
+        <button onclick="markAllAsRead()" class="bg-forest-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-forest-700 transition-all">
+            Отметить все как прочитанные
+        </button>
+        {% endif %}
+    </div>
+    
+    <!-- Filters -->
+    <div class="bg-white rounded-2xl shadow-md p-4 mb-6">
+        <div class="flex gap-4">
+            <a href="{% url 'notifications_list' %}?filter=all" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if filter_type == 'all' %}bg-forest-100 text-forest-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+                Все
+            </a>
+            <a href="{% url 'notifications_list' %}?filter=unread" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if filter_type == 'unread' %}bg-forest-100 text-forest-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+                Непрочитанные
+                {% if unread_count > 0 %}
+                <span class="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{{ unread_count }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'notifications_list' %}?filter=read" 
+               class="px-4 py-2 rounded-lg font-medium transition-all {% if filter_type == 'read' %}bg-forest-100 text-forest-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}">
+                Прочитанные
+            </a>
+        </div>
+    </div>
+    
+    <!-- Notifications List -->
+    {% if notifications %}
+    <div class="space-y-3">
+        {% for notification in notifications %}
+        <div class="bg-white rounded-2xl shadow-md p-6 {% if not notification.is_read %}border-l-4 border-forest-500{% endif %} hover:shadow-lg transition-all">
+            <div class="flex items-start">
+                <div class="text-3xl mr-4 flex-shrink-0">{{ notification.icon }}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <h3 class="font-display font-bold text-lg text-gray-800 mb-1 {% if not notification.is_read %}font-bold{% endif %}">
+                                {{ notification.title }}
+                            </h3>
+                            <p class="text-gray-600 mb-2">{{ notification.message }}</p>
+                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <span>{{ notification.created_at|date:"d.m.Y H:i" }}</span>
+                                {% if notification.related_event %}
+                                <a href="{% url 'event_detail' notification.related_event.pk %}" 
+                                   class="text-forest-600 hover:text-forest-800 font-medium">
+                                    Посмотреть событие →
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            {% if not notification.is_read %}
+                            <button onclick="markAsRead({{ notification.id }})" 
+                                    class="text-gray-400 hover:text-forest-600 transition-colors"
+                                    title="Отметить как прочитанное">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </button>
+                            {% else %}
+                            <span class="text-gray-300" title="Прочитано">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-3xl shadow-xl p-12 text-center">
+        <svg class="w-24 h-24 text-gray-300 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        <h3 class="font-display text-2xl font-bold text-gray-800 mb-2">Нет уведомлений</h3>
+        <p class="text-gray-600">
+            {% if filter_type == 'unread' %}
+                У вас нет непрочитанных уведомлений
+            {% elif filter_type == 'read' %}
+                У вас нет прочитанных уведомлений
+            {% else %}
+                У вас пока нет уведомлений
+            {% endif %}
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function markAsRead(notificationId) {
+    fetch(`/notifications/${notificationId}/read/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    }).then(() => {
+        location.reload();
+    });
+}
+
+function markAllAsRead() {
+    fetch('{% url "notification_mark_all_read" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin'
+    }).then(() => {
+        location.reload();
+    });
+}
+</script>
+{% endblock %}
+

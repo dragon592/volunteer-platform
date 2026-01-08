@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+
+{% block title %}Мои события — Open Hearts{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="font-display text-3xl font-bold text-gray-800">Мои события</h1>
+        {% if user.profile.is_organizer %}
+        <a href="{% url 'event_create' %}" class="bg-forest-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Создать событие
+        </a>
+        {% endif %}
+    </div>
+    
+    {% if events %}
+    <div class="space-y-4">
+        {% for event in events %}
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="flex flex-col md:flex-row">
+                <!-- Image -->
+                <div class="md:w-48 h-32 md:h-auto bg-gradient-to-br from-forest-400 to-forest-600 flex-shrink-0">
+                    {% if event.image_url %}
+                    <img src="{{ event.image_url }}" alt="{{ event.title }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full flex items-center justify-center">
+                        <svg class="w-12 h-12 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Content -->
+                <div class="flex-1 p-6">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <h3 class="font-display font-bold text-xl text-gray-800 mb-2">
+                                <a href="{% url 'event_detail' event.pk %}" class="hover:text-forest-600 transition-colors">
+                                    {{ event.title }}
+                                </a>
+                            </h3>
+                            <div class="flex flex-wrap gap-4 text-sm text-gray-500">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    {{ event.date|date:"d F Y" }}
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    </svg>
+                                    {{ event.location }}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            {% if user.profile.is_organizer %}
+                                <span class="bg-forest-100 text-forest-700 px-3 py-1 rounded-full text-sm font-medium">
+                                    {{ event.registrations_count }} заявок
+                                </span>
+                                <a href="{% url 'event_manage' event.pk %}" class="bg-sunset-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-sunset-600 transition-all">
+                                    Управление
+                                </a>
+                                <a href="{% url 'event_edit' event.pk %}" class="border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-all">
+                                    Редактировать
+                                </a>
+                            {% else %}
+                                {% if registrations %}
+                                    {% with reg=registrations|get_item:event.id %}
+                                        {% if reg %}
+                                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                                            {% if reg.status == 'approved' %}bg-green-100 text-green-700
+                                            {% elif reg.status == 'pending' %}bg-yellow-100 text-yellow-700
+                                            {% elif reg.status == 'rejected' %}bg-red-100 text-red-700
+                                            {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                            {{ reg.get_status_display }}
+                                        </span>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-3xl shadow-xl p-12 text-center">
+        <svg class="w-24 h-24 text-gray-300 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <h3 class="font-display text-2xl font-bold text-gray-800 mb-2">У вас пока нет событий</h3>
+        {% if user.profile.is_organizer %}
+        <p class="text-gray-600 mb-6">Создайте своё первое волонтёрское событие</p>
+        <a href="{% url 'event_create' %}" class="inline-block bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
+            Создать событие
+        </a>
+        {% else %}
+        <p class="text-gray-600 mb-6">Найдите интересные события и запишитесь</p>
+        <a href="{% url 'event_list' %}" class="inline-block bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
+            Смотреть события
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
