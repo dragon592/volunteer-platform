@@ -1,0 +1,63 @@
+{% extends 'index.html' %}
+
+{% block title %}{{ channel.name }} — Чат{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid lg:grid-cols-4 gap-6">
+        <aside class="lg:col-span-1 bg-white rounded-2xl shadow-md p-4 h-fit">
+            <h2 class="font-display text-lg font-bold text-gray-800 mb-3">Каналы</h2>
+            <div class="space-y-2">
+                {% for item in sidebar_channels %}
+                <a href="{% url 'chat_channel_detail' item.channel.pk %}" class="block p-3 rounded-xl {% if item.channel.pk == channel.pk %}bg-forest-100{% else %}hover:bg-gray-100{% endif %}">
+                    <div class="flex items-center justify-between">
+                        <span class="font-semibold text-gray-800">{{ item.channel.name }}</span>
+                        {% if item.unread > 0 %}
+                        <span class="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full">{{ item.unread }}</span>
+                        {% endif %}
+                    </div>
+                    {% if item.channel.event %}
+                    <div class="text-xs text-gray-500 mt-1">{{ item.channel.event.title|truncatechars:24 }}</div>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <section class="lg:col-span-3 bg-white rounded-2xl shadow-md overflow-hidden">
+            <div class="px-6 py-4 border-b bg-gray-50">
+                <h1 class="font-display text-2xl font-bold text-gray-800">{{ channel.name }}</h1>
+                {% if channel.topic %}<p class="text-gray-600 text-sm mt-1">{{ channel.topic }}</p>{% endif %}
+            </div>
+
+            <div class="p-6 h-[460px] overflow-y-auto bg-gray-50 space-y-3">
+                {% for message in messages %}
+                <div class="{% if message.author_id == user.id %}text-right{% endif %}">
+                    <div class="inline-block max-w-[80%] px-4 py-3 rounded-2xl {% if message.author_id == user.id %}bg-forest-600 text-white{% else %}bg-white text-gray-800{% endif %}">
+                        <div class="text-xs {% if message.author_id == user.id %}text-forest-100{% else %}text-gray-500{% endif %} mb-1">
+                            {{ message.author.get_full_name|default:message.author.username }}
+                        </div>
+                        <div class="whitespace-pre-line">{{ message.content }}</div>
+                        <div class="text-[11px] mt-2 {% if message.author_id == user.id %}text-forest-100{% else %}text-gray-400{% endif %}">
+                            {{ message.created_at|date:"d.m.Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500">Сообщений пока нет. Начните обсуждение.</p>
+                {% endfor %}
+            </div>
+
+            <form method="POST" class="p-4 border-t bg-white">
+                {% csrf_token %}
+                {{ message_form.content }}
+                <div class="mt-3 flex justify-end">
+                    <button type="submit" class="bg-forest-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-forest-700 transition-all">
+                        Отправить
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+{% endblock %}
