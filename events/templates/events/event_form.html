@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 {% extends 'index.html' %}
-=======
-{% extends 'base.html' %}
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
 
 {% block title %}{{ title }} — Open Hearts{% endblock %}
 
@@ -10,32 +6,20 @@
 <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12">
         <h1 class="font-display text-3xl font-bold text-gray-800 mb-8">{{ title }}</h1>
-<<<<<<< HEAD
 
         <form method="POST">
             {% csrf_token %}
 
-=======
-        
-        <form method="POST">
-            {% csrf_token %}
-            
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             <div class="space-y-6">
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Название события *</label>
                     {{ form.title }}
                 </div>
-<<<<<<< HEAD
 
-=======
-                
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Описание *</label>
                     {{ form.description }}
                 </div>
-<<<<<<< HEAD
 
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
@@ -49,9 +33,6 @@
                     </div>
                 </div>
 
-=======
-                
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-gray-700 font-semibold mb-2">Дата *</label>
@@ -62,11 +43,7 @@
                         {{ form.time }}
                     </div>
                 </div>
-<<<<<<< HEAD
 
-=======
-                
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-gray-700 font-semibold mb-2">Место проведения *</label>
@@ -77,11 +54,7 @@
                         {{ form.city }}
                     </div>
                 </div>
-<<<<<<< HEAD
 
-=======
-                
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Требуемые навыки</label>
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -93,32 +66,19 @@
                         {% endfor %}
                     </div>
                 </div>
-<<<<<<< HEAD
 
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">Максимум волонтеров</label>
                     {{ form.max_volunteers }}
                 </div>
 
-=======
-                
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Максимум волонтёров</label>
-                    {{ form.max_volunteers }}
-                </div>
-                
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                 <div>
                     <label class="block text-gray-700 font-semibold mb-2">URL изображения</label>
                     {{ form.image_url }}
                     <p class="text-gray-500 text-sm mt-1">Ссылка на изображение для обложки события</p>
                 </div>
             </div>
-<<<<<<< HEAD
 
-=======
-            
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             <div class="flex gap-4 mt-8">
                 <button type="submit" class="flex-1 bg-forest-600 text-white py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
                     {% if event %}Сохранить{% else %}Создать событие{% endif %}
@@ -131,7 +91,3 @@
     </div>
 </div>
 {% endblock %}
-<<<<<<< HEAD
-=======
-
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f

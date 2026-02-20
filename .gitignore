@@ -9,6 +9,7 @@ __pycache__/
 db.sqlite3
 db.sqlite3-journal
 *.log
+staticfiles/
 
 # Media files (uploaded by users)
 media/

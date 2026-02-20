@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-from django.contrib.auth.models import User
+﻿from django.contrib.auth.models import User
 from django.db import models, transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -7,66 +6,39 @@ from django.utils import timezone
 
 
 class Skill(models.Model):
-    name = models.CharField(max_length=100, unique=True, verbose_name='Название')
-    icon = models.CharField(max_length=50, blank=True, verbose_name='Иконка')
+    name = models.CharField(max_length=100, unique=True, verbose_name='РќР°Р·РІР°РЅРёРµ')
+    icon = models.CharField(max_length=50, blank=True, verbose_name='РРєРѕРЅРєР°')
 
-=======
-from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
-
-class Skill(models.Model):
-    """Навыки волонтёров (экология, медицина, образование и т.д.)"""
-    name = models.CharField(max_length=100, unique=True, verbose_name='Название')
-    icon = models.CharField(max_length=50, blank=True, verbose_name='Иконка')
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     class Meta:
-        verbose_name = 'Навык'
-        verbose_name_plural = 'Навыки'
+        verbose_name = 'РќР°РІС‹Рє'
+        verbose_name_plural = 'РќР°РІС‹РєРё'
         ordering = ['name']
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     def __str__(self):
         return self.name
 
 
 class UserProfile(models.Model):
-<<<<<<< HEAD
     ROLE_CHOICES = [
-        ('volunteer', 'Волонтер'),
-        ('organizer', 'Организатор'),
+        ('volunteer', 'Р’РѕР»РѕРЅС‚РµСЂ'),
+        ('organizer', 'РћСЂРіР°РЅРёР·Р°С‚РѕСЂ'),
     ]
 
-=======
-    """Профиль пользователя с ролью и навыками"""
-    ROLE_CHOICES = [
-        ('volunteer', 'Волонтёр'),
-        ('organizer', 'Организатор'),
-    ]
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='volunteer', verbose_name='Роль')
-    bio = models.TextField(blank=True, verbose_name='О себе')
-    phone = models.CharField(max_length=20, blank=True, verbose_name='Телефон')
-    city = models.CharField(max_length=100, blank=True, verbose_name='Город')
-    skills = models.ManyToManyField(Skill, blank=True, related_name='users', verbose_name='Навыки')
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name='Аватар')
-    avatar_url = models.URLField(blank=True, verbose_name='Аватар URL (опционально)')
-<<<<<<< HEAD
-    xp = models.PositiveIntegerField(default=0, verbose_name='Опыт (XP)')
-    level = models.PositiveIntegerField(default=1, verbose_name='Уровень')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='volunteer', verbose_name='Р РѕР»СЊ')
+    bio = models.TextField(blank=True, verbose_name='Рћ СЃРµР±Рµ')
+    phone = models.CharField(max_length=20, blank=True, verbose_name='РўРµР»РµС„РѕРЅ')
+    city = models.CharField(max_length=100, blank=True, verbose_name='Р“РѕСЂРѕРґ')
+    skills = models.ManyToManyField(Skill, blank=True, related_name='users', verbose_name='РќР°РІС‹РєРё')
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name='РђРІР°С‚Р°СЂ')
+    avatar_url = models.URLField(blank=True, verbose_name='РђРІР°С‚Р°СЂ URL (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ)')
+    xp = models.PositiveIntegerField(default=0, verbose_name='РћРїС‹С‚ (XP)')
+    level = models.PositiveIntegerField(default=1, verbose_name='РЈСЂРѕРІРµРЅСЊ')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Профиль'
-        verbose_name_plural = 'Профили'
+        verbose_name = 'РџСЂРѕС„РёР»СЊ'
+        verbose_name_plural = 'РџСЂРѕС„РёР»Рё'
 
     def __str__(self):
         return f'{self.user.username} ({self.get_role_display()})'
@@ -75,26 +47,10 @@ class UserProfile(models.Model):
     def is_volunteer(self):
         return self.role == 'volunteer'
 
-=======
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        verbose_name = 'Профиль'
-        verbose_name_plural = 'Профили'
-    
-    def __str__(self):
-        return f'{self.user.username} ({self.get_role_display()})'
-    
-    @property
-    def is_volunteer(self):
-        return self.role == 'volunteer'
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     @property
     def is_organizer(self):
         return self.role == 'organizer'
 
-<<<<<<< HEAD
     @property
     def xp_to_next_level(self):
         next_level_xp = self.level * 100
@@ -106,96 +62,52 @@ class UserProfile(models.Model):
 
 class Event(models.Model):
     TYPE_CHOICES = [
-        ('community', 'Сообщество'),
-        ('education', 'Образование'),
-        ('ecology', 'Экология'),
-        ('health', 'Здоровье'),
-        ('charity', 'Благотворительность'),
-        ('other', 'Другое'),
+        ('community', 'РЎРѕРѕР±С‰РµСЃС‚РІРѕ'),
+        ('education', 'РћР±СЂР°Р·РѕРІР°РЅРёРµ'),
+        ('ecology', 'Р­РєРѕР»РѕРіРёСЏ'),
+        ('health', 'Р—РґРѕСЂРѕРІСЊРµ'),
+        ('charity', 'Р‘Р»Р°РіРѕС‚РІРѕСЂРёС‚РµР»СЊРЅРѕСЃС‚СЊ'),
+        ('other', 'Р”СЂСѓРіРѕРµ'),
     ]
 
-    title = models.CharField(max_length=200, verbose_name='Название')
-    description = models.TextField(verbose_name='Описание')
+    title = models.CharField(max_length=200, verbose_name='РќР°Р·РІР°РЅРёРµ')
+    description = models.TextField(verbose_name='РћРїРёСЃР°РЅРёРµ')
     event_type = models.CharField(
         max_length=30,
         choices=TYPE_CHOICES,
         default='community',
         db_index=True,
-        verbose_name='Тип события',
+        verbose_name='РўРёРї СЃРѕР±С‹С‚РёСЏ',
     )
-=======
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    """Автоматическое создание профиля при создании пользователя"""
-    if created:
-        UserProfile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    """Сохранение профиля при сохранении пользователя"""
-    if hasattr(instance, 'profile'):
-        instance.profile.save()
-
-
-class Event(models.Model):
-    """Волонтёрское событие"""
-    title = models.CharField(max_length=200, verbose_name='Название')
-    description = models.TextField(verbose_name='Описание')
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
-    date = models.DateField(verbose_name='Дата')
-    time = models.TimeField(null=True, blank=True, verbose_name='Время')
-    location = models.CharField(max_length=200, verbose_name='Место')
-    city = models.CharField(max_length=100, blank=True, verbose_name='Город')
-<<<<<<< HEAD
+    date = models.DateField(verbose_name='Р”Р°С‚Р°')
+    time = models.TimeField(null=True, blank=True, verbose_name='Р’СЂРµРјСЏ')
+    location = models.CharField(max_length=200, verbose_name='РњРµСЃС‚Рѕ')
+    city = models.CharField(max_length=100, blank=True, verbose_name='Р“РѕСЂРѕРґ')
 
     organizer = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='organized_events',
-        verbose_name='Организатор',
+        verbose_name='РћСЂРіР°РЅРёР·Р°С‚РѕСЂ',
     )
     required_skills = models.ManyToManyField(
         Skill,
         blank=True,
         related_name='events',
-        verbose_name='Требуемые навыки',
+        verbose_name='РўСЂРµР±СѓРµРјС‹Рµ РЅР°РІС‹РєРё',
     )
-    max_volunteers = models.PositiveIntegerField(default=10, verbose_name='Макс. волонтеров')
-    xp_reward = models.PositiveIntegerField(default=50, verbose_name='XP за участие')
+    max_volunteers = models.PositiveIntegerField(default=10, verbose_name='РњР°РєСЃ. РІРѕР»РѕРЅС‚РµСЂРѕРІ')
+    xp_reward = models.PositiveIntegerField(default=50, verbose_name='XP Р·Р° СѓС‡Р°СЃС‚РёРµ')
 
-=======
-    
-    organizer = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='organized_events',
-        verbose_name='Организатор'
-    )
-    required_skills = models.ManyToManyField(
-        Skill, 
-        blank=True, 
-        related_name='events',
-        verbose_name='Требуемые навыки'
-    )
-    max_volunteers = models.PositiveIntegerField(default=10, verbose_name='Макс. волонтёров')
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
-    image_url = models.URLField(blank=True, verbose_name='URL изображения')
-    is_active = models.BooleanField(default=True, verbose_name='Активно')
+    image_url = models.URLField(blank=True, verbose_name='URL РёР·РѕР±СЂР°Р¶РµРЅРёСЏ')
+    is_active = models.BooleanField(default=True, verbose_name='РђРєС‚РёРІРЅРѕ')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     class Meta:
-        verbose_name = 'Событие'
-        verbose_name_plural = 'События'
+        verbose_name = 'РЎРѕР±С‹С‚РёРµ'
+        verbose_name_plural = 'РЎРѕР±С‹С‚РёСЏ'
         ordering = ['date', 'time']
-<<<<<<< HEAD
 
     def __str__(self):
         return self.title
@@ -208,97 +120,49 @@ class Event(models.Model):
     def spots_left(self):
         return self.max_volunteers - self.registered_count
 
-=======
-    
-    def __str__(self):
-        return self.title
-    
-    @property
-    def registered_count(self):
-        return self.registrations.filter(status='approved').count()
-    
-    @property
-    def spots_left(self):
-        return self.max_volunteers - self.registered_count
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     @property
     def is_full(self):
         return self.spots_left <= 0
 
 
 class EventRegistration(models.Model):
-<<<<<<< HEAD
     STATUS_CHOICES = [
-        ('pending', 'На рассмотрении'),
-        ('approved', 'Одобрено'),
-        ('completed', 'Завершено'),
-        ('rejected', 'Отклонено'),
-        ('cancelled', 'Отменено'),
+        ('pending', 'РќР° СЂР°СЃСЃРјРѕС‚СЂРµРЅРёРё'),
+        ('approved', 'РћРґРѕР±СЂРµРЅРѕ'),
+        ('completed', 'Р—Р°РІРµСЂС€РµРЅРѕ'),
+        ('rejected', 'РћС‚РєР»РѕРЅРµРЅРѕ'),
+        ('cancelled', 'РћС‚РјРµРЅРµРЅРѕ'),
     ]
 
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
         related_name='registrations',
-        verbose_name='Событие',
+        verbose_name='РЎРѕР±С‹С‚РёРµ',
     )
     volunteer = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='event_registrations',
-        verbose_name='Волонтер',
+        verbose_name='Р’РѕР»РѕРЅС‚РµСЂ',
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='pending',
-        verbose_name='Статус',
+        verbose_name='РЎС‚Р°С‚СѓСЃ',
     )
-    message = models.TextField(blank=True, verbose_name='Сообщение')
-    completed_at = models.DateTimeField(null=True, blank=True, verbose_name='Завершено в')
-    xp_awarded = models.BooleanField(default=False, verbose_name='XP начислен')
+    message = models.TextField(blank=True, verbose_name='РЎРѕРѕР±С‰РµРЅРёРµ')
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name='Р—Р°РІРµСЂС€РµРЅРѕ РІ')
+    xp_awarded = models.BooleanField(default=False, verbose_name='XP РЅР°С‡РёСЃР»РµРЅ')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-=======
-    """Заявка волонтёра на событие"""
-    STATUS_CHOICES = [
-        ('pending', 'На рассмотрении'),
-        ('approved', 'Одобрено'),
-        ('rejected', 'Отклонено'),
-        ('cancelled', 'Отменено'),
-    ]
-    
-    event = models.ForeignKey(
-        Event, 
-        on_delete=models.CASCADE, 
-        related_name='registrations',
-        verbose_name='Событие'
-    )
-    volunteer = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='event_registrations',
-        verbose_name='Волонтёр'
-    )
-    status = models.CharField(
-        max_length=20, 
-        choices=STATUS_CHOICES, 
-        default='pending',
-        verbose_name='Статус'
-    )
-    message = models.TextField(blank=True, verbose_name='Сообщение')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     class Meta:
-        verbose_name = 'Заявка на событие'
-        verbose_name_plural = 'Заявки на события'
+        verbose_name = 'Р—Р°СЏРІРєР° РЅР° СЃРѕР±С‹С‚РёРµ'
+        verbose_name_plural = 'Р—Р°СЏРІРєРё РЅР° СЃРѕР±С‹С‚РёСЏ'
         unique_together = ['event', 'volunteer']
         ordering = ['-created_at']
-<<<<<<< HEAD
 
     def __str__(self):
         return f'{self.volunteer.username} -> {self.event.title}'
@@ -306,21 +170,21 @@ class EventRegistration(models.Model):
 
 class Achievement(models.Model):
     CATEGORY_CHOICES = [
-        ('events_completed', 'Завершенные события'),
-        ('xp_total', 'Суммарный XP'),
+        ('events_completed', 'Р—Р°РІРµСЂС€РµРЅРЅС‹Рµ СЃРѕР±С‹С‚РёСЏ'),
+        ('xp_total', 'РЎСѓРјРјР°СЂРЅС‹Р№ XP'),
     ]
 
-    slug = models.SlugField(unique=True, verbose_name='Код')
-    title = models.CharField(max_length=120, verbose_name='Название')
-    description = models.CharField(max_length=255, verbose_name='Описание')
-    icon = models.CharField(max_length=10, default='🏅', verbose_name='Бейдж')
-    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, verbose_name='Категория')
-    threshold = models.PositiveIntegerField(default=1, verbose_name='Порог')
-    is_active = models.BooleanField(default=True, verbose_name='Активно')
+    slug = models.SlugField(unique=True, verbose_name='РљРѕРґ')
+    title = models.CharField(max_length=120, verbose_name='РќР°Р·РІР°РЅРёРµ')
+    description = models.CharField(max_length=255, verbose_name='РћРїРёСЃР°РЅРёРµ')
+    icon = models.CharField(max_length=10, default='рџЏ…', verbose_name='Р‘РµР№РґР¶')
+    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, verbose_name='РљР°С‚РµРіРѕСЂРёСЏ')
+    threshold = models.PositiveIntegerField(default=1, verbose_name='РџРѕСЂРѕРі')
+    is_active = models.BooleanField(default=True, verbose_name='РђРєС‚РёРІРЅРѕ')
 
     class Meta:
-        verbose_name = 'Достижение'
-        verbose_name_plural = 'Достижения'
+        verbose_name = 'Р”РѕСЃС‚РёР¶РµРЅРёРµ'
+        verbose_name_plural = 'Р”РѕСЃС‚РёР¶РµРЅРёСЏ'
         ordering = ['category', 'threshold']
 
     def __str__(self):
@@ -332,19 +196,19 @@ class VolunteerAchievement(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='volunteer_achievements',
-        verbose_name='Волонтер',
+        verbose_name='Р’РѕР»РѕРЅС‚РµСЂ',
     )
     achievement = models.ForeignKey(
         Achievement,
         on_delete=models.CASCADE,
         related_name='awards',
-        verbose_name='Достижение',
+        verbose_name='Р”РѕСЃС‚РёР¶РµРЅРёРµ',
     )
-    awarded_at = models.DateTimeField(auto_now_add=True, verbose_name='Выдано')
+    awarded_at = models.DateTimeField(auto_now_add=True, verbose_name='Р’С‹РґР°РЅРѕ')
 
     class Meta:
-        verbose_name = 'Полученное достижение'
-        verbose_name_plural = 'Полученные достижения'
+        verbose_name = 'РџРѕР»СѓС‡РµРЅРЅРѕРµ РґРѕСЃС‚РёР¶РµРЅРёРµ'
+        verbose_name_plural = 'РџРѕР»СѓС‡РµРЅРЅС‹Рµ РґРѕСЃС‚РёР¶РµРЅРёСЏ'
         unique_together = ['volunteer', 'achievement']
         ordering = ['-awarded_at']
 
@@ -359,29 +223,29 @@ class ChatChannel(models.Model):
         related_name='chat_channels',
         null=True,
         blank=True,
-        verbose_name='Событие',
+        verbose_name='РЎРѕР±С‹С‚РёРµ',
     )
-    name = models.CharField(max_length=120, verbose_name='Название канала')
-    topic = models.CharField(max_length=255, blank=True, verbose_name='Тема')
+    name = models.CharField(max_length=120, verbose_name='РќР°Р·РІР°РЅРёРµ РєР°РЅР°Р»Р°')
+    topic = models.CharField(max_length=255, blank=True, verbose_name='РўРµРјР°')
     created_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='created_chat_channels',
-        verbose_name='Создан пользователем',
+        verbose_name='РЎРѕР·РґР°РЅ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј',
     )
-    is_archived = models.BooleanField(default=False, verbose_name='Архивный')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='Обновлен')
+    is_archived = models.BooleanField(default=False, verbose_name='РђСЂС…РёРІРЅС‹Р№')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='РЎРѕР·РґР°РЅ')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='РћР±РЅРѕРІР»РµРЅ')
     participants = models.ManyToManyField(
         User,
         through='ChatChannelMembership',
         related_name='chat_channels',
-        verbose_name='Участники',
+        verbose_name='РЈС‡Р°СЃС‚РЅРёРєРё',
     )
 
     class Meta:
-        verbose_name = 'Канал чата'
-        verbose_name_plural = 'Каналы чата'
+        verbose_name = 'РљР°РЅР°Р» С‡Р°С‚Р°'
+        verbose_name_plural = 'РљР°РЅР°Р»С‹ С‡Р°С‚Р°'
         ordering = ['-updated_at']
         constraints = [
             models.UniqueConstraint(fields=['event', 'name'], name='unique_channel_name_per_event'),
@@ -398,21 +262,21 @@ class ChatChannelMembership(models.Model):
         ChatChannel,
         on_delete=models.CASCADE,
         related_name='memberships',
-        verbose_name='Канал',
+        verbose_name='РљР°РЅР°Р»',
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='chat_memberships',
-        verbose_name='Пользователь',
+        verbose_name='РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ',
     )
-    notifications_enabled = models.BooleanField(default=True, verbose_name='Уведомления включены')
-    last_read_at = models.DateTimeField(default=timezone.now, verbose_name='Последнее чтение')
-    joined_at = models.DateTimeField(auto_now_add=True, verbose_name='Вступил')
+    notifications_enabled = models.BooleanField(default=True, verbose_name='РЈРІРµРґРѕРјР»РµРЅРёСЏ РІРєР»СЋС‡РµРЅС‹')
+    last_read_at = models.DateTimeField(default=timezone.now, verbose_name='РџРѕСЃР»РµРґРЅРµРµ С‡С‚РµРЅРёРµ')
+    joined_at = models.DateTimeField(auto_now_add=True, verbose_name='Р’СЃС‚СѓРїРёР»')
 
     class Meta:
-        verbose_name = 'Участник канала'
-        verbose_name_plural = 'Участники каналов'
+        verbose_name = 'РЈС‡Р°СЃС‚РЅРёРє РєР°РЅР°Р»Р°'
+        verbose_name_plural = 'РЈС‡Р°СЃС‚РЅРёРєРё РєР°РЅР°Р»РѕРІ'
         unique_together = ['channel', 'user']
         ordering = ['-joined_at']
 
@@ -425,21 +289,21 @@ class ChatMessage(models.Model):
         ChatChannel,
         on_delete=models.CASCADE,
         related_name='messages',
-        verbose_name='Канал',
+        verbose_name='РљР°РЅР°Р»',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='chat_messages',
-        verbose_name='Автор',
+        verbose_name='РђРІС‚РѕСЂ',
     )
-    content = models.TextField(verbose_name='Сообщение')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
-    edited_at = models.DateTimeField(null=True, blank=True, verbose_name='Изменено')
+    content = models.TextField(verbose_name='РЎРѕРѕР±С‰РµРЅРёРµ')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='РЎРѕР·РґР°РЅРѕ')
+    edited_at = models.DateTimeField(null=True, blank=True, verbose_name='РР·РјРµРЅРµРЅРѕ')
 
     class Meta:
-        verbose_name = 'Сообщение'
-        verbose_name_plural = 'Сообщения'
+        verbose_name = 'РЎРѕРѕР±С‰РµРЅРёРµ'
+        verbose_name_plural = 'РЎРѕРѕР±С‰РµРЅРёСЏ'
         ordering = ['created_at']
         indexes = [
             models.Index(fields=['channel', 'created_at']),
@@ -450,64 +314,38 @@ class ChatMessage(models.Model):
 
 
 class Notification(models.Model):
-=======
-    
-    def __str__(self):
-        return f'{self.volunteer.username} → {self.event.title}'
-
-
-class Notification(models.Model):
-    """Уведомления для пользователей"""
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     TYPE_CHOICES = [
-        ('application_approved', 'Заявка одобрена'),
-        ('application_rejected', 'Заявка отклонена'),
-        ('new_application', 'Новая заявка'),
-        ('new_event', 'Новое событие'),
-        ('event_reminder', 'Напоминание о событии'),
-<<<<<<< HEAD
-        ('new_message', 'Новое сообщение в чате'),
-        ('achievement_unlocked', 'Новое достижение'),
-        ('level_up', 'Новый уровень'),
+        ('application_approved', 'Р—Р°СЏРІРєР° РѕРґРѕР±СЂРµРЅР°'),
+        ('application_rejected', 'Р—Р°СЏРІРєР° РѕС‚РєР»РѕРЅРµРЅР°'),
+        ('new_application', 'РќРѕРІР°СЏ Р·Р°СЏРІРєР°'),
+        ('new_event', 'РќРѕРІРѕРµ СЃРѕР±С‹С‚РёРµ'),
+        ('event_reminder', 'РќР°РїРѕРјРёРЅР°РЅРёРµ Рѕ СЃРѕР±С‹С‚РёРё'),
+        ('new_message', 'РќРѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РІ С‡Р°С‚Рµ'),
+        ('achievement_unlocked', 'РќРѕРІРѕРµ РґРѕСЃС‚РёР¶РµРЅРёРµ'),
+        ('level_up', 'РќРѕРІС‹Р№ СѓСЂРѕРІРµРЅСЊ'),
     ]
 
-=======
-    ]
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='notifications',
-<<<<<<< HEAD
-        verbose_name='Пользователь',
-=======
-        verbose_name='Пользователь'
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
+        verbose_name='РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ',
     )
     type = models.CharField(
         max_length=50,
         choices=TYPE_CHOICES,
-<<<<<<< HEAD
-        verbose_name='Тип уведомления',
-=======
-        verbose_name='Тип уведомления'
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
+        verbose_name='РўРёРї СѓРІРµРґРѕРјР»РµРЅРёСЏ',
     )
-    title = models.CharField(max_length=200, verbose_name='Заголовок')
-    message = models.TextField(verbose_name='Сообщение')
-    is_read = models.BooleanField(default=False, verbose_name='Прочитано')
+    title = models.CharField(max_length=200, verbose_name='Р—Р°РіРѕР»РѕРІРѕРє')
+    message = models.TextField(verbose_name='РЎРѕРѕР±С‰РµРЅРёРµ')
+    is_read = models.BooleanField(default=False, verbose_name='РџСЂРѕС‡РёС‚Р°РЅРѕ')
     related_event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='notifications',
-<<<<<<< HEAD
-        verbose_name='Связанное событие',
-=======
-        verbose_name='Связанное событие'
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
+        verbose_name='РЎРІСЏР·Р°РЅРЅРѕРµ СЃРѕР±С‹С‚РёРµ',
     )
     related_registration = models.ForeignKey(
         EventRegistration,
@@ -515,92 +353,74 @@ class Notification(models.Model):
         null=True,
         blank=True,
         related_name='notifications',
-<<<<<<< HEAD
-        verbose_name='Связанная заявка',
+        verbose_name='РЎРІСЏР·Р°РЅРЅР°СЏ Р·Р°СЏРІРєР°',
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='РЎРѕР·РґР°РЅРѕ')
 
-=======
-        verbose_name='Связанная заявка'
-    )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создано')
-    
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     class Meta:
-        verbose_name = 'Уведомление'
-        verbose_name_plural = 'Уведомления'
+        verbose_name = 'РЈРІРµРґРѕРјР»РµРЅРёРµ'
+        verbose_name_plural = 'РЈРІРµРґРѕРјР»РµРЅРёСЏ'
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['user', 'is_read']),
         ]
-<<<<<<< HEAD
 
     def __str__(self):
         return f'{self.user.username} - {self.title}'
 
     @property
     def icon(self):
-=======
-    
-    def __str__(self):
-        return f'{self.user.username} - {self.title}'
-    
-    @property
-    def icon(self):
-        """Иконка в зависимости от типа"""
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
         icons = {
-            'application_approved': '✅',
-            'application_rejected': '❌',
-            'new_application': '📬',
-            'new_event': '🎉',
-            'event_reminder': '⏰',
-<<<<<<< HEAD
-            'new_message': '💬',
-            'achievement_unlocked': '🏅',
-            'level_up': '⭐',
+            'application_approved': 'вњ…',
+            'application_rejected': 'вќЊ',
+            'new_application': 'рџ“¬',
+            'new_event': 'рџЋ‰',
+            'event_reminder': 'вЏ°',
+            'new_message': 'рџ’¬',
+            'achievement_unlocked': 'рџЏ…',
+            'level_up': 'в­ђ',
         }
-        return icons.get(self.type, '🔔')
+        return icons.get(self.type, 'рџ””')
 
 
 DEFAULT_ACHIEVEMENTS = [
     {
         'slug': 'first_event',
-        'title': 'Первый шаг',
-        'description': 'Завершено первое событие',
-        'icon': '🌱',
+        'title': 'РџРµСЂРІС‹Р№ С€Р°Рі',
+        'description': 'Р—Р°РІРµСЂС€РµРЅРѕ РїРµСЂРІРѕРµ СЃРѕР±С‹С‚РёРµ',
+        'icon': 'рџЊ±',
         'category': 'events_completed',
         'threshold': 1,
     },
     {
         'slug': 'five_events',
-        'title': 'Активный участник',
-        'description': 'Завершено 5 событий',
-        'icon': '🔥',
+        'title': 'РђРєС‚РёРІРЅС‹Р№ СѓС‡Р°СЃС‚РЅРёРє',
+        'description': 'Р—Р°РІРµСЂС€РµРЅРѕ 5 СЃРѕР±С‹С‚РёР№',
+        'icon': 'рџ”Ґ',
         'category': 'events_completed',
         'threshold': 5,
     },
     {
         'slug': 'ten_events',
-        'title': 'Опора команды',
-        'description': 'Завершено 10 событий',
-        'icon': '🏆',
+        'title': 'РћРїРѕСЂР° РєРѕРјР°РЅРґС‹',
+        'description': 'Р—Р°РІРµСЂС€РµРЅРѕ 10 СЃРѕР±С‹С‚РёР№',
+        'icon': 'рџЏ†',
         'category': 'events_completed',
         'threshold': 10,
     },
     {
         'slug': 'xp_250',
-        'title': 'Набираю темп',
-        'description': 'Получено 250 XP',
-        'icon': '⚡',
+        'title': 'РќР°Р±РёСЂР°СЋ С‚РµРјРї',
+        'description': 'РџРѕР»СѓС‡РµРЅРѕ 250 XP',
+        'icon': 'вљЎ',
         'category': 'xp_total',
         'threshold': 250,
     },
     {
         'slug': 'xp_1000',
-        'title': 'Мастер волонтерства',
-        'description': 'Получено 1000 XP',
-        'icon': '👑',
+        'title': 'РњР°СЃС‚РµСЂ РІРѕР»РѕРЅС‚РµСЂСЃС‚РІР°',
+        'description': 'РџРѕР»СѓС‡РµРЅРѕ 1000 XP',
+        'icon': 'рџ‘‘',
         'category': 'xp_total',
         'threshold': 1000,
     },
@@ -642,8 +462,8 @@ def apply_event_completion_rewards(registration):
             Notification.objects.create(
                 user=registration.volunteer,
                 type='level_up',
-                title='Новый уровень!',
-                message=f'Ваш уровень повышен до {profile.level}.',
+                title='РќРѕРІС‹Р№ СѓСЂРѕРІРµРЅСЊ!',
+                message=f'Р’Р°С€ СѓСЂРѕРІРµРЅСЊ РїРѕРІС‹С€РµРЅ РґРѕ {profile.level}.',
                 related_event=registration.event,
                 related_registration=registration,
             )
@@ -669,7 +489,7 @@ def apply_event_completion_rewards(registration):
                 Notification.objects.create(
                     user=registration.volunteer,
                     type='achievement_unlocked',
-                    title=f'Достижение: {achievement.title}',
+                    title=f'Р”РѕСЃС‚РёР¶РµРЅРёРµ: {achievement.title}',
                     message=achievement.description,
                     related_event=registration.event,
                     related_registration=registration,
@@ -694,12 +514,8 @@ def create_default_event_channel(sender, instance, created, **kwargs):
         return
     channel = ChatChannel.objects.create(
         event=instance,
-        name='Общий',
-        topic='Основной канал события',
+        name='РћР±С‰РёР№',
+        topic='РћСЃРЅРѕРІРЅРѕР№ РєР°РЅР°Р» СЃРѕР±С‹С‚РёСЏ',
         created_by=instance.organizer,
     )
     ChatChannelMembership.objects.get_or_create(channel=channel, user=instance.organizer)
-=======
-        }
-        return icons.get(self.type, '🔔')
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f

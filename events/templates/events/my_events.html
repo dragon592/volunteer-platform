@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 {% extends 'index.html' %}
-=======
-{% extends 'base.html' %}
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
 {% load custom_tags %}
 
 {% block title %}Мои события — Open Hearts{% endblock %}
@@ -81,10 +77,7 @@
                                         {% if reg %}
                                         <span class="px-3 py-1 rounded-full text-sm font-medium
                                             {% if reg.status == 'approved' %}bg-green-100 text-green-700
-<<<<<<< HEAD
                                             {% elif reg.status == 'completed' %}bg-emerald-100 text-emerald-700
-=======
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                                             {% elif reg.status == 'pending' %}bg-yellow-100 text-yellow-700
                                             {% elif reg.status == 'rejected' %}bg-red-100 text-red-700
                                             {% else %}bg-gray-100 text-gray-700{% endif %}">
@@ -122,7 +115,3 @@
     {% endif %}
 </div>
 {% endblock %}
-<<<<<<< HEAD
-=======
-
->>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
