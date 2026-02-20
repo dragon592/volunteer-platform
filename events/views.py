@@ -1,4 +1,4 @@
-﻿from datetime import date
+from datetime import date
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -199,16 +199,16 @@ def event_register(request, pk):
     event = get_object_or_404(Event, pk=pk)
 
     if not request.user.profile.is_volunteer:
-        messages.error(request, 'РўРѕР»СЊРєРѕ РІРѕР»РѕРЅС‚РµСЂС‹ РјРѕРіСѓС‚ Р·Р°РїРёСЃС‹РІР°С‚СЊСЃСЏ РЅР° СЃРѕР±С‹С‚РёСЏ.')
+        messages.error(request, 'Только волонтеры могут записываться на события.')
         return redirect('event_detail', pk=pk)
 
     if event.is_full:
-        messages.error(request, 'Рљ СЃРѕР¶Р°Р»РµРЅРёСЋ, РІСЃРµ РјРµСЃС‚Р° Р·Р°РЅСЏС‚С‹.')
+        messages.error(request, 'К сожалению, все места заняты.')
         return redirect('event_detail', pk=pk)
 
     existing = EventRegistration.objects.filter(event=event, volunteer=request.user).first()
     if existing and existing.status in ['pending', 'approved', 'completed']:
-        messages.info(request, 'Р’С‹ СѓР¶Рµ Р·Р°РїРёСЃР°РЅС‹ РЅР° СЌС‚Рѕ СЃРѕР±С‹С‚РёРµ.')
+        messages.info(request, 'Вы уже записаны на это событие.')
         return redirect('event_detail', pk=pk)
 
     if request.method == 'POST':
@@ -218,12 +218,12 @@ def event_register(request, pk):
             registration.event = event
             registration.volunteer = request.user
             registration.save()
-            messages.success(request, 'Р’С‹ СѓСЃРїРµС€РЅРѕ Р·Р°РїРёСЃР°Р»РёСЃСЊ РЅР° СЃРѕР±С‹С‚РёРµ!')
+            messages.success(request, 'Вы успешно записались на событие!')
             Notification.objects.create(
                 user=event.organizer,
                 type='new_application',
-                title='РќРѕРІР°СЏ Р·Р°СЏРІРєР° РЅР° СЃРѕР±С‹С‚РёРµ',
-                message=f'{request.user.get_full_name()} РїРѕРґР°Р» Р·Р°СЏРІРєСѓ РЅР° СЃРѕР±С‹С‚РёРµ "{event.title}".',
+                title='Новая заявка на событие',
+                message=f'{request.user.get_full_name()} подал заявку на событие "{event.title}".',
                 related_event=event,
                 related_registration=registration,
             )
@@ -239,18 +239,18 @@ def event_cancel_registration(request, pk):
     event = get_object_or_404(Event, pk=pk)
     registration = get_object_or_404(EventRegistration, event=event, volunteer=request.user)
     if registration.status in ['completed', 'rejected']:
-        messages.error(request, 'Р­С‚Сѓ Р·Р°СЏРІРєСѓ РЅРµР»СЊР·СЏ РѕС‚РјРµРЅРёС‚СЊ.')
+        messages.error(request, 'Эту заявку нельзя отменить.')
         return redirect('event_detail', pk=pk)
     registration.status = 'cancelled'
     registration.save(update_fields=['status', 'updated_at'])
-    messages.success(request, 'Р—Р°РїРёСЃСЊ РѕС‚РјРµРЅРµРЅР°.')
+    messages.success(request, 'Запись отменена.')
     return redirect('event_detail', pk=pk)
 
 
 @login_required
 def event_create(request):
     if not request.user.profile.is_organizer:
-        messages.error(request, 'РўРѕР»СЊРєРѕ РѕСЂРіР°РЅРёР·Р°С‚РѕСЂС‹ РјРѕРіСѓС‚ СЃРѕР·РґР°РІР°С‚СЊ СЃРѕР±С‹С‚РёСЏ.')
+        messages.error(request, 'Только организаторы могут создавать события.')
         return redirect('event_list')
 
     if request.method == 'POST':
@@ -260,12 +260,12 @@ def event_create(request):
             event.organizer = request.user
             event.save()
             form.save_m2m()
-            messages.success(request, 'РЎРѕР±С‹С‚РёРµ СѓСЃРїРµС€РЅРѕ СЃРѕР·РґР°РЅРѕ!')
+            messages.success(request, 'Событие успешно создано!')
             return redirect('event_detail', pk=event.pk)
     else:
         form = EventForm()
 
-    return render(request, 'events/event_form.html', {'form': form, 'title': 'РЎРѕР·РґР°С‚СЊ СЃРѕР±С‹С‚РёРµ'})
+    return render(request, 'events/event_form.html', {'form': form, 'title': 'Создать событие'})
 
 
 @login_required
@@ -273,19 +273,19 @@ def event_edit(request, pk):
     event = get_object_or_404(Event, pk=pk)
 
     if event.organizer != request.user:
-        messages.error(request, 'Р’С‹ РјРѕР¶РµС‚Рµ СЂРµРґР°РєС‚РёСЂРѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ СЃРІРѕРё СЃРѕР±С‹С‚РёСЏ.')
+        messages.error(request, 'Вы можете редактировать только свои события.')
         return redirect('event_detail', pk=pk)
 
     if request.method == 'POST':
         form = EventForm(request.POST, instance=event)
         if form.is_valid():
             form.save()
-            messages.success(request, 'РЎРѕР±С‹С‚РёРµ РѕР±РЅРѕРІР»РµРЅРѕ!')
+            messages.success(request, 'Событие обновлено!')
             return redirect('event_detail', pk=pk)
     else:
         form = EventForm(instance=event)
 
-    return render(request, 'events/event_form.html', {'form': form, 'title': 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ СЃРѕР±С‹С‚РёРµ', 'event': event})
+    return render(request, 'events/event_form.html', {'form': form, 'title': 'Редактировать событие', 'event': event})
 
 
 @login_required
@@ -293,7 +293,7 @@ def event_manage_registrations(request, pk):
     event = get_object_or_404(Event, pk=pk)
 
     if event.organizer != request.user:
-        messages.error(request, 'Р’С‹ РјРѕР¶РµС‚Рµ СѓРїСЂР°РІР»СЏС‚СЊ С‚РѕР»СЊРєРѕ СЃРІРѕРёРјРё СЃРѕР±С‹С‚РёСЏРјРё.')
+        messages.error(request, 'Вы можете управлять только своими событиями.')
         return redirect('event_detail', pk=pk)
 
     if request.method == 'POST':
@@ -305,32 +305,32 @@ def event_manage_registrations(request, pk):
             registration.status = 'approved'
             registration.save(update_fields=['status', 'updated_at'])
             _add_volunteer_to_event_channels(registration.volunteer, event)
-            messages.success(request, f'Р—Р°СЏРІРєР° {registration.volunteer.get_full_name()} РѕРґРѕР±СЂРµРЅР°.')
+            messages.success(request, f'Заявка {registration.volunteer.get_full_name()} одобрена.')
             Notification.objects.create(
                 user=registration.volunteer,
                 type='application_approved',
-                title='Р—Р°СЏРІРєР° РѕРґРѕР±СЂРµРЅР°!',
-                message=f'Р’Р°С€Р° Р·Р°СЏРІРєР° РЅР° СЃРѕР±С‹С‚РёРµ "{event.title}" Р±С‹Р»Р° РѕРґРѕР±СЂРµРЅР°.',
+                title='Заявка одобрена!',
+                message=f'Ваша заявка на событие "{event.title}" была одобрена.',
                 related_event=event,
                 related_registration=registration,
             )
         elif action == 'reject':
             registration.status = 'rejected'
             registration.save(update_fields=['status', 'updated_at'])
-            messages.success(request, f'Р—Р°СЏРІРєР° {registration.volunteer.get_full_name()} РѕС‚РєР»РѕРЅРµРЅР°.')
+            messages.success(request, f'Заявка {registration.volunteer.get_full_name()} отклонена.')
             Notification.objects.create(
                 user=registration.volunteer,
                 type='application_rejected',
-                title='Р—Р°СЏРІРєР° РѕС‚РєР»РѕРЅРµРЅР°',
-                message=f'Рљ СЃРѕР¶Р°Р»РµРЅРёСЋ, РІР°С€Р° Р·Р°СЏРІРєР° РЅР° СЃРѕР±С‹С‚РёРµ "{event.title}" Р±С‹Р»Р° РѕС‚РєР»РѕРЅРµРЅР°.',
+                title='Заявка отклонена',
+                message=f'К сожалению, ваша заявка на событие "{event.title}" была отклонена.',
                 related_event=event,
                 related_registration=registration,
             )
         elif action == 'complete':
             if event.date > date.today():
-                messages.error(request, 'РќРµР»СЊР·СЏ Р·Р°РІРµСЂС€РёС‚СЊ СѓС‡Р°СЃС‚РёРµ РґРѕ РґР°С‚С‹ СЃРѕР±С‹С‚РёСЏ.')
+                messages.error(request, 'Нельзя завершить участие до даты события.')
             elif registration.status not in ['approved', 'completed']:
-                messages.error(request, 'Р—Р°РІРµСЂС€РёС‚СЊ РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РѕРґРѕР±СЂРµРЅРЅРѕРіРѕ СѓС‡Р°СЃС‚РЅРёРєР°.')
+                messages.error(request, 'Завершить можно только одобренного участника.')
             else:
                 registration.status = 'completed'
                 registration.completed_at = timezone.now()
@@ -338,7 +338,7 @@ def event_manage_registrations(request, pk):
                 apply_event_completion_rewards(registration)
                 messages.success(
                     request,
-                    f'РЈС‡Р°СЃС‚РёРµ {registration.volunteer.get_full_name()} Р·Р°РІРµСЂС€РµРЅРѕ, XP Рё РґРѕСЃС‚РёР¶РµРЅРёСЏ РѕР±РЅРѕРІР»РµРЅС‹.',
+                    f'Участие {registration.volunteer.get_full_name()} завершено, XP и достижения обновлены.',
                 )
 
     registrations = event.registrations.select_related('volunteer__profile')
@@ -354,7 +354,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, 'Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ! Р’Р°С€ Р°РєРєР°СѓРЅС‚ СЃРѕР·РґР°РЅ.')
+            messages.success(request, 'Добро пожаловать! Ваш аккаунт создан.')
             return redirect('profile')
     else:
         form = UserRegisterForm()
@@ -371,7 +371,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            messages.success(request, f'Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ, {user.get_full_name() or user.username}!')
+            messages.success(request, f'Добро пожаловать, {user.get_full_name() or user.username}!')
             next_url = request.GET.get('next', 'event_list')
             return redirect(next_url)
     else:
@@ -382,7 +382,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'Р’С‹ РІС‹С€Р»Рё РёР· СЃРёСЃС‚РµРјС‹.')
+    messages.success(request, 'Вы вышли из системы.')
     return redirect('event_list')
 
 
@@ -392,7 +392,7 @@ def profile_view(request):
         form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile, user=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'РџСЂРѕС„РёР»СЊ РѕР±РЅРѕРІР»РµРЅ!')
+            messages.success(request, 'Профиль обновлен!')
             return redirect('profile')
     else:
         form = UserProfileForm(instance=request.user.profile, user=request.user)
@@ -442,7 +442,7 @@ def my_events(request):
 @login_required
 def volunteer_search(request):
     if not request.user.profile.is_organizer:
-        messages.error(request, 'РўРѕР»СЊРєРѕ РѕСЂРіР°РЅРёР·Р°С‚РѕСЂС‹ РјРѕРіСѓС‚ РёСЃРєР°С‚СЊ РІРѕР»РѕРЅС‚РµСЂРѕРІ.')
+        messages.error(request, 'Только организаторы могут искать волонтеров.')
         return redirect('event_list')
 
     form = VolunteerSearchForm(request.GET or None)
@@ -521,7 +521,7 @@ def notification_mark_all_read(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'success': True})
 
-    messages.success(request, 'Р’СЃРµ СѓРІРµРґРѕРјР»РµРЅРёСЏ РѕС‚РјРµС‡РµРЅС‹ РєР°Рє РїСЂРѕС‡РёС‚Р°РЅРЅС‹Рµ')
+    messages.success(request, 'Все уведомления отмечены как прочитанные')
     return redirect('notifications_list')
 
 
@@ -563,7 +563,7 @@ def chat_channel_detail(request, channel_id):
     channel = get_object_or_404(ChatChannel.objects.select_related('event'), pk=channel_id, is_archived=False)
     channels = _available_channels_for_user(request.user)
     if not channels.filter(pk=channel.pk).exists():
-        messages.error(request, 'РЈ РІР°СЃ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє СЌС‚РѕРјСѓ РєР°РЅР°Р»Сѓ.')
+        messages.error(request, 'У вас нет доступа к этому каналу.')
         return redirect('chat_channels')
 
     membership, _ = ChatChannelMembership.objects.get_or_create(channel=channel, user=request.user)
@@ -587,7 +587,7 @@ def chat_channel_detail(request, channel_id):
                 Notification.objects.create(
                     user=recipient.user,
                     type='new_message',
-                    title=f'РќРѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РІ РєР°РЅР°Р»Рµ "{channel.name}"',
+                    title=f'Новое сообщение в канале "{channel.name}"',
                     message=f'{request.user.get_full_name() or request.user.username}: {message_obj.content[:80]}',
                     related_event=channel.event,
                 )
@@ -636,7 +636,7 @@ def chat_channel_detail(request, channel_id):
 def chat_create_channel(request, event_pk):
     event = get_object_or_404(Event, pk=event_pk)
     if event.organizer != request.user:
-        messages.error(request, 'РўРѕР»СЊРєРѕ РѕСЂРіР°РЅРёР·Р°С‚РѕСЂ СЃРѕР±С‹С‚РёСЏ РјРѕР¶РµС‚ СЃРѕР·РґР°РІР°С‚СЊ РєР°РЅР°Р»С‹.')
+        messages.error(request, 'Только организатор события может создавать каналы.')
         return redirect('event_detail', pk=event.pk)
 
     if request.method == 'POST':
@@ -655,7 +655,7 @@ def chat_create_channel(request, event_pk):
             for volunteer in approved_volunteers:
                 ChatChannelMembership.objects.get_or_create(channel=channel, user=volunteer)
 
-            messages.success(request, 'РљР°РЅР°Р» СѓСЃРїРµС€РЅРѕ СЃРѕР·РґР°РЅ.')
+            messages.success(request, 'Канал успешно создан.')
             return redirect('chat_channel_detail', channel_id=channel.pk)
     else:
         form = ChatChannelForm()

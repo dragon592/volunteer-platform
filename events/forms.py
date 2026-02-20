@@ -1,4 +1,4 @@
-﻿from django import forms
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -14,11 +14,11 @@ from .models import (
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True, label='Email')
-    first_name = forms.CharField(max_length=30, required=True, label='РРјСЏ')
-    last_name = forms.CharField(max_length=30, required=True, label='Р¤Р°РјРёР»РёСЏ')
+    first_name = forms.CharField(max_length=30, required=True, label='Имя')
+    last_name = forms.CharField(max_length=30, required=True, label='Фамилия')
     role = forms.ChoiceField(
         choices=UserProfile.ROLE_CHOICES,
-        label='РЇ С…РѕС‡Сѓ',
+        label='Я хочу',
         widget=forms.RadioSelect,
     )
 
@@ -48,8 +48,8 @@ class UserRegisterForm(UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=30, required=True, label='РРјСЏ')
-    last_name = forms.CharField(max_length=30, required=True, label='Р¤Р°РјРёР»РёСЏ')
+    first_name = forms.CharField(max_length=30, required=True, label='Имя')
+    last_name = forms.CharField(max_length=30, required=True, label='Фамилия')
     email = forms.EmailField(required=True, label='Email')
 
     class Meta:
@@ -140,7 +140,7 @@ class EventRegistrationForm(forms.ModelForm):
             'message': forms.Textarea(
                 attrs={
                     'rows': 3,
-                    'placeholder': 'Р Р°СЃСЃРєР°Р¶РёС‚Рµ РЅРµРјРЅРѕРіРѕ Рѕ СЃРµР±Рµ Рё РїРѕС‡РµРјСѓ С…РѕС‚РёС‚Рµ СѓС‡Р°СЃС‚РІРѕРІР°С‚СЊ...',
+                    'placeholder': 'Расскажите немного о себе и почему хотите участвовать...',
                     'class': (
                         'w-full px-4 py-3 rounded-lg border border-gray-300 '
                         'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
@@ -155,9 +155,9 @@ class VolunteerSearchForm(forms.Form):
         queryset=Skill.objects.all(),
         required=False,
         widget=forms.CheckboxSelectMultiple(),
-        label='РќР°РІС‹РєРё',
+        label='Навыки',
     )
-    city = forms.CharField(max_length=100, required=False, label='Р“РѕСЂРѕРґ')
+    city = forms.CharField(max_length=100, required=False, label='Город')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -165,7 +165,7 @@ class VolunteerSearchForm(forms.Form):
             'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 '
             'focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
         )
-        self.fields['city'].widget.attrs['placeholder'] = 'Р’РІРµРґРёС‚Рµ РіРѕСЂРѕРґ...'
+        self.fields['city'].widget.attrs['placeholder'] = 'Введите город...'
 
 
 class ChatChannelForm(forms.ModelForm):
@@ -173,7 +173,7 @@ class ChatChannelForm(forms.ModelForm):
         model = ChatChannel
         fields = ['name', 'topic']
         widgets = {
-            'topic': forms.TextInput(attrs={'placeholder': 'РљРѕСЂРѕС‚РєРѕРµ РѕРїРёСЃР°РЅРёРµ РєР°РЅР°Р»Р°'}),
+            'topic': forms.TextInput(attrs={'placeholder': 'Короткое описание канала'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -193,7 +193,7 @@ class ChatMessageForm(forms.ModelForm):
             'content': forms.Textarea(
                 attrs={
                     'rows': 2,
-                    'placeholder': 'Р’РІРµРґРёС‚Рµ СЃРѕРѕР±С‰РµРЅРёРµ...',
+                    'placeholder': 'Введите сообщение...',
                     'class': (
                         'w-full px-4 py-3 rounded-lg border border-gray-300 '
                         'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
