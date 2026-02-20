@@ -1,4 +1,5 @@
 from django.contrib import admin
+<<<<<<< HEAD
 
 from .models import (
     Achievement,
@@ -12,6 +13,9 @@ from .models import (
     UserProfile,
     VolunteerAchievement,
 )
+=======
+from .models import Skill, UserProfile, Event, EventRegistration, Notification
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
 
 
 @admin.register(Skill)
@@ -22,16 +26,26 @@ class SkillAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
+<<<<<<< HEAD
     list_display = ['user', 'role', 'city', 'phone', 'level', 'xp']
     list_filter = ['role', 'city', 'level']
+=======
+    list_display = ['user', 'role', 'city', 'phone']
+    list_filter = ['role', 'city']
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     search_fields = ['user__username', 'user__email', 'city']
     filter_horizontal = ['skills']
 
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
+<<<<<<< HEAD
     list_display = ['title', 'event_type', 'date', 'location', 'organizer', 'max_volunteers', 'xp_reward', 'is_active']
     list_filter = ['event_type', 'is_active', 'date', 'city']
+=======
+    list_display = ['title', 'date', 'location', 'organizer', 'max_volunteers', 'is_active']
+    list_filter = ['is_active', 'date', 'city']
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     search_fields = ['title', 'description', 'location']
     filter_horizontal = ['required_skills']
     date_hierarchy = 'date'
@@ -39,10 +53,17 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(EventRegistration)
 class EventRegistrationAdmin(admin.ModelAdmin):
+<<<<<<< HEAD
     list_display = ['volunteer', 'event', 'status', 'xp_awarded', 'created_at']
     list_filter = ['status', 'xp_awarded', 'created_at']
     search_fields = ['volunteer__username', 'event__title']
     list_editable = ['status', 'xp_awarded']
+=======
+    list_display = ['volunteer', 'event', 'status', 'created_at']
+    list_filter = ['status', 'created_at']
+    search_fields = ['volunteer__username', 'event__title']
+    list_editable = ['status']
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
 
 
 @admin.register(Notification)
@@ -52,6 +73,7 @@ class NotificationAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'title', 'message']
     list_editable = ['is_read']
     readonly_fields = ['created_at']
+<<<<<<< HEAD
 
 
 @admin.register(Achievement)
@@ -88,3 +110,5 @@ class ChatMessageAdmin(admin.ModelAdmin):
     list_display = ['channel', 'author', 'created_at']
     list_filter = ['created_at']
     search_fields = ['channel__name', 'author__username', 'content']
+=======
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f

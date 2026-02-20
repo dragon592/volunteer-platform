@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 {% extends 'index.html' %}
+=======
+{% extends 'base.html' %}
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
 
 {% block title %}Мой профиль — Open Hearts{% endblock %}
 
 {% block content %}
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid lg:grid-cols-3 gap-8">
+<<<<<<< HEAD
+=======
+        <!-- Profile Card -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
         <div class="lg:col-span-2">
             <div class="bg-white rounded-3xl shadow-xl p-8">
                 <div class="flex items-center mb-8">
@@ -21,11 +29,17 @@
                     </div>
                     <div>
                         <h1 class="font-display text-2xl font-bold text-gray-800">{{ user.get_full_name }}</h1>
+<<<<<<< HEAD
                         <span class="inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium {% if user.profile.is_organizer %}bg-sunset-100 text-sunset-700{% else %}bg-forest-100 text-forest-700{% endif %}">
+=======
+                        <span class="inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium
+                            {% if user.profile.is_organizer %}bg-sunset-100 text-sunset-700{% else %}bg-forest-100 text-forest-700{% endif %}">
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                             {{ user.profile.get_role_display }}
                         </span>
                     </div>
                 </div>
+<<<<<<< HEAD
 
                 {% if user.profile.is_volunteer %}
                 <div class="mb-8 p-5 rounded-2xl bg-gradient-to-r from-forest-50 to-sunset-50 border border-forest-100">
@@ -46,6 +60,12 @@
 
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
+=======
+                
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                     <div class="space-y-6">
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
@@ -57,12 +77,20 @@
                                 {{ form.last_name }}
                             </div>
                         </div>
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">Email</label>
                             {{ form.email }}
                         </div>
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-gray-700 font-semibold mb-2">Телефон</label>
@@ -73,12 +101,20 @@
                                 {{ form.city }}
                             </div>
                         </div>
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">О себе</label>
                             {{ form.bio }}
                         </div>
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                         {% if user.profile.is_volunteer %}
                         <div>
                             <label class="block text-gray-700 font-semibold mb-3">Мои навыки</label>
@@ -92,6 +128,7 @@
                             </div>
                         </div>
                         {% endif %}
+<<<<<<< HEAD
 
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">Загрузить аватар</label>
@@ -104,14 +141,37 @@
                         </div>
                     </div>
 
+=======
+                        
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">Загрузить аватар</label>
+                            {{ form.avatar }}
+                            <p class="text-gray-500 text-sm mt-1">Поддерживаются форматы: JPG, PNG, GIF</p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">Или URL аватара (опционально)</label>
+                            {{ form.avatar_url }}
+                            <p class="text-gray-500 text-sm mt-1">Можно указать ссылку на изображение вместо загрузки</p>
+                        </div>
+                    </div>
+                    
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                     <button type="submit" class="mt-8 w-full bg-forest-600 text-white py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
                         Сохранить изменения
                     </button>
                 </form>
             </div>
         </div>
+<<<<<<< HEAD
 
         <div class="space-y-6">
+=======
+        
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Quick Stats -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <h3 class="font-display font-semibold text-gray-800 mb-4">Статистика</h3>
                 <div class="space-y-3">
@@ -124,6 +184,7 @@
                         <span class="text-gray-600">Навыков</span>
                         <span class="font-bold text-sunset-500">{{ user.profile.skills.count }}</span>
                     </div>
+<<<<<<< HEAD
                     <div class="flex justify-between items-center">
                         <span class="text-gray-600">Уровень</span>
                         <span class="font-bold text-forest-600">{{ user.profile.level }}</span>
@@ -150,21 +211,35 @@
             </div>
             {% endif %}
 
+=======
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             <div class="bg-white rounded-2xl shadow-lg p-6">
                 <h3 class="font-display font-semibold text-gray-800 mb-4">Быстрые действия</h3>
                 <div class="space-y-3">
                     <a href="{% url 'my_events' %}" class="block w-full text-center bg-forest-100 text-forest-700 py-2 rounded-lg font-medium hover:bg-forest-200 transition-colors">
                         Мои события
                     </a>
+<<<<<<< HEAD
                     <a href="{% url 'chat_channels' %}" class="block w-full text-center bg-blue-100 text-blue-700 py-2 rounded-lg font-medium hover:bg-blue-200 transition-colors">
                         Открыть чат
                     </a>
+=======
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                     {% if user.profile.is_organizer %}
                     <a href="{% url 'event_create' %}" class="block w-full text-center bg-sunset-100 text-sunset-700 py-2 rounded-lg font-medium hover:bg-sunset-200 transition-colors">
                         Создать событие
                     </a>
                     <a href="{% url 'volunteer_search' %}" class="block w-full text-center bg-blue-100 text-blue-700 py-2 rounded-lg font-medium hover:bg-blue-200 transition-colors">
+<<<<<<< HEAD
                         Найти волонтеров
+=======
+                        Найти волонтёров
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                     </a>
                     {% endif %}
                 </div>
@@ -173,3 +248,7 @@
     </div>
 </div>
 {% endblock %}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f

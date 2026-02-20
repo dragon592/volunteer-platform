@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 {% extends 'index.html' %}
+=======
+{% extends 'base.html' %}
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
 
 {% block title %}{{ event.title }} — Open Hearts{% endblock %}
 
 {% block content %}
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<<<<<<< HEAD
+=======
+    <!-- Breadcrumb -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
     <div class="mb-6">
         <a href="{% url 'event_list' %}" class="text-forest-600 hover:text-forest-800 flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -12,8 +20,14 @@
             Назад к событиям
         </a>
     </div>
+<<<<<<< HEAD
 
     <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+=======
+    
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <!-- Hero Image -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
         <div class="h-64 md:h-80 bg-gradient-to-br from-forest-400 to-forest-600 relative">
             {% if event.image_url %}
             <img src="{{ event.image_url }}" alt="{{ event.title }}" class="w-full h-full object-cover">
@@ -25,6 +39,7 @@
             </div>
             {% endif %}
         </div>
+<<<<<<< HEAD
 
         <div class="p-8 md:p-12">
             <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
@@ -34,6 +49,14 @@
                         <span class="bg-sunset-100 text-sunset-700 px-3 py-1 rounded-full text-sm font-semibold">{{ event.get_event_type_display }}</span>
                         <span class="bg-forest-100 text-forest-700 px-3 py-1 rounded-full text-sm font-semibold">{{ event.xp_reward }} XP</span>
                     </div>
+=======
+        
+        <div class="p-8 md:p-12">
+            <!-- Title and Meta -->
+            <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+                <div>
+                    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800 mb-4">{{ event.title }}</h1>
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                     <div class="flex flex-wrap gap-4 text-gray-600">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 mr-2 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,7 +73,12 @@
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
 
+=======
+                
+                <!-- Status Badge -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                 <div class="flex flex-col items-end gap-2">
                     <div class="{% if event.is_full %}bg-red-100 text-red-700{% else %}bg-forest-100 text-forest-700{% endif %} px-4 py-2 rounded-full font-semibold">
                         {% if event.is_full %}
@@ -61,7 +89,12 @@
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
 
+=======
+            
+            <!-- Skills -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             {% if event.required_skills.exists %}
             <div class="mb-8">
                 <h3 class="font-display font-semibold text-gray-800 mb-3">Требуемые навыки:</h3>
@@ -72,12 +105,22 @@
                 </div>
             </div>
             {% endif %}
+<<<<<<< HEAD
 
+=======
+            
+            <!-- Description -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             <div class="prose max-w-none mb-8">
                 <h3 class="font-display font-semibold text-gray-800 mb-3">Описание:</h3>
                 <p class="text-gray-600 whitespace-pre-line">{{ event.description }}</p>
             </div>
+<<<<<<< HEAD
 
+=======
+            
+            <!-- Organizer -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             <div class="bg-gray-50 rounded-2xl p-6 mb-8">
                 <h3 class="font-display font-semibold text-gray-800 mb-3">Организатор:</h3>
                 <div class="flex items-center">
@@ -98,7 +141,12 @@
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
 
+=======
+            
+            <!-- Actions -->
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
             <div class="flex flex-wrap gap-4">
                 {% if user.is_authenticated %}
                     {% if user == event.organizer %}
@@ -108,24 +156,35 @@
                         <a href="{% url 'event_manage' event.pk %}" class="bg-sunset-500 text-white px-8 py-3 rounded-xl font-semibold hover:bg-sunset-600 transition-all shadow-lg hover:shadow-xl">
                             Управление заявками ({{ event.registrations.count }})
                         </a>
+<<<<<<< HEAD
                         <a href="{% url 'chat_create_channel' event.pk %}" class="border-2 border-forest-600 text-forest-700 px-8 py-3 rounded-xl font-semibold hover:bg-forest-50 transition-all">
                             Новый канал чата
                         </a>
+=======
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                     {% elif user_registration %}
                         <div class="bg-gray-100 px-8 py-3 rounded-xl font-semibold text-gray-600">
                             {% if user_registration.status == 'pending' %}
                                 Заявка на рассмотрении
                             {% elif user_registration.status == 'approved' %}
+<<<<<<< HEAD
                                 Вы записаны
                             {% elif user_registration.status == 'completed' %}
                                 Участие завершено
+=======
+                                ✓ Вы записаны
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                             {% elif user_registration.status == 'rejected' %}
                                 Заявка отклонена
                             {% else %}
                                 Запись отменена
                             {% endif %}
                         </div>
+<<<<<<< HEAD
                         {% if user_registration.status == 'pending' or user_registration.status == 'approved' %}
+=======
+                        {% if user_registration.status in 'pending,approved' %}
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                         <a href="{% url 'event_cancel_registration' event.pk %}" class="border-2 border-red-500 text-red-500 px-8 py-3 rounded-xl font-semibold hover:bg-red-50 transition-all">
                             Отменить запись
                         </a>
@@ -135,12 +194,15 @@
                             Записаться
                         </a>
                     {% endif %}
+<<<<<<< HEAD
 
                     {% if can_open_chat and event_chat_channel %}
                     <a href="{% url 'chat_channel_detail' event_chat_channel.pk %}" class="border-2 border-forest-600 text-forest-700 px-8 py-3 rounded-xl font-semibold hover:bg-forest-50 transition-all">
                         Открыть чат события
                     </a>
                     {% endif %}
+=======
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
                 {% else %}
                     <a href="{% url 'login' %}?next={{ request.path }}" class="bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
                         Войдите, чтобы записаться
@@ -151,3 +213,7 @@
     </div>
 </div>
 {% endblock %}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 87649b76dfffa07ece7192331d9e7cea6fa6ae8f
