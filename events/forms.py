@@ -11,8 +11,14 @@ from .models import (
     UserProfile,
 )
 
-INPUT_CLASS = 'input'
-FILE_INPUT_CLASS = 'input file-input'
+INPUT_CLASS = (
+    'input w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-900 '
+    'outline-none transition-all focus:border-forest-500 focus:ring-2 focus:ring-forest-200'
+)
+FILE_INPUT_CLASS = (
+    'input file-input w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-gray-900 '
+    'outline-none transition-all focus:border-forest-500 focus:ring-2 focus:ring-forest-200'
+)
 
 
 def _set_class(field, css_class):

@@ -3,6 +3,7 @@ from .views_chat import chat_channel_detail, chat_channels, chat_create_channel
 from .views_events import (
     event_cancel_registration,
     event_create,
+    event_delete,
     event_detail,
     event_edit,
     event_list,
@@ -23,6 +24,7 @@ __all__ = [
     'event_list',
     'event_detail',
     'event_create',
+    'event_delete',
     'event_edit',
     'event_register',
     'event_cancel_registration',

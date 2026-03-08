@@ -3,27 +3,46 @@
 {% block title %}События — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container">
-    <section class="hero">
-        <h1>Найдите событие для участия</h1>
-        <p>Текущие и будущие активности, архив прошедших событий и быстрый фильтр по навыкам, датам и статусу.</p>
+<div class="container page-stack">
+    <section class="hero hero-events">
+        <div class="hero-copy">
+            <span class="hero-kicker">Open Hearts</span>
+            <h1>Найдите событие для участия</h1>
+            <p>Актуальные и архивные активности с гибкой фильтрацией по навыкам, городу, датам и участникам.</p>
+            <div class="hero-metrics">
+                <div class="hero-metric">
+                    <strong>{{ events|length }}</strong>
+                    <span>событий</span>
+                </div>
+                <div class="hero-metric">
+                    <strong>{{ cities|length }}</strong>
+                    <span>городов</span>
+                </div>
+                <div class="hero-metric">
+                    <strong>{{ skills|length }}</strong>
+                    <span>навыков</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-orb hero-orb-one"></div>
+        <div class="hero-orb hero-orb-two"></div>
     </section>
 
     <section class="section">
-        <div class="tabs">
+        <div class="tabs event-tabs">
             <a href="?tab=current" class="tab {% if tab == 'current' %}active{% endif %}">Текущие и будущие</a>
             <a href="?tab=archive" class="tab {% if tab == 'archive' %}active{% endif %}">Архив</a>
         </div>
     </section>
 
-    <section class="panel section">
+    <section class="panel panel-filters section">
         <div class="panel-body">
             <form method="GET" class="form-grid">
                 <input type="hidden" name="tab" value="{{ tab }}">
 
                 <div class="field half">
                     <label for="search">Поиск</label>
-                    <input class="input" id="search" type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Название или описание">
+                    <input class="input" id="search" type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Название или описание события">
                 </div>
 
                 <div class="field third">
@@ -83,11 +102,14 @@
                     <input class="input" id="participant" type="text" name="participant" value="{{ selected_participant|default:'' }}" placeholder="Имя или username">
                 </div>
 
-                <div class="field">
+                <div class="field field-actions">
                     <div class="btn-row">
                         <button class="btn btn-primary" type="submit">Применить фильтры</button>
                         <a class="btn btn-secondary" href="?tab={{ tab }}">Сбросить</a>
                     </div>
+                    {% if selected_skill or selected_city or search_query or selected_type or selected_status or selected_date_from or selected_date_to or selected_participant %}
+                        <p class="inline-note">Активны фильтры: выдача уже сужена под ваш запрос.</p>
+                    {% endif %}
                 </div>
             </form>
         </div>
@@ -95,42 +117,58 @@
 
     <section class="section">
         {% if events %}
-            <div class="event-grid">
+            <div class="event-grid event-grid--enhanced">
                 {% for event in events %}
-                    <article class="event-card">
-                        <a href="{% url 'event_detail' event.pk %}">
-                            <div class="event-cover">
+                    <article class="event-card event-card--enhanced">
+                        <a href="{% url 'event_detail' event.pk %}" class="event-link">
+                            <div class="event-cover event-cover--enhanced">
                                 {% if event.image_url %}
-                                    <img src="{{ event.image_url }}" alt="{{ event.title }}">
+                                    <img src="{{ event.image_url }}" alt="{{ event.title }}" loading="lazy">
+                                {% else %}
+                                    <div class="event-cover-placeholder">
+                                        <span>Open Hearts</span>
+                                    </div>
                                 {% endif %}
+                                <span class="event-date-chip">{{ event.date|date:"d M" }}</span>
+                                <span class="event-type-chip">{{ event.get_event_type_display }}</span>
                             </div>
-                            <div class="event-content">
-                                <div class="btn-row" style="justify-content: space-between;">
-                                    <h3 class="event-title">{{ event.title }}</h3>
-                                    <span class="badge badge-accent">{{ event.get_event_type_display }}</span>
-                                </div>
+
+                            <div class="event-content event-content--enhanced">
+                                <h3 class="event-title">{{ event.title }}</h3>
                                 <p class="muted-text">{{ event.description|truncatewords:18 }}</p>
-                                <ul class="meta-list">
+
+                                <ul class="meta-list event-meta-list">
                                     <li>{{ event.date|date:"d.m.Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}</li>
                                     <li>{{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}</li>
-                                    <li>
+                                </ul>
+
+                                <div class="chip-row event-skill-row">
+                                    {% for skill in event.required_skills.all|slice:":3" %}
+                                        <span class="chip chip-soft">{{ skill.name }}</span>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="event-footer">
+                                    <div class="chip-row">
                                         {% if event.is_full %}
                                             <span class="badge badge-danger">Мест нет</span>
                                         {% else %}
                                             <span class="badge badge-success">{{ event.spots_left }} мест</span>
                                         {% endif %}
-                                        <span class="badge">{{ event.xp_reward }} XP</span>
-                                    </li>
-                                </ul>
+                                        <span class="badge badge-accent">{{ event.xp_reward }} XP</span>
+                                    </div>
+                                    <span class="event-cta">Подробнее</span>
+                                </div>
                             </div>
                         </a>
                     </article>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty">
+            <div class="empty empty-illustrated">
                 <h3>События не найдены</h3>
-                <p>Попробуйте изменить параметры фильтрации.</p>
+                <p>Попробуйте ослабить фильтры или переключиться между текущими и архивными событиями.</p>
+                <a class="btn btn-secondary" href="?tab={{ tab }}">Сбросить фильтры</a>
             </div>
         {% endif %}
     </section>

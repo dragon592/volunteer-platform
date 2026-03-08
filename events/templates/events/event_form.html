@@ -3,129 +3,107 @@
 {% block title %}{{ title }} — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container">
-    <section class="section">
-        <a
-            href="{% if event %}{% url 'event_detail' event.pk %}{% else %}{% url 'event_list' %}{% endif %}"
-            class="btn btn-ghost btn-sm"
-        >
-            ← Назад
-        </a>
+<div class="container page-stack event-form-page">
+    <section class="panel event-form-hero">
+        <div class="panel-body event-form-hero-body">
+            <a
+                href="{% if event %}{% url 'event_detail' event.pk %}{% else %}{% url 'event_list' %}{% endif %}"
+                class="btn btn-ghost btn-sm"
+            >
+                ← Назад
+            </a>
+
+            <div class="event-form-hero-copy">
+                <h1>{{ title }}</h1>
+                <p>Заполните карточку события. Поля с датой, местом, лимитом и навыками определяют видимость и подбор волонтёров.</p>
+            </div>
+        </div>
     </section>
 
-    <section class="panel section">
-        <div class="panel-head">
-            <h1 class="page-title">{{ title }}</h1>
-        </div>
-
+    <section class="panel event-form-card section">
         <div class="panel-body">
-            <form method="POST" class="form-grid">
+            <form method="POST" class="form-grid event-form-grid">
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
-                    <div class="field">
-                        <div class="flash flash-error">
-                            {% for error in form.non_field_errors %}
-                                <div>{{ error }}</div>
-                            {% endfor %}
-                        </div>
+                    <div class="field form-errors">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
                     </div>
                 {% endif %}
 
                 <div class="field">
                     <label for="{{ form.title.id_for_label }}">Название события</label>
                     {{ form.title }}
-                    {% for error in form.title.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.title.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field">
                     <label for="{{ form.description.id_for_label }}">Описание</label>
                     {{ form.description }}
-                    {% for error in form.description.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.description.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field third">
                     <label for="{{ form.event_type.id_for_label }}">Тип события</label>
                     {{ form.event_type }}
-                    {% for error in form.event_type.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.event_type.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field third">
                     <label for="{{ form.date.id_for_label }}">Дата</label>
                     {{ form.date }}
-                    {% for error in form.date.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.date.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field third">
                     <label for="{{ form.time.id_for_label }}">Время</label>
                     {{ form.time }}
-                    {% for error in form.time.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.time.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field half">
                     <label for="{{ form.location.id_for_label }}">Место проведения</label>
                     {{ form.location }}
-                    {% for error in form.location.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.location.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field half">
                     <label for="{{ form.city.id_for_label }}">Город</label>
                     {{ form.city }}
-                    {% for error in form.city.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.city.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="field third">
+                    <label for="{{ form.max_volunteers.id_for_label }}">Максимум волонтёров</label>
+                    {{ form.max_volunteers }}
+                    {% for error in form.max_volunteers.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="field third">
+                    <label for="{{ form.xp_reward.id_for_label }}">XP за участие</label>
+                    {{ form.xp_reward }}
+                    {% for error in form.xp_reward.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="field third">
+                    <label for="{{ form.image_url.id_for_label }}">URL изображения</label>
+                    {{ form.image_url }}
+                    {% for error in form.image_url.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field">
                     <label>Требуемые навыки</label>
-                    <div class="choice-grid">
+                    <div class="event-form-skills">
                         {% for skill in form.required_skills %}
-                            <label class="choice-item">
+                            <label class="event-form-skill-item">
                                 {{ skill.tag }}
                                 <span>{{ skill.choice_label }}</span>
                             </label>
                         {% endfor %}
                     </div>
-                    {% for error in form.required_skills.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="field half">
-                    <label for="{{ form.max_volunteers.id_for_label }}">Максимум волонтеров</label>
-                    {{ form.max_volunteers }}
-                    {% for error in form.max_volunteers.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="field half">
-                    <label for="{{ form.xp_reward.id_for_label }}">Награда XP</label>
-                    {{ form.xp_reward }}
-                    {% for error in form.xp_reward.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="field">
-                    <label for="{{ form.image_url.id_for_label }}">URL изображения</label>
-                    {{ form.image_url }}
-                    <div class="hint">Опционально. Используется как обложка события.</div>
-                    {% for error in form.image_url.errors %}
-                        <div class="hint" style="color: var(--danger);">{{ error }}</div>
-                    {% endfor %}
+                    {% for error in form.required_skills.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field">

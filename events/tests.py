@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import Event, EventRegistration, Notification
+from .models import ChatChannelMembership, Event, EventRegistration, Notification
 
 
 class BaseEventsTestCase(TestCase):
@@ -71,6 +71,24 @@ class EventRegistrationFlowTests(BaseEventsTestCase):
             ).exists()
         )
 
+    def test_cancel_approved_registration_removes_chat_membership(self):
+        organizer = self.create_user('organizer_cancel_chat', role='organizer')
+        volunteer = self.create_user('volunteer_cancel_chat', role='volunteer')
+        event = self.create_event(organizer=organizer)
+        EventRegistration.objects.create(
+            event=event,
+            volunteer=volunteer,
+            status='approved',
+        )
+        channel = event.chat_channels.first()
+        ChatChannelMembership.objects.get_or_create(channel=channel, user=volunteer)
+
+        self.client.login(username=volunteer.username, password=self.password)
+        response = self.client.post(reverse('event_cancel_registration', kwargs={'pk': event.pk}))
+
+        self.assertRedirects(response, reverse('event_detail', kwargs={'pk': event.pk}))
+        self.assertFalse(ChatChannelMembership.objects.filter(channel=channel, user=volunteer).exists())
+
 
 class AuthenticationSecurityTests(BaseEventsTestCase):
     def test_login_ignores_external_next_redirect(self):
@@ -88,6 +106,14 @@ class AuthenticationSecurityTests(BaseEventsTestCase):
 
 
 class MutatingEndpointsMethodTests(BaseEventsTestCase):
+    def test_event_delete_requires_post(self):
+        organizer = self.create_user('organizer_delete_http', role='organizer')
+        event = self.create_event(organizer=organizer)
+
+        self.client.login(username=organizer.username, password=self.password)
+        response = self.client.get(reverse('event_delete', kwargs={'pk': event.pk}))
+        self.assertEqual(response.status_code, 405)
+
     def test_cancel_registration_requires_post(self):
         organizer = self.create_user('organizer2', role='organizer')
         volunteer = self.create_user('volunteer3', role='volunteer')
@@ -154,6 +180,47 @@ class RegistrationManagementTests(BaseEventsTestCase):
         pending_registration.refresh_from_db()
         self.assertEqual(pending_registration.status, 'pending')
 
+    def test_rejecting_approved_registration_removes_chat_membership(self):
+        organizer = self.create_user('organizer_reject', role='organizer')
+        volunteer = self.create_user('volunteer_reject', role='volunteer')
+        event = self.create_event(organizer=organizer)
+        registration = EventRegistration.objects.create(
+            event=event,
+            volunteer=volunteer,
+            status='approved',
+        )
+        channel = event.chat_channels.first()
+        ChatChannelMembership.objects.get_or_create(channel=channel, user=volunteer)
+        self.assertTrue(ChatChannelMembership.objects.filter(channel=channel, user=volunteer).exists())
+
+        self.client.login(username=organizer.username, password=self.password)
+        response = self.client.post(
+            reverse('event_manage', kwargs={'pk': event.pk}),
+            {
+                'registration_id': registration.pk,
+                'action': 'reject',
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        registration.refresh_from_db()
+        self.assertEqual(registration.status, 'rejected')
+        self.assertFalse(ChatChannelMembership.objects.filter(channel=channel, user=volunteer).exists())
+
+    def test_manage_with_missing_registration_id_is_graceful(self):
+        organizer = self.create_user('organizer_missing_reg', role='organizer')
+        event = self.create_event(organizer=organizer)
+
+        self.client.login(username=organizer.username, password=self.password)
+        response = self.client.post(
+            reverse('event_manage', kwargs={'pk': event.pk}),
+            {
+                'action': 'approve',
+            },
+        )
+
+        self.assertRedirects(response, reverse('event_manage', kwargs={'pk': event.pk}))
+
 
 class AccessControlTests(BaseEventsTestCase):
     def test_volunteer_profile_requires_login(self):
@@ -174,6 +241,44 @@ class AccessControlTests(BaseEventsTestCase):
         self.client.login(username=organizer.username, password=self.password)
         response = self.client.get(reverse('volunteer_profile', kwargs={'pk': organizer_target.profile.pk}))
         self.assertEqual(response.status_code, 404)
+
+
+class EventLifecycleTests(BaseEventsTestCase):
+    def test_organizer_can_soft_delete_event(self):
+        organizer = self.create_user('organizer_delete', role='organizer')
+        event = self.create_event(organizer=organizer)
+
+        self.client.login(username=organizer.username, password=self.password)
+        response = self.client.post(reverse('event_delete', kwargs={'pk': event.pk}))
+
+        self.assertRedirects(response, reverse('my_events'))
+        event.refresh_from_db()
+        self.assertFalse(event.is_active)
+        self.assertTrue(event.chat_channels.filter(is_archived=True).exists())
+
+    def test_non_organizer_cannot_delete_event(self):
+        organizer = self.create_user('organizer_delete_owner', role='organizer')
+        volunteer = self.create_user('volunteer_delete_other', role='volunteer')
+        event = self.create_event(organizer=organizer)
+
+        self.client.login(username=volunteer.username, password=self.password)
+        response = self.client.post(reverse('event_delete', kwargs={'pk': event.pk}))
+
+        self.assertRedirects(response, reverse('event_detail', kwargs={'pk': event.pk}))
+        event.refresh_from_db()
+        self.assertTrue(event.is_active)
+
+    def test_inactive_event_detail_and_register_return_404(self):
+        organizer = self.create_user('organizer_inactive', role='organizer')
+        volunteer = self.create_user('volunteer_inactive', role='volunteer')
+        event = self.create_event(organizer=organizer, is_active=False)
+
+        self.client.login(username=volunteer.username, password=self.password)
+        detail_response = self.client.get(reverse('event_detail', kwargs={'pk': event.pk}))
+        register_response = self.client.get(reverse('event_register', kwargs={'pk': event.pk}))
+
+        self.assertEqual(detail_response.status_code, 404)
+        self.assertEqual(register_response.status_code, 404)
 
 
 class EventListAndTemplatesTests(BaseEventsTestCase):

@@ -3,173 +3,181 @@
 {% block title %}Мой профиль — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid lg:grid-cols-3 gap-8">
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-3xl shadow-xl p-8">
-                <div class="flex items-center mb-8">
-                    <div class="w-20 h-20 rounded-2xl overflow-hidden mr-6 shadow-lg flex-shrink-0">
-                        {% if user.profile.avatar %}
-                            <img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover">
-                        {% elif user.profile.avatar_url %}
-                            <img src="{{ user.profile.avatar_url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover">
-                        {% else %}
-                            <div class="w-full h-full bg-gradient-to-br from-forest-400 to-forest-600 flex items-center justify-center text-white font-bold text-2xl">
-                                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+<div class="container page-stack profile-edit-page">
+    <section class="panel profile-edit-hero">
+        <div class="panel-body profile-edit-hero-body">
+            <div class="profile-edit-user">
+                <div class="profile-edit-avatar">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name }}" loading="lazy">
+                    {% elif user.profile.avatar_url %}
+                        <img src="{{ user.profile.avatar_url }}" alt="{{ user.get_full_name }}" loading="lazy">
+                    {% else %}
+                        <span>{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="profile-edit-copy">
+                    <h1>{{ user.get_full_name|default:user.username }}</h1>
+                    <span class="badge {% if user.profile.is_organizer %}badge-warning{% else %}badge-accent{% endif %}">
+                        {{ user.profile.get_role_display }}
+                    </span>
+
+                    {% if user.profile.is_volunteer %}
+                        <div class="profile-edit-progress">
+                            <div class="profile-edit-progress-head">
+                                <strong>Уровень {{ user.profile.level }}</strong>
+                                <span>{{ user.profile.xp }} XP</span>
                             </div>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <h1 class="font-display text-2xl font-bold text-gray-800">{{ user.get_full_name }}</h1>
-                        <span class="inline-block mt-1 px-3 py-1 rounded-full text-sm font-medium {% if user.profile.is_organizer %}bg-sunset-100 text-sunset-700{% else %}bg-forest-100 text-forest-700{% endif %}">
-                            {{ user.profile.get_role_display }}
-                        </span>
-                    </div>
+                            <div class="progress">
+                                <span style="width: {{ xp_progress_percent }}%;"></span>
+                            </div>
+                            <p>До следующего уровня: {{ user.profile.xp_to_next_level }} XP</p>
+                        </div>
+                    {% endif %}
                 </div>
+            </div>
+        </div>
+    </section>
 
-                {% if user.profile.is_volunteer %}
-                <div class="mb-8 p-5 rounded-2xl bg-gradient-to-r from-forest-50 to-sunset-50 border border-forest-100">
-                    <div class="flex items-center justify-between mb-3">
-                        <h2 class="font-display text-lg font-bold text-gray-800">Прогресс волонтера</h2>
-                        <span class="text-sm font-semibold bg-white px-3 py-1 rounded-full text-forest-700">Уровень {{ user.profile.level }}</span>
-                    </div>
-                    <div class="flex items-center justify-between text-sm mb-2">
-                        <span class="text-gray-600">Опыт</span>
-                        <span class="font-semibold text-forest-700">{{ user.profile.xp }} XP</span>
-                    </div>
-                    <div class="w-full bg-white rounded-full h-2.5 overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-forest-500 to-sunset-500" style="width: {{ xp_progress_percent }}%;"></div>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2">До следующего уровня: {{ user.profile.xp_to_next_level }} XP</p>
-                </div>
-                {% endif %}
+    <section class="profile-edit-layout section">
+        <article class="panel profile-edit-form-card">
+            <div class="panel-body">
+                <h2 class="page-title">Редактирование профиля</h2>
+                <p class="subtle">Обновите контакты, описание и дополнительные данные профиля.</p>
 
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" enctype="multipart/form-data" class="form-grid profile-edit-form">
                     {% csrf_token %}
-                    <div class="space-y-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-gray-700 font-semibold mb-2">мя</label>
-                                {{ form.first_name }}
-                            </div>
-                            <div>
-                                <label class="block text-gray-700 font-semibold mb-2">Фамилия</label>
-                                {{ form.last_name }}
-                            </div>
-                        </div>
 
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-2">Email</label>
-                            {{ form.email }}
+                    {% if form.non_field_errors %}
+                        <div class="field profile-errors">
+                            {% for error in form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
                         </div>
+                    {% endif %}
 
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-gray-700 font-semibold mb-2">Телефон</label>
-                                {{ form.phone }}
-                            </div>
-                            <div>
-                                <label class="block text-gray-700 font-semibold mb-2">Город</label>
-                                {{ form.city }}
-                            </div>
-                        </div>
+                    <div class="field half">
+                        <label for="{{ form.first_name.id_for_label }}">Имя</label>
+                        {{ form.first_name }}
+                        {% for error in form.first_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
 
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-2">О себе</label>
-                            {{ form.bio }}
-                        </div>
+                    <div class="field half">
+                        <label for="{{ form.last_name.id_for_label }}">Фамилия</label>
+                        {{ form.last_name }}
+                        {% for error in form.last_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
 
-                        {% if user.profile.is_volunteer %}
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-3">Мои навыки</label>
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div class="field half">
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                        {{ form.email }}
+                        {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    <div class="field half">
+                        <label for="{{ form.phone.id_for_label }}">Телефон</label>
+                        {{ form.phone }}
+                        {% for error in form.phone.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    <div class="field half">
+                        <label for="{{ form.city.id_for_label }}">Город</label>
+                        {{ form.city }}
+                        {% for error in form.city.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    <div class="field half">
+                        <label for="{{ form.avatar_url.id_for_label }}">URL аватара</label>
+                        {{ form.avatar_url }}
+                        {% for error in form.avatar_url.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    <div class="field half">
+                        <label for="{{ form.avatar.id_for_label }}">Файл аватара</label>
+                        {{ form.avatar }}
+                        {% for error in form.avatar.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    <div class="field">
+                        <label for="{{ form.bio.id_for_label }}">О себе</label>
+                        {{ form.bio }}
+                        {% for error in form.bio.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    </div>
+
+                    {% if user.profile.is_volunteer %}
+                        <div class="field">
+                            <label>Мои навыки</label>
+                            <div class="profile-skill-grid">
                                 {% for skill in form.skills %}
-                                <label class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-forest-50 cursor-pointer transition-colors">
-                                    {{ skill.tag }}
-                                    <span class="ml-2 text-gray-700">{{ skill.choice_label }}</span>
-                                </label>
+                                    <label class="profile-skill-item">
+                                        {{ skill.tag }}
+                                        <span>{{ skill.choice_label }}</span>
+                                    </label>
                                 {% endfor %}
                             </div>
+                            {% for error in form.skills.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
                         </div>
-                        {% endif %}
+                    {% endif %}
 
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-2">Загрузить аватар</label>
-                            {{ form.avatar }}
-                        </div>
-
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-2">ли URL аватара</label>
-                            {{ form.avatar_url }}
+                    <div class="field">
+                        <div class="btn-row">
+                            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+                            <a href="{% url 'my_events' %}" class="btn btn-secondary">К моим событиям</a>
                         </div>
                     </div>
-
-                    <button type="submit" class="mt-8 w-full bg-forest-600 text-white py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
-                        Сохранить изменения
-                    </button>
                 </form>
             </div>
-        </div>
+        </article>
 
-        <div class="space-y-6">
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h3 class="font-display font-semibold text-gray-800 mb-4">Статистика</h3>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Событий</span>
-                        <span class="font-bold text-forest-600">{{ my_events.count }}</span>
+        <aside class="profile-edit-side">
+            <section class="panel profile-side-card">
+                <div class="panel-body">
+                    <h3>Статистика</h3>
+                    <div class="profile-stats-list">
+                        <div><span>Событий</span><strong>{{ my_events.count }}</strong></div>
+                        {% if user.profile.is_volunteer %}
+                            <div><span>Навыков</span><strong>{{ user.profile.skills.count }}</strong></div>
+                            <div><span>Уровень</span><strong>{{ user.profile.level }}</strong></div>
+                        {% endif %}
                     </div>
-                    {% if user.profile.is_volunteer %}
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Навыков</span>
-                        <span class="font-bold text-sunset-500">{{ user.profile.skills.count }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-600">Уровень</span>
-                        <span class="font-bold text-forest-600">{{ user.profile.level }}</span>
-                    </div>
-                    {% endif %}
                 </div>
-            </div>
+            </section>
 
             {% if user.profile.is_volunteer %}
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h3 class="font-display font-semibold text-gray-800 mb-4">Достижения</h3>
-                {% if achievements %}
-                <div class="space-y-3">
-                    {% for item in achievements|slice:":5" %}
-                    <div class="p-3 rounded-xl bg-forest-50 border border-forest-100">
-                        <div class="text-sm font-semibold text-gray-800">{{ item.achievement.icon }} {{ item.achievement.title }}</div>
-                        <div class="text-xs text-gray-600 mt-1">{{ item.achievement.description }}</div>
+                <section class="panel profile-side-card">
+                    <div class="panel-body">
+                        <h3>Достижения</h3>
+                        {% if achievements %}
+                            <div class="profile-achievements-list">
+                                {% for item in achievements|slice:":5" %}
+                                    <div class="profile-achievement-item">
+                                        <div class="profile-achievement-title">{{ item.achievement.icon }} {{ item.achievement.title }}</div>
+                                        <div class="profile-achievement-text">{{ item.achievement.description }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="muted-text">Достижения появятся после завершения событий.</p>
+                        {% endif %}
                     </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <p class="text-sm text-gray-500">Достижения появятся после завершения событий.</p>
-                {% endif %}
-            </div>
+                </section>
             {% endif %}
 
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <h3 class="font-display font-semibold text-gray-800 mb-4">Быстрые действия</h3>
-                <div class="space-y-3">
-                    <a href="{% url 'my_events' %}" class="block w-full text-center bg-forest-100 text-forest-700 py-2 rounded-lg font-medium hover:bg-forest-200 transition-colors">
-                        Мои события
-                    </a>
-                    <a href="{% url 'chat_channels' %}" class="block w-full text-center bg-blue-100 text-blue-700 py-2 rounded-lg font-medium hover:bg-blue-200 transition-colors">
-                        Открыть чат
-                    </a>
-                    {% if user.profile.is_organizer %}
-                    <a href="{% url 'event_create' %}" class="block w-full text-center bg-sunset-100 text-sunset-700 py-2 rounded-lg font-medium hover:bg-sunset-200 transition-colors">
-                        Создать событие
-                    </a>
-                    <a href="{% url 'volunteer_search' %}" class="block w-full text-center bg-blue-100 text-blue-700 py-2 rounded-lg font-medium hover:bg-blue-200 transition-colors">
-                        Найти волонтеров
-                    </a>
-                    {% endif %}
+            <section class="panel profile-side-card">
+                <div class="panel-body">
+                    <h3>Быстрые действия</h3>
+                    <div class="profile-quick-actions">
+                        <a href="{% url 'my_events' %}" class="btn btn-secondary btn-sm">Мои события</a>
+                        <a href="{% url 'chat_channels' %}" class="btn btn-secondary btn-sm">Открыть чат</a>
+                        {% if user.profile.is_organizer %}
+                            <a href="{% url 'event_create' %}" class="btn btn-secondary btn-sm">Создать событие</a>
+                            <a href="{% url 'volunteer_search' %}" class="btn btn-secondary btn-sm">Найти волонтёров</a>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </section>
+        </aside>
+    </section>
 </div>
 {% endblock %}

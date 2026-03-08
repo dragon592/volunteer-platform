@@ -22,6 +22,10 @@ def add_volunteer_to_event_channels(user, event):
         ChatChannelMembership.objects.get_or_create(channel=channel, user=user)
 
 
+def remove_volunteer_from_event_channels(user, event):
+    ChatChannelMembership.objects.filter(channel__event=event, user=user).delete()
+
+
 def submit_event_registration(form, event, volunteer, existing_registration=None):
     should_notify_organizer = True
 
@@ -31,6 +35,7 @@ def submit_event_registration(form, event, volunteer, existing_registration=None
         registration.message = form.cleaned_data['message']
         registration.completed_at = None
         registration.save(update_fields=['status', 'message', 'completed_at', 'updated_at'])
+        remove_volunteer_from_event_channels(volunteer, event)
         success_message = 'Заявка отправлена повторно.'
     else:
         try:
@@ -46,6 +51,7 @@ def submit_event_registration(form, event, volunteer, existing_registration=None
                 registration.message = form.cleaned_data['message']
                 registration.completed_at = None
                 registration.save(update_fields=['status', 'message', 'completed_at', 'updated_at'])
+                remove_volunteer_from_event_channels(volunteer, event)
                 success_message = 'Заявка отправлена повторно.'
             else:
                 should_notify_organizer = False

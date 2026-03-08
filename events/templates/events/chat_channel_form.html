@@ -1,38 +1,50 @@
 {% extends 'index.html' %}
 
-{% block title %}Новый канал — {{ event.title }}{% endblock %}
+{% block title %}Новый канал - {{ event.title }}{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="bg-white rounded-3xl shadow-xl p-8">
-        <h1 class="font-display text-2xl font-bold text-gray-800 mb-2">Создать канал</h1>
-        <p class="text-gray-600 mb-6">Событие: {{ event.title }}</p>
+<div class="container page-stack chat-form-page">
+    <section class="panel chat-form-hero">
+        <div class="panel-body chat-form-hero-body">
+            <a href="{% url 'event_detail' event.pk %}" class="btn btn-ghost btn-sm">← Назад к событию</a>
+            <h1>Создать канал</h1>
+            <p>Событие: {{ event.title }}</p>
+        </div>
+    </section>
 
-        <form method="POST" class="space-y-5">
-            {% csrf_token %}
-            <div>
-                <label class="block text-sm text-gray-700 font-semibold mb-2">Название канала</label>
-                {{ form.name }}
-                {% for error in form.name.errors %}
-                <p class="text-sm text-red-600 mt-1">{{ error }}</p>
-                {% endfor %}
-            </div>
-            <div>
-                <label class="block text-sm text-gray-700 font-semibold mb-2">Тема</label>
-                {{ form.topic }}
-                {% for error in form.topic.errors %}
-                <p class="text-sm text-red-600 mt-1">{{ error }}</p>
-                {% endfor %}
-            </div>
-            <div class="flex gap-3">
-                <button type="submit" class="bg-forest-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-forest-700 transition-all">
-                    Создать
-                </button>
-                <a href="{% url 'event_detail' event.pk %}" class="bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-semibold hover:bg-gray-300 transition-all">
-                    Отмена
-                </a>
-            </div>
-        </form>
-    </div>
+    <section class="panel chat-form-card section">
+        <div class="panel-body">
+            <form method="POST" class="form-grid chat-form-grid">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="field form-errors">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="field">
+                    <label for="{{ form.name.id_for_label }}">Название канала</label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="field">
+                    <label for="{{ form.topic.id_for_label }}">Тема</label>
+                    {{ form.topic }}
+                    {% for error in form.topic.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="field">
+                    <div class="btn-row">
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                        <a href="{% url 'event_detail' event.pk %}" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
 </div>
 {% endblock %}

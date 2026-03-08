@@ -24,7 +24,7 @@ class UserRegisterForm(UserCreationForm):
         # Tailwind стили для полей
         for field_name, field in self.fields.items():
             if field_name != 'role':
-                field.widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
+                field.widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-forest-500 focus:ring-2 focus:ring-forest-200 transition-all outline-none'
     
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -65,7 +65,7 @@ class UserProfileForm(forms.ModelForm):
         # Tailwind стили
         for field_name, field in self.fields.items():
             if field_name not in ['skills']:
-                field.widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
+                field.widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-forest-500 focus:ring-2 focus:ring-forest-200 transition-all outline-none'
     
     def save(self, commit=True):
         profile = super().save(commit=False)
@@ -98,7 +98,7 @@ class EventForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             if field_name not in ['required_skills']:
-                field.widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
+                field.widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-forest-500 focus:ring-2 focus:ring-forest-200 transition-all outline-none'
 
 
 class EventRegistrationForm(forms.ModelForm):
@@ -110,7 +110,7 @@ class EventRegistrationForm(forms.ModelForm):
             'message': forms.Textarea(attrs={
                 'rows': 3,
                 'placeholder': 'Расскажите немного о себе и почему хотите участвовать...',
-                'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
+                'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-forest-500 focus:ring-2 focus:ring-forest-200 transition-all outline-none'
             }),
         }
 
@@ -127,6 +127,5 @@ class VolunteerSearchForm(forms.Form):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['city'].widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
+        self.fields['city'].widget.attrs['class'] = 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-forest-500 focus:ring-2 focus:ring-forest-200 transition-all outline-none'
         self.fields['city'].widget.attrs['placeholder'] = 'Введите город...'
-

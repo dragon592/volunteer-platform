@@ -3,109 +3,138 @@
 {% block title %}{{ event.title }} — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container">
-    <section class="section">
-        <a href="{% url 'event_list' %}" class="btn btn-ghost btn-sm">← Назад к событиям</a>
+<div class="container page-stack detail-page">
+    <section class="panel detail-hero">
+        <div class="detail-hero-media">
+            {% if event.image_url %}
+                <img src="{{ event.image_url }}" alt="{{ event.title }}" loading="lazy">
+            {% else %}
+                <div class="event-cover-placeholder detail-cover-placeholder">
+                    <span>Open Hearts</span>
+                </div>
+            {% endif %}
+
+            <div class="detail-hero-overlay">
+                <a href="{% url 'event_list' %}" class="btn btn-ghost btn-sm detail-back-link">← Назад к событиям</a>
+            </div>
+
+            <div class="detail-hero-caption">
+                <div class="chip-row">
+                    <span class="badge badge-accent">{{ event.get_event_type_display }}</span>
+                    <span class="badge">{{ event.xp_reward }} XP</span>
+                    {% if event.is_full %}
+                        <span class="badge badge-danger">Мест нет</span>
+                    {% else %}
+                        <span class="badge badge-success">{{ event.spots_left }} из {{ event.max_volunteers }} мест</span>
+                    {% endif %}
+                </div>
+                <h1>{{ event.title }}</h1>
+            </div>
+        </div>
     </section>
 
-    <section class="panel section">
-        <div class="event-cover" style="height: 280px;">
-            {% if event.image_url %}
-                <img src="{{ event.image_url }}" alt="{{ event.title }}">
-            {% endif %}
-        </div>
-        <div class="panel-body event-details">
-            <div class="btn-row" style="justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h1 class="page-title">{{ event.title }}</h1>
-                    <div class="chip-row" style="margin-top: 8px;">
-                        <span class="badge badge-accent">{{ event.get_event_type_display }}</span>
-                        <span class="badge">{{ event.xp_reward }} XP</span>
+    <section class="detail-layout section">
+        <article class="panel detail-main">
+            <div class="panel-body detail-main-body">
+                <div class="detail-meta-grid">
+                    <div class="detail-meta-item">
+                        <span class="detail-meta-label">Дата</span>
+                        <strong>{{ event.date|date:"d.m.Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}</strong>
+                    </div>
+                    <div class="detail-meta-item">
+                        <span class="detail-meta-label">Локация</span>
+                        <strong>{{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}</strong>
+                    </div>
+                    <div class="detail-meta-item">
+                        <span class="detail-meta-label">Организатор</span>
+                        <strong>{{ event.organizer.get_full_name|default:event.organizer.username }}</strong>
                     </div>
                 </div>
-                {% if event.is_full %}
-                    <span class="badge badge-danger">Мест нет</span>
-                {% else %}
-                    <span class="badge badge-success">{{ event.spots_left }} из {{ event.max_volunteers }} мест</span>
+
+                {% if event.required_skills.exists %}
+                    <div class="detail-block">
+                        <h3>Требуемые навыки</h3>
+                        <div class="chip-row">
+                            {% for skill in event.required_skills.all %}
+                                <span class="chip chip-soft">{{ skill.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% endif %}
-            </div>
 
-            <ul class="meta-list">
-                <li><strong>Дата:</strong> {{ event.date|date:"d.m.Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}</li>
-                <li><strong>Локация:</strong> {{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}</li>
-            </ul>
-
-            {% if event.required_skills.exists %}
-                <div>
-                    <h3>Требуемые навыки</h3>
-                    <div class="chip-row">
-                        {% for skill in event.required_skills.all %}
-                            <span class="chip">{{ skill.name }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-
-            <div>
-                <h3>Описание</h3>
-                <p class="muted-text" style="white-space: pre-line;">{{ event.description }}</p>
-            </div>
-
-            <div class="list-item">
-                <h3 style="margin-top: 0;">Организатор</h3>
-                <div class="btn-row" style="align-items: center;">
-                    {% if event.organizer.profile.avatar %}
-                        <img class="avatar-md" src="{{ event.organizer.profile.avatar.url }}" alt="{{ event.organizer.get_full_name }}">
-                    {% elif event.organizer.profile.avatar_url %}
-                        <img class="avatar-md" src="{{ event.organizer.profile.avatar_url }}" alt="{{ event.organizer.get_full_name }}">
-                    {% else %}
-                        <span class="avatar-fallback">{{ event.organizer.first_name|first|upper }}{{ event.organizer.last_name|first|upper }}</span>
-                    {% endif %}
-                    <div>
-                        <strong>{{ event.organizer.get_full_name }}</strong>
-                        <div class="subtle">{{ event.organizer.email }}</div>
-                    </div>
+                <div class="detail-block">
+                    <h3>Описание</h3>
+                    <p class="detail-description">{{ event.description }}</p>
                 </div>
             </div>
+        </article>
 
-            <div class="btn-row">
-                {% if user.is_authenticated %}
-                    {% if user == event.organizer %}
-                        <a class="btn btn-primary" href="{% url 'event_edit' event.pk %}">Редактировать</a>
-                        <a class="btn btn-secondary" href="{% url 'event_manage' event.pk %}">Заявки ({{ organizer_registrations_count|default:0 }})</a>
-                        <a class="btn btn-secondary" href="{% url 'chat_create_channel' event.pk %}">Новый канал</a>
-                    {% elif user_registration %}
-                        <span class="badge">
-                            {% if user_registration.status == 'pending' %}
-                                Заявка на рассмотрении
-                            {% elif user_registration.status == 'approved' %}
-                                Вы записаны
-                            {% elif user_registration.status == 'completed' %}
-                                Участие завершено
-                            {% elif user_registration.status == 'rejected' %}
-                                Заявка отклонена
-                            {% else %}
-                                Запись отменена
-                            {% endif %}
-                        </span>
-                        {% if user_registration.status == 'pending' or user_registration.status == 'approved' %}
-                            <form method="POST" action="{% url 'event_cancel_registration' event.pk %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Отменить запись</button>
-                            </form>
+        <aside class="detail-side">
+            <section class="panel organizer-card">
+                <div class="panel-body">
+                    <h3>Организатор</h3>
+                    <div class="organizer-row">
+                        {% if event.organizer.profile.avatar %}
+                            <img class="avatar-md" src="{{ event.organizer.profile.avatar.url }}" alt="{{ event.organizer.get_full_name }}">
+                        {% elif event.organizer.profile.avatar_url %}
+                            <img class="avatar-md" src="{{ event.organizer.profile.avatar_url }}" alt="{{ event.organizer.get_full_name }}">
+                        {% else %}
+                            <span class="avatar-fallback">{{ event.organizer.first_name|first|upper }}{{ event.organizer.last_name|first|upper }}</span>
                         {% endif %}
-                    {% elif can_register %}
-                        <a class="btn btn-primary" href="{% url 'event_register' event.pk %}">Записаться</a>
-                    {% endif %}
+                        <div>
+                            <strong>{{ event.organizer.get_full_name|default:event.organizer.username }}</strong>
+                            <div class="subtle">{{ event.organizer.email }}</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                    {% if can_open_chat and event_chat_channel %}
-                        <a class="btn btn-secondary" href="{% url 'chat_channel_detail' event_chat_channel.pk %}">Открыть чат</a>
+            <section class="panel action-panel">
+                <div class="panel-body action-stack">
+                    <h3>Действия</h3>
+
+                    {% if user.is_authenticated %}
+                        {% if user == event.organizer %}
+                            <a class="btn btn-primary" href="{% url 'event_edit' event.pk %}">Редактировать</a>
+                            <a class="btn btn-secondary" href="{% url 'event_manage' event.pk %}">Заявки ({{ organizer_registrations_count|default:0 }})</a>
+                            <a class="btn btn-secondary" href="{% url 'chat_create_channel' event.pk %}">Новый канал</a>
+                            <form method="POST" action="{% url 'event_delete' event.pk %}" onsubmit="return confirm('Удалить событие?');" class="action-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        {% elif user_registration %}
+                            <div class="registration-state">
+                                {% if user_registration.status == 'pending' %}
+                                    Заявка на рассмотрении
+                                {% elif user_registration.status == 'approved' %}
+                                    Вы записаны
+                                {% elif user_registration.status == 'completed' %}
+                                    Участие завершено
+                                {% elif user_registration.status == 'rejected' %}
+                                    Заявка отклонена
+                                {% else %}
+                                    Запись отменена
+                                {% endif %}
+                            </div>
+                            {% if user_registration.status == 'pending' or user_registration.status == 'approved' %}
+                                <form method="POST" action="{% url 'event_cancel_registration' event.pk %}" class="action-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Отменить запись</button>
+                                </form>
+                            {% endif %}
+                        {% elif can_register %}
+                            <a class="btn btn-primary" href="{% url 'event_register' event.pk %}">Записаться</a>
+                        {% endif %}
+
+                        {% if can_open_chat and event_chat_channel %}
+                            <a class="btn btn-secondary" href="{% url 'chat_channel_detail' event_chat_channel.pk %}">Открыть чат</a>
+                        {% endif %}
+                    {% else %}
+                        <a class="btn btn-primary" href="{% url 'login' %}?next={{ request.path }}">Войдите, чтобы записаться</a>
                     {% endif %}
-                {% else %}
-                    <a class="btn btn-primary" href="{% url 'login' %}?next={{ request.path }}">Войдите, чтобы записаться</a>
-                {% endif %}
-            </div>
-        </div>
+                </div>
+            </section>
+        </aside>
     </section>
 </div>
 {% endblock %}
