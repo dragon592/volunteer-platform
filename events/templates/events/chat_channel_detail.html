@@ -30,7 +30,7 @@
                 {% if channel.topic %}<p class="text-gray-600 text-sm mt-1">{{ channel.topic }}</p>{% endif %}
             </div>
 
-            <div class="p-6 h-[460px] overflow-y-auto bg-gray-50 space-y-3">
+            <div data-chat-log class="p-6 h-[460px] overflow-y-auto bg-gray-50 space-y-3">
                 {% for message in messages %}
                 <div class="{% if message.author_id == user.id %}text-right{% endif %}">
                     <div class="inline-block max-w-[80%] px-4 py-3 rounded-2xl {% if message.author_id == user.id %}bg-forest-600 text-white{% else %}bg-white text-gray-800{% endif %}">

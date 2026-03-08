@@ -22,7 +22,7 @@
 - **Backend**: Django 5.2.8
 - **Frontend**: HTML, Tailwind CSS (CDN)
 - **База данных**: SQLite3
-- **Языки**: Python 3.14+, Django Templates
+- **Языки**: Python 3.8+, Django Templates
 
 ## 📦 Установка
 
@@ -33,9 +33,9 @@
 
 ### Шаги установки
 
-1. **Клонируйте репозиторий или перейдите в директорию проекта**
+1. **Клонируйте репозиторий и перейдите в директорию проекта**
    ```bash
-   cd volunteer
+   cd volunteer-platform-main
    ```
 
 2. **Создайте виртуальное окружение**
@@ -62,7 +62,7 @@
 
 4. **Установите зависимости**
    ```bash
-   pip install -r requirements.txt
+   python -m pip install -r requirements.txt
    ```
 
 5. **Примените миграции**
@@ -85,20 +85,24 @@
    python manage.py runserver
    ```
 
+   Если `python manage.py ...` запускается не из `venv` (например, ошибка `No module named 'django'`), используйте интерпретатор окружения напрямую:
+   ```powershell
+   .\venv\Scripts\python.exe manage.py runserver
+   ```
+
 9. **Откройте в браузере**
    ```
    http://127.0.0.1:8000/
    ```
 
-## 👤 Суперпользователь по умолчанию
+## 👤 Админ-доступ
 
-После первой установки создан суперпользователь:
-- **Username**: `admin`
-- **Password**: `admin123`
+Суперпользователь создаётся вручную командой:
+```bash
+python manage.py createsuperuser
+```
 
-**⚠️ Важно**: Измените пароль в продакшене!
-
-Для входа в админ-панель: http://127.0.0.1:8000/admin/
+После создания вход в админ-панель: http://127.0.0.1:8000/admin/
 
 ## 📁 Структура проекта
 
@@ -258,4 +262,3 @@ Open Hearts Team
 ---
 
 **Сделано с ❤️ для волонтёров**
-

@@ -3,7 +3,11 @@
 {% block title %}Уведомления — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div
+    id="notifications-page"
+    class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+    data-mark-read-template="{% url 'notification_mark_read' 0 %}"
+>
     <div class="flex items-center justify-between mb-8">
         <div>
             <h1 class="font-display text-3xl font-bold text-gray-800">Уведомления</h1>
@@ -18,7 +22,7 @@
             </p>
         </div>
         {% if unread_count > 0 and filter_type != 'read' %}
-        <button onclick="markAllAsRead()" class="bg-forest-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-forest-700 transition-all">
+        <button onclick="markAllAsRead(this)" class="bg-forest-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-forest-700 transition-all">
             Отметить все как прочитанные
         </button>
         {% endif %}
@@ -71,7 +75,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             {% if not notification.is_read %}
-                            <button onclick="markAsRead({{ notification.id }})" 
+                            <button onclick="markAsRead({{ notification.id }}, this)" 
                                     class="text-gray-400 hover:text-forest-600 transition-colors"
                                     title="Отметить как прочитанное">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,6 +96,31 @@
         </div>
         {% endfor %}
     </div>
+    {% if page_obj.has_other_pages %}
+    <div class="mt-6 flex items-center justify-between text-sm text-gray-600">
+        <div>
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+        </div>
+        <div class="flex items-center gap-2">
+            {% if page_obj.has_previous %}
+            <a
+                href="?filter={{ filter_type }}&page={{ page_obj.previous_page_number }}"
+                class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200"
+            >
+                Назад
+            </a>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <a
+                href="?filter={{ filter_type }}&page={{ page_obj.next_page_number }}"
+                class="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200"
+            >
+                Вперёд
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
     {% else %}
     <div class="bg-white rounded-3xl shadow-xl p-12 text-center">
         <svg class="w-24 h-24 text-gray-300 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,45 +141,61 @@
 </div>
 
 <script>
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
+function markAsRead(notificationId, button) {
+    const root = document.getElementById('notifications-page');
+    const urlTemplate = root?.dataset?.markReadTemplate || '{% url "notification_mark_read" 0 %}';
+    const url = urlTemplate.replace('/0/read/', `/${notificationId}/read/`);
+    const csrfToken = typeof window.getCookie === 'function' ? window.getCookie('csrftoken') : '';
+    if (button) {
+        button.disabled = true;
     }
-    return cookieValue;
-}
 
-function markAsRead(notificationId) {
-    fetch(`/notifications/${notificationId}/read/`, {
+    fetch(url, {
         method: 'POST',
         headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
+            'X-CSRFToken': csrfToken,
             'X-Requested-With': 'XMLHttpRequest'
         },
         credentials: 'same-origin'
-    }).then(() => {
-        location.reload();
-    });
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Failed to mark notification as read');
+            }
+            location.reload();
+        })
+        .catch(() => {
+            if (button) {
+                button.disabled = false;
+            }
+        });
 }
 
-function markAllAsRead() {
+function markAllAsRead(button) {
+    const csrfToken = typeof window.getCookie === 'function' ? window.getCookie('csrftoken') : '';
+    if (button) {
+        button.disabled = true;
+    }
+
     fetch('{% url "notification_mark_all_read" %}', {
         method: 'POST',
         headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
+            'X-CSRFToken': csrfToken,
             'X-Requested-With': 'XMLHttpRequest'
         },
         credentials: 'same-origin'
-    }).then(() => {
-        location.reload();
-    });
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Failed to mark notifications as read');
+            }
+            location.reload();
+        })
+        .catch(() => {
+            if (button) {
+                button.disabled = false;
+            }
+        });
 }
 </script>
 {% endblock %}

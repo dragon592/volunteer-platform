@@ -108,12 +108,20 @@ class Event(models.Model):
         verbose_name = 'Событие'
         verbose_name_plural = 'События'
         ordering = ['date', 'time']
+        indexes = [
+            models.Index(fields=['is_active', 'date']),
+            models.Index(fields=['city']),
+        ]
 
     def __str__(self):
         return self.title
 
     @property
     def registered_count(self):
+        # Reuse annotated value from list views to avoid N+1 counts.
+        annotated_count = getattr(self, 'approved_participants', None)
+        if annotated_count is not None:
+            return annotated_count
         return self.registrations.filter(status__in=['approved', 'completed']).count()
 
     @property
@@ -163,6 +171,10 @@ class EventRegistration(models.Model):
         verbose_name_plural = 'Заявки на события'
         unique_together = ['event', 'volunteer']
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['event', 'status']),
+            models.Index(fields=['volunteer', 'status']),
+        ]
 
     def __str__(self):
         return f'{self.volunteer.username} -> {self.event.title}'

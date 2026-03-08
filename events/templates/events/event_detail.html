@@ -3,116 +3,79 @@
 {% block title %}{{ event.title }} — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="mb-6">
-        <a href="{% url 'event_list' %}" class="text-forest-600 hover:text-forest-800 flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-            Назад к событиям
-        </a>
-    </div>
+<div class="container">
+    <section class="section">
+        <a href="{% url 'event_list' %}" class="btn btn-ghost btn-sm">← Назад к событиям</a>
+    </section>
 
-    <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
-        <div class="h-64 md:h-80 bg-gradient-to-br from-forest-400 to-forest-600 relative">
+    <section class="panel section">
+        <div class="event-cover" style="height: 280px;">
             {% if event.image_url %}
-            <img src="{{ event.image_url }}" alt="{{ event.title }}" class="w-full h-full object-cover">
-            {% else %}
-            <div class="absolute inset-0 flex items-center justify-center">
-                <svg class="w-32 h-32 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                </svg>
-            </div>
+                <img src="{{ event.image_url }}" alt="{{ event.title }}">
             {% endif %}
         </div>
-
-        <div class="p-8 md:p-12">
-            <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+        <div class="panel-body event-details">
+            <div class="btn-row" style="justify-content: space-between; align-items: flex-start;">
                 <div>
-                    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800 mb-4">{{ event.title }}</h1>
-                    <div class="flex flex-wrap gap-3 mb-4">
-                        <span class="bg-sunset-100 text-sunset-700 px-3 py-1 rounded-full text-sm font-semibold">{{ event.get_event_type_display }}</span>
-                        <span class="bg-forest-100 text-forest-700 px-3 py-1 rounded-full text-sm font-semibold">{{ event.xp_reward }} XP</span>
-                    </div>
-                    <div class="flex flex-wrap gap-4 text-gray-600">
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            {{ event.date|date:"d F Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}
-                        </div>
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-2 text-forest-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            </svg>
-                            {{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}
-                        </div>
+                    <h1 class="page-title">{{ event.title }}</h1>
+                    <div class="chip-row" style="margin-top: 8px;">
+                        <span class="badge badge-accent">{{ event.get_event_type_display }}</span>
+                        <span class="badge">{{ event.xp_reward }} XP</span>
                     </div>
                 </div>
-
-                <div class="flex flex-col items-end gap-2">
-                    <div class="{% if event.is_full %}bg-red-100 text-red-700{% else %}bg-forest-100 text-forest-700{% endif %} px-4 py-2 rounded-full font-semibold">
-                        {% if event.is_full %}
-                            Мест нет
-                        {% else %}
-                            {{ event.spots_left }} из {{ event.max_volunteers }} мест
-                        {% endif %}
-                    </div>
-                </div>
+                {% if event.is_full %}
+                    <span class="badge badge-danger">Мест нет</span>
+                {% else %}
+                    <span class="badge badge-success">{{ event.spots_left }} из {{ event.max_volunteers }} мест</span>
+                {% endif %}
             </div>
+
+            <ul class="meta-list">
+                <li><strong>Дата:</strong> {{ event.date|date:"d.m.Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}</li>
+                <li><strong>Локация:</strong> {{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}</li>
+            </ul>
 
             {% if event.required_skills.exists %}
-            <div class="mb-8">
-                <h3 class="font-display font-semibold text-gray-800 mb-3">Требуемые навыки:</h3>
-                <div class="flex flex-wrap gap-2">
-                    {% for skill in event.required_skills.all %}
-                    <span class="bg-sunset-100 text-sunset-700 px-4 py-2 rounded-full font-medium">{{ skill.name }}</span>
-                    {% endfor %}
+                <div>
+                    <h3>Требуемые навыки</h3>
+                    <div class="chip-row">
+                        {% for skill in event.required_skills.all %}
+                            <span class="chip">{{ skill.name }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
             {% endif %}
 
-            <div class="prose max-w-none mb-8">
-                <h3 class="font-display font-semibold text-gray-800 mb-3">Описание:</h3>
-                <p class="text-gray-600 whitespace-pre-line">{{ event.description }}</p>
+            <div>
+                <h3>Описание</h3>
+                <p class="muted-text" style="white-space: pre-line;">{{ event.description }}</p>
             </div>
 
-            <div class="bg-gray-50 rounded-2xl p-6 mb-8">
-                <h3 class="font-display font-semibold text-gray-800 mb-3">Организатор:</h3>
-                <div class="flex items-center">
-                    <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 mr-4">
-                        {% if event.organizer.profile.avatar %}
-                            <img src="{{ event.organizer.profile.avatar.url }}" alt="{{ event.organizer.get_full_name }}" class="w-full h-full object-cover">
-                        {% elif event.organizer.profile.avatar_url %}
-                            <img src="{{ event.organizer.profile.avatar_url }}" alt="{{ event.organizer.get_full_name }}" class="w-full h-full object-cover">
-                        {% else %}
-                            <div class="w-full h-full bg-forest-500 flex items-center justify-center text-white font-bold text-sm">
-                                {{ event.organizer.first_name|first|upper }}{{ event.organizer.last_name|first|upper }}
-                            </div>
-                        {% endif %}
-                    </div>
+            <div class="list-item">
+                <h3 style="margin-top: 0;">Организатор</h3>
+                <div class="btn-row" style="align-items: center;">
+                    {% if event.organizer.profile.avatar %}
+                        <img class="avatar-md" src="{{ event.organizer.profile.avatar.url }}" alt="{{ event.organizer.get_full_name }}">
+                    {% elif event.organizer.profile.avatar_url %}
+                        <img class="avatar-md" src="{{ event.organizer.profile.avatar_url }}" alt="{{ event.organizer.get_full_name }}">
+                    {% else %}
+                        <span class="avatar-fallback">{{ event.organizer.first_name|first|upper }}{{ event.organizer.last_name|first|upper }}</span>
+                    {% endif %}
                     <div>
-                        <div class="font-semibold text-gray-800">{{ event.organizer.get_full_name }}</div>
-                        <div class="text-gray-500 text-sm">{{ event.organizer.email }}</div>
+                        <strong>{{ event.organizer.get_full_name }}</strong>
+                        <div class="subtle">{{ event.organizer.email }}</div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-4">
+            <div class="btn-row">
                 {% if user.is_authenticated %}
                     {% if user == event.organizer %}
-                        <a href="{% url 'event_edit' event.pk %}" class="bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
-                            Редактировать
-                        </a>
-                        <a href="{% url 'event_manage' event.pk %}" class="bg-sunset-500 text-white px-8 py-3 rounded-xl font-semibold hover:bg-sunset-600 transition-all shadow-lg hover:shadow-xl">
-                            Управление заявками ({{ event.registrations.count }})
-                        </a>
-                        <a href="{% url 'chat_create_channel' event.pk %}" class="border-2 border-forest-600 text-forest-700 px-8 py-3 rounded-xl font-semibold hover:bg-forest-50 transition-all">
-                            Новый канал чата
-                        </a>
+                        <a class="btn btn-primary" href="{% url 'event_edit' event.pk %}">Редактировать</a>
+                        <a class="btn btn-secondary" href="{% url 'event_manage' event.pk %}">Заявки ({{ organizer_registrations_count|default:0 }})</a>
+                        <a class="btn btn-secondary" href="{% url 'chat_create_channel' event.pk %}">Новый канал</a>
                     {% elif user_registration %}
-                        <div class="bg-gray-100 px-8 py-3 rounded-xl font-semibold text-gray-600">
+                        <span class="badge">
                             {% if user_registration.status == 'pending' %}
                                 Заявка на рассмотрении
                             {% elif user_registration.status == 'approved' %}
@@ -124,30 +87,25 @@
                             {% else %}
                                 Запись отменена
                             {% endif %}
-                        </div>
+                        </span>
                         {% if user_registration.status == 'pending' or user_registration.status == 'approved' %}
-                        <a href="{% url 'event_cancel_registration' event.pk %}" class="border-2 border-red-500 text-red-500 px-8 py-3 rounded-xl font-semibold hover:bg-red-50 transition-all">
-                            Отменить запись
-                        </a>
+                            <form method="POST" action="{% url 'event_cancel_registration' event.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Отменить запись</button>
+                            </form>
                         {% endif %}
                     {% elif can_register %}
-                        <a href="{% url 'event_register' event.pk %}" class="bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
-                            Записаться
-                        </a>
+                        <a class="btn btn-primary" href="{% url 'event_register' event.pk %}">Записаться</a>
                     {% endif %}
 
                     {% if can_open_chat and event_chat_channel %}
-                    <a href="{% url 'chat_channel_detail' event_chat_channel.pk %}" class="border-2 border-forest-600 text-forest-700 px-8 py-3 rounded-xl font-semibold hover:bg-forest-50 transition-all">
-                        Открыть чат события
-                    </a>
+                        <a class="btn btn-secondary" href="{% url 'chat_channel_detail' event_chat_channel.pk %}">Открыть чат</a>
                     {% endif %}
                 {% else %}
-                    <a href="{% url 'login' %}?next={{ request.path }}" class="bg-forest-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-forest-700 transition-all shadow-lg hover:shadow-xl">
-                        Войдите, чтобы записаться
-                    </a>
+                    <a class="btn btn-primary" href="{% url 'login' %}?next={{ request.path }}">Войдите, чтобы записаться</a>
                 {% endif %}
             </div>
         </div>
-    </div>
+    </section>
 </div>
 {% endblock %}

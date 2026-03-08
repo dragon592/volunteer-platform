@@ -11,6 +11,21 @@ from .models import (
     UserProfile,
 )
 
+INPUT_CLASS = 'input'
+FILE_INPUT_CLASS = 'input file-input'
+
+
+def _set_class(field, css_class):
+    field.widget.attrs['class'] = css_class
+
+
+def _set_class_for_fields(fields, css_class, exclude=()):
+    excluded = set(exclude)
+    for field_name, field in fields.items():
+        if field_name in excluded:
+            continue
+        _set_class(field, css_class)
+
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True, label='Email')
@@ -28,12 +43,7 @@ class UserRegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            if field_name != 'role':
-                field.widget.attrs['class'] = (
-                    'w-full px-4 py-3 rounded-lg border border-gray-300 '
-                    'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
-                )
+        _set_class_for_fields(self.fields, INPUT_CLASS, exclude=('role',))
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -70,20 +80,10 @@ class UserProfileForm(forms.ModelForm):
             self.fields['last_name'].initial = self.user.last_name
             self.fields['email'].initial = self.user.email
 
-        for field_name, field in self.fields.items():
-            if field_name not in ['skills', 'avatar']:
-                field.widget.attrs['class'] = (
-                    'w-full px-4 py-3 rounded-lg border border-gray-300 '
-                    'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
-                )
+        _set_class_for_fields(self.fields, INPUT_CLASS, exclude=('skills', 'avatar'))
 
         if 'avatar' in self.fields:
-            self.fields['avatar'].widget.attrs['class'] = (
-                'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 '
-                'focus:ring-2 focus:ring-emerald-200 transition-all outline-none file:mr-4 file:py-2 '
-                'file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-forest-50 '
-                'file:text-forest-700 hover:file:bg-forest-100'
-            )
+            _set_class(self.fields['avatar'], FILE_INPUT_CLASS)
 
     def save(self, commit=True):
         profile = super().save(commit=False)
@@ -124,12 +124,33 @@ class EventForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            if field_name not in ['required_skills']:
-                field.widget.attrs['class'] = (
-                    'w-full px-4 py-3 rounded-lg border border-gray-300 '
-                    'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
-                )
+        _set_class_for_fields(self.fields, INPUT_CLASS, exclude=('required_skills',))
+
+
+class EventListFilterForm(forms.Form):
+    STATUS_CHOICES = (
+        ('', 'Р’СЃРµ'),
+        ('open', 'РћС‚РєСЂС‹С‚ РЅР°Р±РѕСЂ'),
+        ('full', 'РњРµСЃС‚ РЅРµС‚'),
+        ('mine', 'РњРѕРё СЃРѕР±С‹С‚РёСЏ'),
+    )
+
+    skill = forms.ModelChoiceField(queryset=Skill.objects.all(), required=False)
+    city = forms.CharField(max_length=100, required=False)
+    search = forms.CharField(max_length=200, required=False)
+    event_type = forms.ChoiceField(required=False, choices=(('', 'Р’СЃРµ С‚РёРїС‹'), *Event.TYPE_CHOICES))
+    status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
+    date_from = forms.DateField(required=False)
+    date_to = forms.DateField(required=False)
+    participant = forms.CharField(max_length=150, required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        date_from = cleaned_data.get('date_from')
+        date_to = cleaned_data.get('date_to')
+        if date_from and date_to and date_from > date_to:
+            raise forms.ValidationError('Р”Р°С‚Р° "РѕС‚" РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїРѕР·Р¶Рµ РґР°С‚С‹ "РґРѕ".')
+        return cleaned_data
 
 
 class EventRegistrationForm(forms.ModelForm):
@@ -141,10 +162,7 @@ class EventRegistrationForm(forms.ModelForm):
                 attrs={
                     'rows': 3,
                     'placeholder': 'Расскажите немного о себе и почему хотите участвовать...',
-                    'class': (
-                        'w-full px-4 py-3 rounded-lg border border-gray-300 '
-                        'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
-                    ),
+                    'class': INPUT_CLASS,
                 }
             ),
         }
@@ -161,10 +179,7 @@ class VolunteerSearchForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['city'].widget.attrs['class'] = (
-            'w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 '
-            'focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
-        )
+        _set_class(self.fields['city'], INPUT_CLASS)
         self.fields['city'].widget.attrs['placeholder'] = 'Введите город...'
 
 
@@ -178,11 +193,7 @@ class ChatChannelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = (
-                'w-full px-4 py-3 rounded-lg border border-gray-300 '
-                'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
-            )
+        _set_class_for_fields(self.fields, INPUT_CLASS)
 
 
 class ChatMessageForm(forms.ModelForm):
@@ -194,10 +205,7 @@ class ChatMessageForm(forms.ModelForm):
                 attrs={
                     'rows': 2,
                     'placeholder': 'Введите сообщение...',
-                    'class': (
-                        'w-full px-4 py-3 rounded-lg border border-gray-300 '
-                        'focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all outline-none'
-                    ),
+                    'class': INPUT_CLASS,
                 }
             ),
         }
