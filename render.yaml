@@ -12,7 +12,7 @@ services:
     autoDeploy: true
     healthCheckPath: /
     envVars:
-      - key: DATABASE_URL
+      - key: postgresql://volunteer_platform_db_9bkb_user:1Ecy7MrHO2yGxSFyjkYlcUik9Bkfge35@dpg-d6o6f5p5pdvs739t2ob0-a.frankfurt-postgres.render.com/volunteer_platform_db_9bkb
         fromDatabase:
           name: volunteer-platform-db
           property: connectionString
