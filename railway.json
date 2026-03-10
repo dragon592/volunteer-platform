@@ -1,0 +1,12 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "gunicorn volunteer.wsgi:application --log-file -",
+    "healthcheckPath": "/",
+    "restartPolicy": {
+      "type": "ON_FAILURE"
+    }
+  }
+}
