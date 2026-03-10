@@ -32,9 +32,14 @@ allowed_str = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost')
 # Убираем кавычки если есть
 allowed_str = allowed_str.strip().strip('"').strip("'")
 ALLOWED_HOSTS = [h.strip() for h in allowed_str.split(',') if h.strip()]
-# Гарантируем наличие доменов Render
-render_hosts = ['.onrender.com', 'volunteer-platform-shwa.onrender.com']
-for host in render_hosts:
+# Гарантируем наличие доменов для популярных хостингов
+common_hosts = [
+    '.onrender.com',
+    'volunteer-platform-shwa.onrender.com',
+    '.railway.app',
+    'healthcheck.railway.app',
+]
+for host in common_hosts:
     if host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(host)
 
@@ -47,7 +52,10 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
 
 # CSRF trusted origins для HTTPS
-CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+    'https://*.railway.app',
+]
 
 
 # Application definition
