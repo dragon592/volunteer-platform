@@ -1,0 +1,944 @@
+[
+{
+  "model": "events.skill",
+  "pk": 1,
+  "fields": {
+    "name": "Экология",
+    "icon": "🌱"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 2,
+  "fields": {
+    "name": "Медицина",
+    "icon": "🏥"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 3,
+  "fields": {
+    "name": "Образование",
+    "icon": "📚"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 4,
+  "fields": {
+    "name": "Социальная помощь",
+    "icon": "🤝"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 5,
+  "fields": {
+    "name": "Спорт",
+    "icon": "⚽"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 6,
+  "fields": {
+    "name": "Культура",
+    "icon": "🎭"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 7,
+  "fields": {
+    "name": "IT и технологии",
+    "icon": "💻"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 8,
+  "fields": {
+    "name": "Строительство",
+    "icon": "🏗️"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 9,
+  "fields": {
+    "name": "Животные",
+    "icon": "🐾"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 10,
+  "fields": {
+    "name": "Дети",
+    "icon": "👶"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 11,
+  "fields": {
+    "name": "Пожилые люди",
+    "icon": "👴"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 12,
+  "fields": {
+    "name": "Инвалиды",
+    "icon": "♿"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 13,
+  "fields": {
+    "name": "Переводы",
+    "icon": "🌍"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 14,
+  "fields": {
+    "name": "Фотография",
+    "icon": "📷"
+  }
+},
+{
+  "model": "events.skill",
+  "pk": 15,
+  "fields": {
+    "name": "Дизайн",
+    "icon": "🎨"
+  }
+},
+{
+  "model": "events.achievement",
+  "pk": 1,
+  "fields": {
+    "slug": "first_event",
+    "title": "Первый шаг",
+    "description": "Завершено первое событие",
+    "icon": "🌱",
+    "category": "events_completed",
+    "threshold": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "events.achievement",
+  "pk": 2,
+  "fields": {
+    "slug": "five_events",
+    "title": "Активный участник",
+    "description": "Завершено 5 событий",
+    "icon": "🔥",
+    "category": "events_completed",
+    "threshold": 5,
+    "is_active": true
+  }
+},
+{
+  "model": "events.achievement",
+  "pk": 3,
+  "fields": {
+    "slug": "ten_events",
+    "title": "Опора команды",
+    "description": "Завершено 10 событий",
+    "icon": "🏆",
+    "category": "events_completed",
+    "threshold": 10,
+    "is_active": true
+  }
+},
+{
+  "model": "events.achievement",
+  "pk": 4,
+  "fields": {
+    "slug": "xp_250",
+    "title": "Набираю темп",
+    "description": "Получено 250 XP",
+    "icon": "⚡",
+    "category": "xp_total",
+    "threshold": 250,
+    "is_active": true
+  }
+},
+{
+  "model": "events.achievement",
+  "pk": 5,
+  "fields": {
+    "slug": "xp_1000",
+    "title": "Мастер волонтерства",
+    "description": "Получено 1000 XP",
+    "icon": "👑",
+    "category": "xp_total",
+    "threshold": 1000,
+    "is_active": true
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$2MyAGBjqlu9l1m5zKTXX35$GX665boyKt8Cyt++P+OLCOpFmr40/83l0U4atBFMGps=",
+    "last_login": "2026-03-08T12:43:02.495Z",
+    "is_superuser": true,
+    "username": "Snow",
+    "first_name": "Муратбек",
+    "last_name": "Сарсенов",
+    "email": "dggmura@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-02-20T03:45:58.870Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$h21QKmrZCfMoumLfhUA3IH$mPwyKi6AmgohY83lFUy0xViPXyDt6f33sLNViYhoVYA=",
+    "last_login": "2026-02-20T08:00:05.352Z",
+    "is_superuser": false,
+    "username": "Gagarin",
+    "first_name": "Медет",
+    "last_name": "Сейткали",
+    "email": "muratbekuchiha@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-02-20T04:42:37.389Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$FLDj0VKTCbct5n5xYO2L4L$pPYIndsxJd/0BNp30D64Mz/LGaRHSc+5Bg0ED4obYD8=",
+    "last_login": "2026-03-10T18:26:26.064Z",
+    "is_superuser": false,
+    "username": "Danil228",
+    "first_name": "Данил",
+    "last_name": "Колбасенко",
+    "email": "muratbekuchiha@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-02-20T04:46:09.992Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$xPP8AKnfNQ12ItTefzC2M5$HF1QW7uK8UHNt0y01TWPK/L3FmgRrJDuWtCTalbxlek=",
+    "last_login": "2026-02-20T08:02:32.087Z",
+    "is_superuser": false,
+    "username": "Ariix",
+    "first_name": "Сагизбай",
+    "last_name": "Али",
+    "email": "fhsgfeye@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-02-20T05:09:55.339Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$yTm2mu3A4B3ktHV4qbvOZi$6F1AuabxomgUSmSRPYn4K34rJ9zm2qoA31U5xRIhwas=",
+    "last_login": "2026-02-20T08:05:18.097Z",
+    "is_superuser": false,
+    "username": "BooVamp",
+    "first_name": "Аружан",
+    "last_name": "Кожахаева",
+    "email": "ILJDH@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-02-20T05:12:17.238Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$fQSZ675ONIAbusoxI9MYJ0$4Q1r8V3BYlaKkcTk8gvuJeE/RZCJAORikqqXGOVZWjw=",
+    "last_login": "2026-02-20T08:10:36.013Z",
+    "is_superuser": false,
+    "username": "Gypsy",
+    "first_name": "Данияр",
+    "last_name": "Еркин",
+    "email": "dggmura@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-02-20T05:20:55.155Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$U7sJkZO0l55f7ZR0n6chkd$dUKaRqpCn095dr3q0vLqIt8mpnWmxiiL90C+TKTjFWY=",
+    "last_login": "2026-03-08T14:23:38.637Z",
+    "is_superuser": false,
+    "username": "tmp_org",
+    "first_name": "",
+    "last_name": "",
+    "email": "tmp_org@example.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-08T14:22:52.765Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "!h70narFs8y4y89Pqh8633zSmsUJKinqjK4qncgIY",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "email": "admin@example.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-10T18:19:48.088Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "00qynlbtjbarnw42otf1rlpbl8m903mc",
+  "fields": {
+    "session_data": ".eJxVjLsOwjAMAP_FM4qSuGmdjux8Q2XHCS2gVOpjQvw7qtQB1rvTvWHgfRuHfc3LMCn0gHD5ZcLpmesh9MH1Pps0122ZxByJOe1qbrPm1_Vs_wYjryP0QMrSJulCUopMHFSxRGxjtoRWJLSOYulsdMVFH7It5L3FQK7BIk2GzxfxgTeH:1vzFsJ:9l2RANA3HsxVs0a5fknO6zBLAgcTxcWihKoJyIOcfHY",
+    "expire_date": "2026-03-22T15:16:59.954Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "484pfxxwkmshb8kgklzdp9aycm5s87rl",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAUBe_y14YECgW6dO8Zmgf_I1XTJqVdGe9umnSh25nJvGnEvtVxb7KOE9NAni6_LCE_ZT4EPzDfF5WXeVunpI5Enbap28Lyup7t36CiVRqoeCPQBRbGdb21LrsURILjENlzZIlJxyywCLoHjNN98WJtB8TSMX2-_504qA:1vzF2J:DRbONNZReAKH28yE55xyD4qgVZX4MJQV13IqCYPU2Ks",
+    "expire_date": "2026-03-22T14:23:15.109Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "4n2feh8ivqtcgs8xfvqwgsfzxpjsknrj",
+  "fields": {
+    "session_data": ".eJxVjMsKwjAQAP9lzxKS5t2jd78hbHZTW5UEmvYk_rsUetDrzDBvSLhvc9p7WdPCMIKGyy_LSM9SD8EPrPcmqNVtXbI4EnHaLm6Ny-t6tn-DGfsMI4SAmSalYvTakLI0DBElIkXrPbEf2BFbqTlYyaTYO6ONKROiZnI2w-cL5SM4Lg:1vtKtL:UwSJ2NfeerAYmy8vK55CTx7VVCdBJ7KjP6ztX4MLUBw",
+    "expire_date": "2026-03-06T07:25:35.663Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "6fr7k38z7bgcjqbl5lkrnjmbusixp201",
+  "fields": {
+    "session_data": ".eJxVjDEOwjAMAP_iGUW1HJrQkZ03RHbskAJqpaadEH9HlTrAene6NyTe1pq2ZksaFQZAOP0y4fy0aRf64Ok-uzxP6zKK2xN32OZus9rrerR_g8qtwgAkFE08ZY_WB-9ZI4p46gpqFgzekM360ncFL3wOTFoKUtBikSgrfL7y_ji1:1vtK4U:4k66ElCKquas5BZwH7lUlx92MsJK4Way6hB4-Mel-D4",
+    "expire_date": "2026-03-06T06:33:02.812Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "caivfame9tq8o1czy0ce90ehvwgf9b3b",
+  "fields": {
+    "session_data": ".eJxVjDEOgzAMAP_iuYogiYlh7N43RHbiFNoKJAJT1b9XSAztene6N0TetzHuVdc4ZRggwOWXCaenzofID57vi0nLvK2TmCMxp63mtmR9Xc_2bzByHWEAKp3HgOIJe9do0SBiGUPbSkJSIuw5OYslF9t0rnW-kFpUT5Q6cQE-X9VzN2U:1vzF2g:9zf_3ehHx04kq1EblFDft-5l0QMa17Ypk8XGmn1iQS0",
+    "expire_date": "2026-03-22T14:23:38.649Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "jc6gomo0cn8h3d4dr2x4uttfid9am22c",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQAP_C2ZAtNAt49O4byC6LUjWQlPZk_Lsh6UGvM5N5q0j7VuLe8xoXUWfl1OmXMaVnrkPIg-q96dTqti6sR6IP2_W1SX5djvZvUKiXsXUhoIcAMk0WPIRbIsiMyYp3KSQ0YGieLZNkw5TZkLOBGR0aNCjq8wXMVDei:1vzF2U:Bw74icyqtSio5mNhMwTWNZrLmL2F-NhR31sFd1KomcQ",
+    "expire_date": "2026-03-22T14:23:26.370Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qcndu0ijz3m90ksqy0ykre2m947pvkia",
+  "fields": {
+    "session_data": ".eJxVjMsKwjAQAP9lzxKS5t2jd78hbHZTW5UEmvYk_rsUetDrzDBvSLhvc9p7WdPCMIKGyy_LSM9SD8EPrPcmqNVtXbI4EnHaLm6Ny-t6tn-DGfsMI4SAmSalYvTakLI0DBElIkXrPbEf2BFbqTlYyaTYO6ONKROiZnI2w-cL5SM4Lg:1w01mk:sFU_-t_AqK6xmTthXfncEKzSfU0hW0UZ17ZBIyj5Kzc",
+    "expire_date": "2026-03-24T18:26:26.078Z"
+  }
+},
+{
+  "model": "events.chatchannelmembership",
+  "pk": 1,
+  "fields": {
+    "channel": 1,
+    "user": [
+      "Danil228"
+    ],
+    "notifications_enabled": true,
+    "last_read_at": "2026-02-20T05:17:58.925Z",
+    "joined_at": "2026-02-20T04:51:28.003Z"
+  }
+},
+{
+  "model": "events.chatchannelmembership",
+  "pk": 2,
+  "fields": {
+    "channel": 2,
+    "user": [
+      "Danil228"
+    ],
+    "notifications_enabled": true,
+    "last_read_at": "2026-02-20T04:53:42.990Z",
+    "joined_at": "2026-02-20T04:53:42.991Z"
+  }
+},
+{
+  "model": "events.chatchannelmembership",
+  "pk": 3,
+  "fields": {
+    "channel": 3,
+    "user": [
+      "Danil228"
+    ],
+    "notifications_enabled": true,
+    "last_read_at": "2026-02-20T04:56:59.851Z",
+    "joined_at": "2026-02-20T04:56:59.851Z"
+  }
+},
+{
+  "model": "events.chatchannelmembership",
+  "pk": 4,
+  "fields": {
+    "channel": 4,
+    "user": [
+      "Danil228"
+    ],
+    "notifications_enabled": true,
+    "last_read_at": "2026-02-20T05:00:46.361Z",
+    "joined_at": "2026-02-20T05:00:46.361Z"
+  }
+},
+{
+  "model": "events.chatchannelmembership",
+  "pk": 5,
+  "fields": {
+    "channel": 5,
+    "user": [
+      "Danil228"
+    ],
+    "notifications_enabled": true,
+    "last_read_at": "2026-02-20T05:19:30.604Z",
+    "joined_at": "2026-02-20T05:03:15.018Z"
+  }
+},
+{
+  "model": "events.chatchannelmembership",
+  "pk": 6,
+  "fields": {
+    "channel": 6,
+    "user": [
+      "Danil228"
+    ],
+    "notifications_enabled": true,
+    "last_read_at": "2026-02-20T05:06:10.295Z",
+    "joined_at": "2026-02-20T05:06:10.295Z"
+  }
+},
+{
+  "model": "events.chatchannelmembership",
+  "pk": 7,
+  "fields": {
+    "channel": 7,
+    "user": [
+      "Danil228"
+    ],
+    "notifications_enabled": true,
+    "last_read_at": "2026-02-20T05:19:25.874Z",
+    "joined_at": "2026-02-20T05:07:59.397Z"
+  }
+},
+{
+  "model": "events.chatchannel",
+  "pk": 1,
+  "fields": {
+    "event": 1,
+    "name": "Общий",
+    "topic": "Основной канал события",
+    "created_by": [
+      "Danil228"
+    ],
+    "is_archived": false,
+    "created_at": "2026-02-20T04:51:27.991Z",
+    "updated_at": "2026-02-20T04:51:27.991Z"
+  }
+},
+{
+  "model": "events.chatchannel",
+  "pk": 2,
+  "fields": {
+    "event": 2,
+    "name": "Общий",
+    "topic": "Основной канал события",
+    "created_by": [
+      "Danil228"
+    ],
+    "is_archived": false,
+    "created_at": "2026-02-20T04:53:42.976Z",
+    "updated_at": "2026-02-20T04:53:42.976Z"
+  }
+},
+{
+  "model": "events.chatchannel",
+  "pk": 3,
+  "fields": {
+    "event": 3,
+    "name": "Общий",
+    "topic": "Основной канал события",
+    "created_by": [
+      "Danil228"
+    ],
+    "is_archived": false,
+    "created_at": "2026-02-20T04:56:59.842Z",
+    "updated_at": "2026-02-20T04:56:59.842Z"
+  }
+},
+{
+  "model": "events.chatchannel",
+  "pk": 4,
+  "fields": {
+    "event": 4,
+    "name": "Общий",
+    "topic": "Основной канал события",
+    "created_by": [
+      "Danil228"
+    ],
+    "is_archived": false,
+    "created_at": "2026-02-20T05:00:46.350Z",
+    "updated_at": "2026-02-20T05:00:46.350Z"
+  }
+},
+{
+  "model": "events.chatchannel",
+  "pk": 5,
+  "fields": {
+    "event": 5,
+    "name": "Общий",
+    "topic": "Основной канал события",
+    "created_by": [
+      "Danil228"
+    ],
+    "is_archived": false,
+    "created_at": "2026-02-20T05:03:15.007Z",
+    "updated_at": "2026-02-20T05:03:15.007Z"
+  }
+},
+{
+  "model": "events.chatchannel",
+  "pk": 6,
+  "fields": {
+    "event": 6,
+    "name": "Общий",
+    "topic": "Основной канал события",
+    "created_by": [
+      "Danil228"
+    ],
+    "is_archived": false,
+    "created_at": "2026-02-20T05:06:10.286Z",
+    "updated_at": "2026-02-20T05:06:10.286Z"
+  }
+},
+{
+  "model": "events.chatchannel",
+  "pk": 7,
+  "fields": {
+    "event": 7,
+    "name": "Общий",
+    "topic": "Основной канал события",
+    "created_by": [
+      "Danil228"
+    ],
+    "is_archived": false,
+    "created_at": "2026-02-20T05:07:59.388Z",
+    "updated_at": "2026-02-20T05:07:59.388Z"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 1,
+  "fields": {
+    "title": "Помощь в приюте для животных",
+    "description": "Выгул собак, кормление, уборка.",
+    "event_type": "charity",
+    "date": "2026-02-28",
+    "time": "12:30:00",
+    "location": "Приют",
+    "city": "Атырау",
+    "organizer": [
+      "Danil228"
+    ],
+    "max_volunteers": 10,
+    "xp_reward": 50,
+    "image_url": "https://cdn.top-news.kz/wp-content/uploads/2022/05/v-feodosii-budet-priyut-dlya-shivotnykh_foto-iz-otkrytykh-istochnikov_1_2020-10-14-08-12-33-scaled.jpeg",
+    "is_active": true,
+    "created_at": "2026-02-20T04:51:27.982Z",
+    "updated_at": "2026-02-20T04:51:27.982Z",
+    "required_skills": [
+      9,
+      4
+    ]
+  }
+},
+{
+  "model": "events.event",
+  "pk": 2,
+  "fields": {
+    "title": "Сбор вещей для благотворительности",
+    "description": "Сбор одежды, еды или школьных принадлежностей для нуждающихся.",
+    "event_type": "charity",
+    "date": "2026-02-26",
+    "time": "15:00:00",
+    "location": "Площадь",
+    "city": "Астана",
+    "organizer": [
+      "Danil228"
+    ],
+    "max_volunteers": 10,
+    "xp_reward": 70,
+    "image_url": "https://informburo.kz/storage/photos/oldArticle/main/CV833LqXQZsfLe9v.jpg",
+    "is_active": true,
+    "created_at": "2026-02-20T04:53:42.964Z",
+    "updated_at": "2026-02-20T04:53:42.964Z",
+    "required_skills": [
+      4
+    ]
+  }
+},
+{
+  "model": "events.event",
+  "pk": 3,
+  "fields": {
+    "title": "Помощь на городских мероприятиях",
+    "description": "Поддержка фестивалей, спортивных соревнований или ярмарок (регистрация участников, логистика).",
+    "event_type": "health",
+    "date": "2026-03-13",
+    "time": "11:00:00",
+    "location": "Торговый Центр",
+    "city": "Актобе",
+    "organizer": [
+      "Danil228"
+    ],
+    "max_volunteers": 10,
+    "xp_reward": 45,
+    "image_url": "https://www.citymurmansk.ru/img/images/2_047be5502441.jpg",
+    "is_active": true,
+    "created_at": "2026-02-20T04:56:59.835Z",
+    "updated_at": "2026-02-20T04:58:03.612Z",
+    "required_skills": [
+      4,
+      5
+    ]
+  }
+},
+{
+  "model": "events.event",
+  "pk": 4,
+  "fields": {
+    "title": "Онлайн-поддержка и наставничество",
+    "description": "Помощь людям в интернете: консультации, сопровождение новичков, обучение базовым навыкам.",
+    "event_type": "education",
+    "date": "2026-03-23",
+    "time": "14:00:00",
+    "location": "Школа",
+    "city": "Атырау",
+    "organizer": [
+      "Danil228"
+    ],
+    "max_volunteers": 10,
+    "xp_reward": 60,
+    "image_url": "https://www.unicraft.org/wp-content/uploads/2023/11/%D0%BE%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0-3.jpg",
+    "is_active": true,
+    "created_at": "2026-02-20T05:00:46.341Z",
+    "updated_at": "2026-02-20T05:00:46.341Z",
+    "required_skills": [
+      7,
+      3,
+      4
+    ]
+  }
+},
+{
+  "model": "events.event",
+  "pk": 5,
+  "fields": {
+    "title": "Образовательный мастер-класс для детей",
+    "description": "Проведение уроков, игр или творческих занятий.",
+    "event_type": "education",
+    "date": "2026-03-06",
+    "time": "13:30:00",
+    "location": "Школа",
+    "city": "Актобе",
+    "organizer": [
+      "Danil228"
+    ],
+    "max_volunteers": 6,
+    "xp_reward": 35,
+    "image_url": "https://comandante-event.ru/wp-content/uploads/2021/09/ae15810692f8edb14991b4df89c4178c.yjwPB_.jpeg",
+    "is_active": true,
+    "created_at": "2026-02-20T05:03:15.000Z",
+    "updated_at": "2026-02-20T05:03:15.000Z",
+    "required_skills": [
+      3,
+      4
+    ]
+  }
+},
+{
+  "model": "events.event",
+  "pk": 6,
+  "fields": {
+    "title": "Поддержка пожилых людей",
+    "description": "Помощь с покупками, доставкой лекарств, общение с одинокими людьми.",
+    "event_type": "charity",
+    "date": "2026-02-05",
+    "time": "09:00:00",
+    "location": "Продуктовый Магазин",
+    "city": "Атырау",
+    "organizer": [
+      "Danil228"
+    ],
+    "max_volunteers": 25,
+    "xp_reward": 85,
+    "image_url": "https://progress-pansion.com.ua/wp-content/uploads/2025/05/psyhologicheskaya-podderzhka-pozhylyh.jpg",
+    "is_active": true,
+    "created_at": "2026-02-20T05:06:10.279Z",
+    "updated_at": "2026-02-20T05:06:10.279Z",
+    "required_skills": [
+      2,
+      11,
+      4
+    ]
+  }
+},
+{
+  "model": "events.event",
+  "pk": 7,
+  "fields": {
+    "title": "Садоводческий день",
+    "description": "Высадка цветов, деревьев, уход за общественными зелёными зонами.",
+    "event_type": "ecology",
+    "date": "2026-02-11",
+    "time": "11:00:00",
+    "location": "Парк",
+    "city": "Астана",
+    "organizer": [
+      "Danil228"
+    ],
+    "max_volunteers": 10,
+    "xp_reward": 50,
+    "image_url": "https://rgbs.ru/wp-content/uploads/2023/06/3916.jpg",
+    "is_active": true,
+    "created_at": "2026-02-20T05:07:59.381Z",
+    "updated_at": "2026-02-20T05:07:59.381Z",
+    "required_skills": [
+      4,
+      1
+    ]
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "Snow"
+    ],
+    "role": "volunteer",
+    "bio": "",
+    "phone": "87787394076",
+    "city": "Атырау",
+    "avatar": "",
+    "avatar_url": "https://i.pinimg.com/736x/7e/c3/23/7ec32369a8da49c00529038cb1501cb8.jpg",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-02-20T03:45:59.357Z",
+    "skills": [
+      7,
+      15,
+      12,
+      6,
+      3,
+      13
+    ]
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "Gagarin"
+    ],
+    "role": "volunteer",
+    "bio": "",
+    "phone": "87375283903",
+    "city": "Атырау",
+    "avatar": "",
+    "avatar_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgh9enMcTMziM7JrLmUs7GPXyC9GPRjzw5Gw&s",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-02-20T04:42:38.203Z",
+    "skills": [
+      7,
+      15,
+      9,
+      2,
+      5,
+      14
+    ]
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "Danil228"
+    ],
+    "role": "organizer",
+    "bio": "",
+    "phone": "824670144583",
+    "city": "Атырау",
+    "avatar": "",
+    "avatar_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvWv4IOgw6rCaauI0O0i3kYFfRU_CK4aLgZg&s",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-02-20T04:46:10.720Z",
+    "skills": []
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "Ariix"
+    ],
+    "role": "volunteer",
+    "bio": "",
+    "phone": "82759360027",
+    "city": "Астана",
+    "avatar": "",
+    "avatar_url": "https://i.pinimg.com/736x/0b/f6/a9/0bf6a9860e84038565cfb18ab3ea2d94.jpg",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-02-20T05:09:56.069Z",
+    "skills": [
+      10,
+      12,
+      6,
+      4,
+      5
+    ]
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "BooVamp"
+    ],
+    "role": "volunteer",
+    "bio": "",
+    "phone": "87731469836",
+    "city": "Актобе",
+    "avatar": "",
+    "avatar_url": "https://avatarko.ru/img/kartinka/27/TMNT_Raphael_26697.jpg",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-02-20T05:12:18.022Z",
+    "skills": [
+      12,
+      2,
+      11,
+      5,
+      14,
+      1
+    ]
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "Gypsy"
+    ],
+    "role": "volunteer",
+    "bio": "",
+    "phone": "83654264200",
+    "city": "Алматы",
+    "avatar": "",
+    "avatar_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyLuGHhIeS2zilSqmCt43AsEcINI3R-Yjs-A&s",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-02-20T05:20:57.226Z",
+    "skills": [
+      10,
+      9,
+      12,
+      11,
+      5,
+      8
+    ]
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "tmp_org"
+    ],
+    "role": "organizer",
+    "bio": "",
+    "phone": "",
+    "city": "",
+    "avatar": "",
+    "avatar_url": "",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-03-08T14:22:52.768Z",
+    "skills": []
+  }
+},
+{
+  "model": "events.userprofile",
+  "pk": 8,
+  "fields": {
+    "user": [
+      "admin"
+    ],
+    "role": "volunteer",
+    "bio": "",
+    "phone": "",
+    "city": "",
+    "avatar": "",
+    "avatar_url": "",
+    "xp": 0,
+    "level": 1,
+    "created_at": "2026-03-10T18:19:48.098Z",
+    "skills": []
+  }
+}
+]

@@ -4,6 +4,7 @@ Django==5.2.8
 gunicorn==25.1.0
 packaging==26.0
 pillow==12.1.0
+psycopg2-binary==2.9.10
 whitenoise==6.11.0
 sqlparse==0.5.3
 tzdata==2025.2

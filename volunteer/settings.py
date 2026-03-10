@@ -10,10 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import os
-import sys
 from pathlib import Path
-
+import os
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,65 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-def env_bool(name, default=False):
-    value = os.getenv(name)
-    if value is None:
-        return default
-    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
-
-
-def env_int(name, default=0):
-    value = os.getenv(name)
-    if value is None:
-        return default
-    try:
-        return int(value)
-    except ValueError:
-        return default
-
-
-def env_list(name, default=''):
-    raw = os.getenv(name, default)
-    return [item.strip() for item in raw.split(',') if item.strip()]
-
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv(
-    'SECRET_KEY',
-    'dev-only-change-me-7u$7k4vA4E5xQvR9c2M3n1B8yL6pJ0hT5sW2dF9rN3mK1qZ',
-)
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-lry=vrw&w1$68vfcwkf&*#cbwt=q)rrk2en(4lfs^4%02p0x5t')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env_bool('DEBUG', True)
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = env_list('ALLOWED_HOSTS')
-if not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
-render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME')
-if render_host:
-    ALLOWED_HOSTS.append(render_host)
-ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
-CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
-if render_host:
-    CSRF_TRUSTED_ORIGINS.append(f'https://{render_host}')
-CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(CSRF_TRUSTED_ORIGINS))
-
-TESTING = 'test' in sys.argv
-if not DEBUG and not TESTING:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', True)
-    SESSION_COOKIE_SECURE = env_bool('SESSION_COOKIE_SECURE', True)
-    CSRF_COOKIE_SECURE = env_bool('CSRF_COOKIE_SECURE', True)
-    SECURE_HSTS_SECONDS = env_int('SECURE_HSTS_SECONDS', 31536000)
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', True)
-    SECURE_HSTS_PRELOAD = env_bool('SECURE_HSTS_PRELOAD', True)
-
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = os.getenv('X_FRAME_OPTIONS', 'DENY')
-SECURE_REFERRER_POLICY = os.getenv('SECURE_REFERRER_POLICY', 'same-origin')
-
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Application definition
 
@@ -97,7 +44,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -132,7 +78,6 @@ WSGI_APPLICATION = 'volunteer.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600,
     )
 }
 
@@ -161,7 +106,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Qyzylorda'
 
 USE_I18N = True
 
@@ -171,20 +116,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = '/static/'
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files (uploaded by users)
+# Whitenoise middleware for static files
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Authentication
+# Authentication URLs
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'event_list'
 LOGOUT_REDIRECT_URL = 'event_list'
