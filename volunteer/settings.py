@@ -107,8 +107,7 @@ WSGI_APPLICATION = 'volunteer.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600,  # Для PostgreSQL на Render
-        ssl_require=True if not DEBUG else False,
+        conn_max_age=600,  # Для PostgreSQL
     )
 }
 
