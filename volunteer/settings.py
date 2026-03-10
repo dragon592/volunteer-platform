@@ -27,7 +27,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-lry=vrw&w1$68vfcwkf&*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+# Получаем ALLOWED_HOSTS из env var с очисткой кавычек
+allowed_str = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost')
+# Убираем кавычки если есть
+allowed_str = allowed_str.strip().strip('"').strip("'")
+ALLOWED_HOSTS = [h.strip() for h in allowed_str.split(',') if h.strip()]
+# Гарантируем наличие доменов Render
+render_hosts = ['.onrender.com', 'volunteer-platform-shwa.onrender.com']
+for host in render_hosts:
+    if host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
 
 # Security settings для Render (HTTPS)
 SECURE_SSL_REDIRECT = not DEBUG
