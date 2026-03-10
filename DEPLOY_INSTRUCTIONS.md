@@ -95,11 +95,7 @@ git push -u origin main
    - **Branch**: `main` (или ваша ветка)
    - **Build Command**: `bash build.sh` (уже указан в render.yaml)
    - **Start Command**: `gunicorn volunteer.wsgi:application` (уже указан)
-4. **Environment Variables** (добавьте вручную, если не из render.yaml):
-   - `DATABASE_URL` = `postgresql://username:password@hostname:port/database` (из шага 3.4)
-   - `DEBUG` = `False`
-   - `SECRET_KEY` = сгенерируйте случайную строку (например, через `python -c "import secrets; print(secrets.token_urlsafe(50))"`)
-   - `ALLOWED_HOSTS` = `.onrender.com,127.0.0.1,localhost,testserver`
+4. python -c "import secrets; print(secrets.token_urlsafe(50))"
 5. Нажмите **"Create Web Service"**
 
 Render начнёт сборку и деплой. Это займет 5-10 минут.
