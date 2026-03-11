@@ -19,6 +19,11 @@ import django
 django.setup()
 
 from django.core.management import call_command
+from django.db.models.signals import post_save
+from events.models import ChatChannel
+
+# Отключаем сигнал post_save для Event, который создаёт ChatChannel
+post_save.disconnect(receiver=ChatChannel.create_default_event_channel, sender='events.Event')
 
 def import_data(data_file='data_dump.json'):
     """Импорт данных из JSON файла"""
@@ -47,6 +52,9 @@ def import_data(data_file='data_dump.json'):
         print(f"  Достижения: {Achievement.objects.count()}")
         print(f"  Каналы чата: {ChatChannel.objects.count()}")
         print(f"  Навыки: {Skill.objects.count()}")
+        
+        # Включаем сигнал обратно после импорта
+        post_save.connect(receiver=ChatChannel.create_default_event_channel, sender='events.Event')
         
         return True
         
