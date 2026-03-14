@@ -555,12 +555,16 @@ def save_user_profile(sender, instance, **kwargs):
 @receiver(post_save, sender=UserProfile)
 def ensure_user_profile_level(sender, instance, **kwargs):
     """Обеспечивает корректный расчет уровня при сохранении профиля"""
-    old_level = UserProfile.objects.filter(pk=instance.pk).first()
-    if old_level is None or old_level.xp != instance.xp:
-        instance.recalculate_level()
-        # Сохраняем только если уровень изменился, чтобы избежать бесконечного цикла
-        if old_level and old_level.level != instance.level:
-            UserProfile.objects.filter(pk=instance.pk).update(level=instance.level)
+    # Пересчитываем уровень только если XP изменилось
+    if instance.pk:
+        old = UserProfile.objects.filter(pk=instance.pk).only('xp', 'level').first()
+        if old and old.xp == instance.xp:
+            return  # XP не изменилось, пересчитывать не нужно
+    
+    instance.recalculate_level()
+    # Обновляем только поле level, если оно изменилось, без вызова сигнала снова
+    if instance.pk:
+        UserProfile.objects.filter(pk=instance.pk).update(level=instance.level)
 
 
 @receiver(post_save, sender=Event)

@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Count, F, Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -16,6 +17,8 @@ from .models import Event, EventRegistration, Skill, apply_event_completion_rewa
 from .selectors import events_base_queryset, user_can_access_event_chat
 from .services import (
     add_volunteer_to_event_channels,
+    notify_event_created,
+    notify_event_updated,
     notify_registration_approved,
     notify_registration_rejected,
     remove_volunteer_from_event_channels,
@@ -106,6 +109,12 @@ def event_list(request):
         events = events.order_by(*sort_options[sort_by])
     else:
         events = events.order_by('date', 'time')
+    
+    # Пагинация: 20 событий на страницу
+    paginator = Paginator(events, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     skills = Skill.objects.all()
     cities = (
         Event.objects.filter(is_active=True)
@@ -115,7 +124,7 @@ def event_list(request):
     )
 
     context = {
-        'events': events,
+        'events': page_obj,
         'skills': skills,
         'cities': cities,
         'event_type_choices': Event.TYPE_CHOICES,
@@ -248,16 +257,7 @@ def event_create(request):
             form.save_m2m()
             
             # Отправляем уведомление о новом событии всем волонтерам
-            from django.contrib.auth.models import User
-            volunteers = User.objects.filter(profile__role='volunteer').exclude(id=request.user.id)
-            for volunteer in volunteers:
-                Notification.objects.create(
-                    user=volunteer,
-                    type='new_event',
-                    title='Новое событие!',
-                    message=f'Появилось новое событие: "{event.title}"',
-                    related_event=event,
-                )
+            notify_event_created(event, exclude_user=request.user)
             
             messages.success(request, 'Событие успешно создано! Уведомления отправлены волонтерам.')
             return redirect('event_detail', pk=event.pk)
@@ -282,19 +282,8 @@ def event_edit(request, pk):
             updated_event = form.save()
             
             # Отправляем уведомления всем зарегистрированным участникам
-            approved_registrations = EventRegistration.objects.filter(
-                event=event,
-                status__in=APPROVED_REGISTRATION_STATUSES
-            )
-            for registration in approved_registrations:
-                Notification.objects.create(
-                    user=registration.volunteer,
-                    type='new_event',
-                    title='Событие обновлено',
-                    message=f'Событие "{event.title}" было обновлено организатором.',
-                    related_event=event,
-                    related_registration=registration,
-                )
+            # Отправляем уведомления участникам об обновлении события
+            notify_event_updated(event)
             
             messages.success(request, 'Событие обновлено! Уведомления отправлены участникам.')
             return redirect('event_detail', pk=pk)

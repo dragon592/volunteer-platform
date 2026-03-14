@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from .constants import REAPPLY_REGISTRATION_STATUSES
-from .models import ChatChannelMembership, EventRegistration, Notification
+from .models import ChatChannelMembership, EventRegistration, Notification, User
 
 
 def safe_redirect_target(request, fallback='event_list'):
@@ -111,3 +111,43 @@ def add_approved_volunteers_to_channel(channel, event):
     )
     for registration in approved_volunteers:
         ChatChannelMembership.objects.get_or_create(channel=channel, user=registration.volunteer)
+
+
+def notify_event_created(event, exclude_user=None):
+    """Отправляет уведомления волонтерам о создании нового события"""
+    volunteers = User.objects.filter(profile__role='volunteer')
+    if exclude_user:
+        volunteers = volunteers.exclude(id=exclude_user.id)
+    
+    notifications = [
+        Notification(
+            user=volunteer,
+            type='new_event',
+            title='Новое событие!',
+            message=f'Появилось новое событие: "{event.title}"',
+            related_event=event,
+        )
+        for volunteer in volunteers
+    ]
+    Notification.objects.bulk_create(notifications, ignore_conflicts=True)
+
+
+def notify_event_updated(event, participants=None):
+    """Отправляет уведомления участникам события об его обновлении"""
+    if participants is None:
+        participants = User.objects.filter(
+            event_registrations__event=event,
+            event_registrations__status__in=['approved', 'completed']
+        ).distinct()
+    
+    notifications = [
+        Notification(
+            user=participant,
+            type='new_event',
+            title='Событие обновлено',
+            message=f'Событие "{event.title}" было обновлено организатором.',
+            related_event=event,
+        )
+        for participant in participants
+    ]
+    Notification.objects.bulk_create(notifications, ignore_conflicts=True)
