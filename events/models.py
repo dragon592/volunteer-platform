@@ -3,6 +3,7 @@ from django.db import models, transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from .constants import VOLUNTEER_LEVELS
 
 
 class Skill(models.Model):
@@ -52,12 +53,43 @@ class UserProfile(models.Model):
         return self.role == 'organizer'
 
     @property
+    def level_name(self):
+        """Возвращает имя текущего уровня"""
+        for level in reversed(VOLUNTEER_LEVELS):
+            if self.xp >= level['min_xp']:
+                return level['name']
+        return VOLUNTEER_LEVELS[0]['name']
+
+    @property
+    def level_icon(self):
+        """Возвращает иконку текущего уровня"""
+        for level in reversed(VOLUNTEER_LEVELS):
+            if self.xp >= level['min_xp']:
+                return level['icon']
+        return VOLUNTEER_LEVELS[0]['icon']
+
+    @property
     def xp_to_next_level(self):
-        next_level_xp = self.level * 100
-        return max(next_level_xp - self.xp, 0)
+        """Возвращает количество XP до следующего уровня"""
+        current_level_info = None
+        for level in VOLUNTEER_LEVELS:
+            if self.xp >= level['min_xp']:
+                current_level_info = level
+            else:
+                # Нашли следующий уровень
+                return level['min_xp'] - self.xp
+        # Если текущий уровень максимальный
+        if current_level_info and current_level_info == VOLUNTEER_LEVELS[-1]:
+            return 0
+        return 0
 
     def recalculate_level(self):
-        self.level = max(1, self.xp // 100 + 1)
+        """Пересчитывает уровень на основе XP"""
+        for i, level in enumerate(reversed(VOLUNTEER_LEVELS), start=1):
+            if self.xp >= level['min_xp']:
+                self.level = len(VOLUNTEER_LEVELS) - i + 1
+                return
+        self.level = 1
 
 
 class Event(models.Model):
@@ -518,6 +550,17 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
+
+
+@receiver(post_save, sender=UserProfile)
+def ensure_user_profile_level(sender, instance, **kwargs):
+    """Обеспечивает корректный расчет уровня при сохранении профиля"""
+    old_level = UserProfile.objects.filter(pk=instance.pk).first()
+    if old_level is None or old_level.xp != instance.xp:
+        instance.recalculate_level()
+        # Сохраняем только если уровень изменился, чтобы избежать бесконечного цикла
+        if old_level and old_level.level != instance.level:
+            UserProfile.objects.filter(pk=instance.pk).update(level=instance.level)
 
 
 @receiver(post_save, sender=Event)

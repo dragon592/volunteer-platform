@@ -44,6 +44,7 @@ def event_list(request):
     selected_date_from = request.GET.get('date_from', '')
     selected_date_to = request.GET.get('date_to', '')
     selected_participant = request.GET.get('participant', '')
+    selected_sort = request.GET.get('sort', 'date_asc')
 
     if filter_form.is_valid():
         skill = filter_form.cleaned_data['skill']
@@ -54,6 +55,7 @@ def event_list(request):
         date_from = filter_form.cleaned_data['date_from']
         date_to = filter_form.cleaned_data['date_to']
         participant = filter_form.cleaned_data['participant']
+        sort_by = filter_form.cleaned_data.get('sort', 'date_asc')
 
         selected_skill = str(skill.pk) if skill else ''
         selected_city = city
@@ -93,7 +95,17 @@ def event_list(request):
     elif request.GET:
         messages.error(request, 'Проверьте корректность параметров фильтрации.')
 
-    events = events.distinct().order_by('date', 'time')
+    # Применяем сортировку
+    sort_options = {
+        'date_asc': ['date', 'time'],
+        'date_desc': ['-date', '-time'],
+        'popular': ['-approved_participants', 'date'],
+        'participants': ['-approved_participants', 'date'],
+    }
+    if sort_by in sort_options:
+        events = events.order_by(*sort_options[sort_by])
+    else:
+        events = events.order_by('date', 'time')
     skills = Skill.objects.all()
     cities = (
         Event.objects.filter(is_active=True)
@@ -116,13 +128,14 @@ def event_list(request):
         'selected_date_from': selected_date_from,
         'selected_date_to': selected_date_to,
         'selected_participant': selected_participant,
+        'selected_sort': selected_sort,
     }
     return render(request, 'events/event_list.html', context)
 
 
 def event_detail(request, pk):
     event = get_object_or_404(
-        events_base_queryset().prefetch_related('chat_channels'),
+        events_base_queryset().prefetch_related('chat_channels', 'registrations__volunteer__profile'),
         pk=pk,
     )
     user_registration = None
@@ -130,6 +143,11 @@ def event_detail(request, pk):
     can_open_chat = False
     organizer_registrations_count = None
     event_chat_channel = event.chat_channels.filter(is_archived=False).first()
+    
+    # Получаем список одобренных участников
+    approved_participants = event.registrations.filter(
+        status__in=APPROVED_REGISTRATION_STATUSES
+    ).select_related('volunteer__profile').order_by('created_at')
 
     if request.user.is_authenticated:
         user_registration = EventRegistration.objects.filter(event=event, volunteer=request.user).first()
@@ -155,6 +173,7 @@ def event_detail(request, pk):
         'can_open_chat': can_open_chat,
         'event_chat_channel': event_chat_channel,
         'organizer_registrations_count': organizer_registrations_count,
+        'approved_participants': approved_participants,
     }
     return render(request, 'events/event_detail.html', context)
 
@@ -227,7 +246,20 @@ def event_create(request):
             event.organizer = request.user
             event.save()
             form.save_m2m()
-            messages.success(request, 'Событие успешно создано!')
+            
+            # Отправляем уведомление о новом событии всем волонтерам
+            from django.contrib.auth.models import User
+            volunteers = User.objects.filter(profile__role='volunteer').exclude(id=request.user.id)
+            for volunteer in volunteers:
+                Notification.objects.create(
+                    user=volunteer,
+                    type='new_event',
+                    title='Новое событие!',
+                    message=f'Появилось новое событие: "{event.title}"',
+                    related_event=event,
+                )
+            
+            messages.success(request, 'Событие успешно создано! Уведомления отправлены волонтерам.')
             return redirect('event_detail', pk=event.pk)
     else:
         form = EventForm()
@@ -246,8 +278,25 @@ def event_edit(request, pk):
     if request.method == 'POST':
         form = EventForm(request.POST, instance=event)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Событие обновлено!')
+            # Сохраняем изменения
+            updated_event = form.save()
+            
+            # Отправляем уведомления всем зарегистрированным участникам
+            approved_registrations = EventRegistration.objects.filter(
+                event=event,
+                status__in=APPROVED_REGISTRATION_STATUSES
+            )
+            for registration in approved_registrations:
+                Notification.objects.create(
+                    user=registration.volunteer,
+                    type='new_event',
+                    title='Событие обновлено',
+                    message=f'Событие "{event.title}" было обновлено организатором.',
+                    related_event=event,
+                    related_registration=registration,
+                )
+            
+            messages.success(request, 'Событие обновлено! Уведомления отправлены участникам.')
             return redirect('event_detail', pk=pk)
     else:
         form = EventForm(instance=event)

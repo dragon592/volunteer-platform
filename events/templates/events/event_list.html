@@ -102,6 +102,15 @@
                     <input class="input" id="participant" type="text" name="participant" value="{{ selected_participant|default:'' }}" placeholder="Имя или username">
                 </div>
 
+                <div class="field third">
+                    <label for="sort">Сортировка</label>
+                    <select id="sort" name="sort">
+                        {% for sort_value, sort_label in form.sort.field.choices %}
+                            <option value="{{ sort_value }}" {% if selected_sort == sort_value %}selected{% endif %}>{{ sort_label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
                 <div class="field field-actions">
                     <div class="btn-row">
                         <button class="btn btn-primary" type="submit">Применить фильтры</button>
@@ -149,13 +158,23 @@
                                 </div>
 
                                 <div class="event-footer">
+                                    <div class="event-participants-progress">
+                                        <div class="progress-label">
+                                            <span>Участники</span>
+                                            <span>{{ event.approved_participants|default:event.registered_count }} / {{ event.max_volunteers }}</span>
+                                        </div>
+                                        <div class="progress">
+                                            {% with count=event.approved_participants|default:event.registered_count max=event.max_volunteers %}
+                                                {% if max > 0 %}
+                                                    {% widthratio count max 100 as percent %}
+                                                    <span style="width: {{ percent }}%"></span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
                                     <div class="chip-row">
-                                        {% if event.is_full %}
-                                            <span class="badge badge-danger">Мест нет</span>
-                                        {% else %}
-                                            <span class="badge badge-success">{{ event.spots_left }} мест</span>
-                                        {% endif %}
                                         <span class="badge badge-accent">{{ event.xp_reward }} XP</span>
+                                        <span class="badge badge-soft">{{ event.get_event_type_display }}</span>
                                     </div>
                                     <span class="event-cta">Подробнее</span>
                                 </div>

@@ -19,20 +19,26 @@
 
                 <div class="profile-edit-copy">
                     <h1>{{ user.get_full_name|default:user.username }}</h1>
-                    <span class="badge {% if user.profile.is_organizer %}badge-warning{% else %}badge-accent{% endif %}">
-                        {{ user.profile.get_role_display }}
-                    </span>
+                    <div class="chip-row">
+                        <span class="badge {% if user.profile.is_organizer %}badge-warning{% else %}badge-accent{% endif %}">
+                            {{ user.profile.get_role_display }}
+                        </span>
+                        {% if user.profile.is_volunteer %}
+                            <span class="badge badge-soft">
+                                {{ user.profile.level_icon }} {{ user.profile.level_name }} ({{ user.profile.level }})
+                            </span>
+                        {% endif %}
+                    </div>
 
                     {% if user.profile.is_volunteer %}
                         <div class="profile-edit-progress">
                             <div class="profile-edit-progress-head">
-                                <strong>Уровень {{ user.profile.level }}</strong>
-                                <span>{{ user.profile.xp }} XP</span>
+                                <strong>{{ user.profile.xp }} XP</strong>
+                                <span>До следующего уровня: {{ user.profile.xp_to_next_level }} XP</span>
                             </div>
                             <div class="progress">
                                 <span style="width: {{ xp_progress_percent }}%;"></span>
                             </div>
-                            <p>До следующего уровня: {{ user.profile.xp_to_next_level }} XP</p>
                         </div>
                     {% endif %}
                 </div>
@@ -135,10 +141,16 @@
                 <div class="panel-body">
                     <h3>Статистика</h3>
                     <div class="profile-stats-list">
-                        <div><span>Событий</span><strong>{{ my_events.count }}</strong></div>
+                        <div><span>Всего событий</span><strong>{{ my_events.count }}</strong></div>
+                        <div><span>Предстоящих</span><strong>{{ upcoming_events|default:0 }}</strong></div>
+                        <div><span>Завершённых</span><strong>{{ past_events|default:0 }}</strong></div>
                         {% if user.profile.is_volunteer %}
                             <div><span>Навыков</span><strong>{{ user.profile.skills.count }}</strong></div>
-                            <div><span>Уровень</span><strong>{{ user.profile.level }}</strong></div>
+                            <div><span>Уровень</span><strong>{{ user.profile.level_name }} {{ user.profile.level_icon }}</strong></div>
+                            <div><span>XP</span><strong>{{ user.profile.xp }}</strong></div>
+                        {% endif %}
+                        {% if total_participants %}
+                            <div><span>Всего участников</span><strong>{{ total_participants }}</strong></div>
                         {% endif %}
                     </div>
                 </div>
@@ -147,13 +159,14 @@
             {% if user.profile.is_volunteer %}
                 <section class="panel profile-side-card">
                     <div class="panel-body">
-                        <h3>Достижения</h3>
+                        <h3>Достижения ({{ achievements|length }})</h3>
                         {% if achievements %}
                             <div class="profile-achievements-list">
-                                {% for item in achievements|slice:":5" %}
+                                {% for item in achievements %}
                                     <div class="profile-achievement-item">
                                         <div class="profile-achievement-title">{{ item.achievement.icon }} {{ item.achievement.title }}</div>
                                         <div class="profile-achievement-text">{{ item.achievement.description }}</div>
+                                        <div class="profile-achievement-date">{{ item.awarded_at|date:"d.m.Y" }}</div>
                                     </div>
                                 {% endfor %}
                             </div>

@@ -80,7 +80,7 @@
    python manage.py createsuperuser
    ```
 
-8. **Запустите сервер разработки**
+8. **Запустите сервер разработки**fff
    ```bash
    python manage.py runserver
    ```

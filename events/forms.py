@@ -131,24 +131,48 @@ class EventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         _set_class_for_fields(self.fields, INPUT_CLASS, exclude=('required_skills',))
+        
+    def clean_max_volunteers(self):
+        max_volunteers = self.cleaned_data.get('max_volunteers')
+        if max_volunteers and max_volunteers < 1:
+            raise forms.ValidationError('Количество участников не может быть меньше 1.')
+        if max_volunteers and max_volunteers > 1000:
+            raise forms.ValidationError('Количество участников не может превышать 1000.')
+        return max_volunteers
+    
+    def clean_xp_reward(self):
+        xp_reward = self.cleaned_data.get('xp_reward')
+        if xp_reward and xp_reward < 0:
+            raise forms.ValidationError('XP награда не может быть отрицательной.')
+        if xp_reward and xp_reward > 10000:
+            raise forms.ValidationError('XP награда не может превышать 10000.')
+        return xp_reward
 
 
 class EventListFilterForm(forms.Form):
     STATUS_CHOICES = (
-        ('', 'Р’СЃРµ'),
-        ('open', 'РћС‚РєСЂС‹С‚ РЅР°Р±РѕСЂ'),
-        ('full', 'РњРµСЃС‚ РЅРµС‚'),
-        ('mine', 'РњРѕРё СЃРѕР±С‹С‚РёСЏ'),
+        ('', 'Все'),
+        ('open', 'Открыт набор'),
+        ('full', 'Мест нет'),
+        ('mine', 'Мои события'),
+    )
+    
+    SORT_CHOICES = (
+        ('date_asc', 'Дата (сначала старые)'),
+        ('date_desc', 'Дата (сначала новые)'),
+        ('popular', 'Популярность'),
+        ('participants', 'По участникам'),
     )
 
     skill = forms.ModelChoiceField(queryset=Skill.objects.all(), required=False)
     city = forms.CharField(max_length=100, required=False)
     search = forms.CharField(max_length=200, required=False)
-    event_type = forms.ChoiceField(required=False, choices=(('', 'Р’СЃРµ С‚РёРїС‹'), *Event.TYPE_CHOICES))
+    event_type = forms.ChoiceField(required=False, choices=(('', 'Все типы'), *Event.TYPE_CHOICES))
     status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
     date_from = forms.DateField(required=False)
     date_to = forms.DateField(required=False)
     participant = forms.CharField(max_length=150, required=False)
+    sort = forms.ChoiceField(required=False, choices=SORT_CHOICES, initial='date_asc')
 
     def clean(self):
         cleaned_data = super().clean()

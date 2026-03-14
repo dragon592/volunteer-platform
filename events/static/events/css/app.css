@@ -3332,3 +3332,143 @@ textarea::placeholder {
         scroll-behavior: auto !important;
     }
 }
+
+/* ===== new components ===== */
+.participants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #d4e2da;
+    border-radius: 12px;
+    background: #f7fcf9;
+    transition: all 0.2s ease;
+}
+
+.participant-item:hover {
+    background: #eef7f2;
+    border-color: #cfe2d9;
+}
+
+.participant-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #1a7d4f 0%, #2ca86b 100%);
+}
+
+.participant-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.participant-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.participant-info strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.participant-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.event-participants-progress {
+    margin-top: 8px;
+}
+
+.event-participants-progress .progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: #4a655b;
+    font-weight: 600;
+}
+
+.event-countdown {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.countdown-label {
+    font-size: 12px;
+    color: #4a655b;
+    font-weight: 600;
+}
+
+.countdown-days,
+.countdown-hours,
+.countdown-minutes,
+.countdown-seconds {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 28px;
+    padding: 0 6px;
+    border-radius: 8px;
+    background: rgba(28, 110, 91, 0.12);
+    color: #145443;
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.countdown-expired {
+    color: #8c2f2f;
+    font-weight: 600;
+}
+
+.event-map {
+    margin-top: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #d4e2da;
+}
+
+.event-map iframe {
+    display: block;
+    border: none;
+}
+
+.event-map small {
+    display: block;
+    padding: 8px 12px;
+    background: #f7fcf9;
+    text-align: center;
+    font-size: 12px;
+}
+
+.event-map small a {
+    color: #1c6e5b;
+    font-weight: 600;
+}
+
+.event-map small a:hover {
+    text-decoration: underline;
+}

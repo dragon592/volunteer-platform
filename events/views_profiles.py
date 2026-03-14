@@ -18,29 +18,48 @@ def profile_view(request):
         form = UserProfileForm(instance=request.user.profile, user=request.user)
 
     if request.user.profile.is_organizer:
-        my_events = Event.objects.filter(organizer=request.user)
+        my_events = Event.objects.filter(organizer=request.user, is_active=True)
+        upcoming_events = my_events.filter(date__gte=timezone.localdate()).count()
+        past_events = my_events.filter(date__lt=timezone.localdate()).count()
+        total_participants = EventRegistration.objects.filter(
+            event__organizer=request.user,
+            status__in=['approved', 'completed']
+        ).count()
         achievements = None
+        completed_events_count = 0
     else:
         my_events = (
             Event.objects.filter(
                 registrations__volunteer=request.user,
                 registrations__status__in=['pending', 'approved', 'completed'],
+                is_active=True,
             )
             .select_related('organizer')
             .prefetch_related('required_skills')
             .distinct()
         )
+        upcoming_events = my_events.filter(date__gte=timezone.localdate()).count()
+        past_events = my_events.filter(date__lt=timezone.localdate()).count()
+        completed_events_count = EventRegistration.objects.filter(
+            volunteer=request.user,
+            status='completed'
+        ).count()
         achievements = (
             VolunteerAchievement.objects.filter(volunteer=request.user)
             .select_related('achievement')
             .order_by('-awarded_at')
         )
+        total_participants = None
 
     context = {
         'form': form,
         'my_events': my_events,
         'achievements': achievements,
         'xp_progress_percent': request.user.profile.xp % 100,
+        'upcoming_events': upcoming_events,
+        'past_events': past_events,
+        'completed_events_count': completed_events_count,
+        'total_participants': total_participants,
     }
     return render(request, 'events/profile.html', context)
 

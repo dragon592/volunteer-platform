@@ -66,6 +66,15 @@ def submit_event_registration(form, event, volunteer, existing_registration=None
             related_event=event,
             related_registration=registration,
         )
+        # Уведомление для волонтера о成功ной заявке
+        Notification.objects.create(
+            user=volunteer,
+            type='new_application',
+            title='Заявка отправлена',
+            message=f'Ваша заявка на событие "{event.title}" была отправлена организатору.',
+            related_event=event,
+            related_registration=registration,
+        )
     return registration, success_message
 
 

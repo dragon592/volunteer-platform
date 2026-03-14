@@ -2,6 +2,45 @@
 
 {% block title %}{{ event.title }} — Open Hearts{% endblock %}
 
+{% block extra_js %}
+{{ block.super }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countdownEl = document.getElementById('event-countdown');
+    if (!countdownEl) return;
+    
+    const eventDate = new Date('{{ event.date|date:"Y-m-d" }}{% if event.time %}T{{ event.time|time:"H:i:s" }}{% else %}T00:00:00{% endif %}').getTime();
+    
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = eventDate - now;
+        
+        if (distance < 0) {
+            countdownEl.innerHTML = 'Событие уже началось или завершено';
+            countdownEl.classList.add('countdown-expired');
+            return;
+        }
+        
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        let html = '';
+        if (days > 0) html += `<span class="countdown-days">${days} дн</span> `;
+        html += `<span class="countdown-hours">${hours} ч</span> `;
+        html += `<span class="countdown-minutes">${minutes} мин</span> `;
+        html += `<span class="countdown-seconds">${seconds} сек</span>`;
+        
+        countdownEl.innerHTML = html;
+    }
+    
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+});
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="container page-stack detail-page">
     <section class="panel detail-hero">
@@ -40,6 +79,11 @@
                     <div class="detail-meta-item">
                         <span class="detail-meta-label">Дата</span>
                         <strong>{{ event.date|date:"d.m.Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}</strong>
+                        {% if event.date >= now|date:"Y-m-d" %}
+                            <div class="event-countdown" id="event-countdown">
+                                <span class="countdown-label">До начала:</span>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="detail-meta-item">
                         <span class="detail-meta-label">Локация</span>
@@ -67,6 +111,34 @@
                     <p class="detail-description">{{ event.description }}</p>
                 </div>
             </div>
+            
+            {% if approved_participants %}
+                <div class="detail-block participants-block">
+                    <h3>Участники ({{ approved_participants|length }})</h3>
+                    <div class="participants-grid">
+                        {% for reg in approved_participants %}
+                            <div class="participant-item">
+                                <div class="participant-avatar">
+                                    {% if reg.volunteer.profile.avatar %}
+                                        <img src="{{ reg.volunteer.profile.avatar.url }}" alt="{{ reg.volunteer.get_full_name }}">
+                                    {% elif reg.volunteer.profile.avatar_url %}
+                                        <img src="{{ reg.volunteer.profile.avatar_url }}" alt="{{ reg.volunteer.get_full_name }}">
+                                    {% else %}
+                                        <span class="avatar-fallback avatar-sm">{{ reg.volunteer.first_name|first|upper }}{{ reg.volunteer.last_name|first|upper }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="participant-info">
+                                    <strong>{{ reg.volunteer.get_full_name|default:reg.volunteer.username }}</strong>
+                                    <div class="participant-meta">
+                                        <span class="badge badge-soft">{{ reg.volunteer.profile.level_name|default:'Beginner' }} {{ reg.volunteer.profile.level_icon }}</span>
+                                        <span class="muted-text">{{ reg.volunteer.profile.xp }} XP</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </article>
 
         <aside class="detail-side">
