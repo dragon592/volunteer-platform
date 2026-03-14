@@ -1,0 +1,5 @@
+[build]
+cmds = ["python -m venv --copies /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt"]
+
+[start]
+cmd = "mkdir -p /app/staticfiles && python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && python import_data.py data_dump.json && gunicorn volunteer.wsgi:application --log-file -"
