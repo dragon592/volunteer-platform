@@ -1,3 +1,6 @@
+from django.shortcuts import redirect
+from django.urls import reverse
+
 class LoginRequiredMiddleware:
     """
     Middleware для принудительной аутентификации.
