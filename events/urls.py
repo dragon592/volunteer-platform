@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from . import views
 
@@ -26,4 +26,6 @@ urlpatterns = [
     path('api/notifications/latest/', views.notifications_latest, name='notifications_latest'),
     path('chat/', views.chat_channels, name='chat_channels'),
     path('chat/<int:channel_id>/', views.chat_channel_detail, name='chat_channel_detail'),
+    #allauth
+    path('accounts/', include('allauth.urls')),
 ]

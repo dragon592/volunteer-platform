@@ -16,8 +16,12 @@ services:
           property: connectionString
       - key: DEBUG
         value: False
-      - key: SECRET_KEY
+            - key: SECRET_KEY
         generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        value: "YOUR_GOOGLE_CLIENT_ID_HERE"
+      - key: GOOGLE_CLIENT_SECRET
+        value: "YOUR_GOOGLE_CLIENT_SECRET_HERE"
       - key: ALLOWED_HOSTS
         value: ".onrender.com"
       - key: DJANGO_SETTINGS_MODULE

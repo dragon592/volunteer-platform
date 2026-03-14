@@ -8,3 +8,6 @@ psycopg2-binary==2.9.10
 whitenoise==6.11.0
 sqlparse==0.5.3
 tzdata==2025.2
+django-allauth==65.7.0
+oauthlib==3.2.2
+requests-oauthlib==2.0.0
