@@ -48,6 +48,7 @@ def event_list(request):
     selected_date_to = request.GET.get('date_to', '')
     selected_participant = request.GET.get('participant', '')
     selected_sort = request.GET.get('sort', 'date_asc')
+    sort_by = selected_sort  # Инициализируем значением из GET
 
     if filter_form.is_valid():
         skill = filter_form.cleaned_data['skill']
