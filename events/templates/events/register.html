@@ -4,8 +4,9 @@
 {% block title %}Регистрация - Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container page-stack auth-page">
-    <section class="panel auth-split auth-register">
+<div class="container auth-page">
+    <div class="auth-split">
+        <!-- Left side - Branding -->
         <div class="auth-side auth-side-brand">
             <span class="hero-kicker">Open Hearts</span>
             <h1>Создайте аккаунт</h1>
@@ -22,11 +23,12 @@
             </div>
         </div>
 
+        <!-- Right side - Registration form -->
         <div class="auth-side auth-side-form">
             <h2>Регистрация</h2>
             <p class="subtle">Заполните форму и выберите роль в системе.</p>
 
-            <!-- Google OAuth кнопка -->
+            <!-- Google OAuth button -->
             <a href="{% provider_login_url 'google' %}" class="btn btn-google btn-block">
                 <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -39,7 +41,7 @@
 
             <p class="auth-divider">или</p>
 
-            <form method="POST" class="auth-form-grid">
+            <form method="POST" class="auth-form-grid" novalidate>
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
@@ -63,31 +65,31 @@
                             </label>
                         {% endfor %}
                     </div>
-                    {% for error in form.role.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.role.errors %}<p class="field-error" style="color: #dc2626; font-size: 0.875rem;">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field half">
                     <label for="{{ form.first_name.id_for_label }}">Имя</label>
                     {{ form.first_name }}
-                    {% for error in form.first_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.first_name.errors %}<p class="field-error" style="color: #dc2626; font-size: 0.875rem;">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field half">
                     <label for="{{ form.last_name.id_for_label }}">Фамилия</label>
                     {{ form.last_name }}
-                    {% for error in form.last_name.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.last_name.errors %}<p class="field-error" style="color: #dc2626; font-size: 0.875rem;">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field">
                     <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
                     {{ form.username }}
-                    {% for error in form.username.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.username.errors %}<p class="field-error" style="color: #dc2626; font-size: 0.875rem;">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field">
                     <label for="{{ form.email.id_for_label }}">Email</label>
                     {{ form.email }}
-                    {% for error in form.email.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.email.errors %}<p class="field-error" style="color: #dc2626; font-size: 0.875rem;">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field">
@@ -96,7 +98,7 @@
                         {{ form.password1 }}
                         <button type="button" class="auth-password-btn" data-toggle-password="{{ form.password1.id_for_label }}">Показать</button>
                     </div>
-                    {% for error in form.password1.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.password1.errors %}<p class="field-error" style="color: #dc2626; font-size: 0.875rem;">{{ error }}</p>{% endfor %}
                 </div>
 
                 <div class="field">
@@ -105,16 +107,27 @@
                         {{ form.password2 }}
                         <button type="button" class="auth-password-btn" data-toggle-password="{{ form.password2.id_for_label }}">Показать</button>
                     </div>
-                    {% for error in form.password2.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+                    {% for error in form.password2.errors %}<p class="field-error" style="color: #dc2626; font-size: 0.875rem;">{{ error }}</p>{% endfor %}
                 </div>
 
-                <button type="submit" class="btn btn-primary">Создать аккаунт</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px 24px; font-size: 1rem; font-weight: 600;">
+                    Создать аккаунт
+                </button>
             </form>
 
             <p class="auth-footnote">
                 Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
             </p>
         </div>
-    </section>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Focus on first name field
+    document.getElementById('{{ form.first_name.id_for_label }}')?.focus();
+});
+</script>
 {% endblock %}
