@@ -107,11 +107,11 @@
         </section>
     {% endif %}
 
-    {% if user.is_authenticated %}
     <main class="site-main">
         {% block content %}{% endblock %}
     </main>
 
+    {% if user.is_authenticated %}
     <footer class="site-footer">
         <div class="container footer-inner">
             <p>Open Hearts</p>
