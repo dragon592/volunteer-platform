@@ -58,6 +58,8 @@
         padding-left: var(--space-4);
         padding-right: var(--space-4);
         width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
     }
 
     /* Header */
@@ -115,7 +117,7 @@
         right: 0;
         bottom: 0;
         background: var(--surface);
-        z-index: 50;
+        z-index: 1001;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -164,7 +166,7 @@
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 40;
+        z-index: 1000;
         backdrop-filter: blur(4px);
         opacity: 0;
         transition: opacity var(--transition-base);
@@ -571,119 +573,6 @@ textarea:focus-visible {
 }
 @media (min-width: 641px) { .menu-toggle { display: none !important; } }
 
-/* Body for auth pages */
-.auth-page-body {
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-}
-
-.auth-page-body .site-header {
-    background: transparent;
-    position: relative;
-    z-index: 10;
-}
-
-.auth-page-body .site-header.auth-header .brand {
-    color: white !important;
-}
-
-.auth-page-body .site-header .header-inner {
-    padding: 16px 24px;
-}
-
-/* Smooth page transitions */
-.auth-page {
-    animation: pageFadeIn 0.4s ease-out;
-}
-
-@keyframes pageFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Enhanced focus states for accessibility */
-.field input:focus,
-.field textarea:focus,
-.field select:focus {
-    outline: none;
-    border-color: #22c55e;
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
-    transition: all 0.2s ease;
-}
-
-/* Button hover effects */
-.btn-primary {
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-primary::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s;
-}
-
-.btn-primary:hover::after {
-    width: 200px;
-    height: 200px;
-}
-
-/* Input field animations */
-.field input,
-.field textarea {
-    transition: all 0.2s ease;
-}
-
-.field input:hover,
-.field textarea:hover {
-    border-color: #86efac;
-}
-
-/* Role card selection animation */
-.auth-role-card input[type="radio"]:checked + div {
-    background: #f0fdf4;
-}
-
-.auth-role-card:has(input[type="radio"]:checked) {
-    border-color: #22c55e;
-    background: #f0fdf4;
-    transform: scale(1.02);
-    transition: all 0.2s ease;
-}
-
-/* Google button special hover */
-.btn-google:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-    transition: all 0.2s ease;
-}
-
-/* Toast notifications z-index */
-.toast-root {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 
 /* =========================================
    Мобильные улучшения для таблиц и карточек
@@ -801,16 +690,53 @@ textarea:focus-visible {
         min-height: 48px;
         padding: 14px 16px;
         font-size: 16px;
+        box-sizing: border-box;
     }
     
     .icon-link {
         min-width: 48px;
         min-height: 48px;
+        box-sizing: border-box;
     }
     
     .user-chip {
         min-height: 48px;
         padding: 8px 12px;
+        box-sizing: border-box;
+    }
+
+    /* Prevent horizontal overflow on mobile */
+    * {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .header-inner {
+        max-width: 100vw;
+        overflow: hidden;
+    }
+
+    .main-nav {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .search-dropdown {
+        max-width: calc(100vw - 32px);
+    }
+
+    .event-card {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .event-card__image {
+        max-width: 100%;
+    }
+
+    .event-card__content {
+        max-width: 100%;
+        box-sizing: border-box;
     }
 }
 

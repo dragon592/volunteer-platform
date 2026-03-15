@@ -14,7 +14,7 @@
     }
 
     // =========================================
-    // Mobile menu toggle
+    // Mobile menu toggle - Fixed for mobile touch
     // =========================================
     function setupMobileMenu() {
         const toggle = document.querySelector('[data-menu-toggle]');
@@ -28,6 +28,13 @@
         menu.classList.remove('active');
         overlay.classList.remove('active');
         toggle.setAttribute('aria-expanded', 'false');
+        
+        // Ensure proper z-index stacking
+        const header = document.querySelector('.site-header');
+        if (header) {
+            header.style.position = 'relative';
+            header.style.zIndex = '1002';
+        }
     
         toggle.addEventListener('click', function (e) {
             e.stopPropagation();
@@ -40,10 +47,20 @@
                 overlay.classList.add('active');
                 // Prevent body scroll when menu is open
                 document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+                // Ensure proper z-index
+                toggle.style.zIndex = '1003';
+                menu.style.zIndex = '1002';
+                overlay.style.zIndex = '1001';
             } else {
                 menu.classList.remove('active');
                 overlay.classList.remove('active');
                 document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                toggle.style.zIndex = '';
+                menu.style.zIndex = '';
             }
         });
     
@@ -52,6 +69,8 @@
             menu.classList.remove('active');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
         });
     
         // Close menu when clicking on a link
@@ -61,6 +80,8 @@
                 menu.classList.remove('active');
                 overlay.classList.remove('active');
                 document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
             }
         });
     
@@ -71,8 +92,32 @@
                 menu.classList.remove('active');
                 overlay.classList.remove('active');
                 document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
             }
         });
+        
+        // Handle touch events for better mobile experience
+        let touchStartY = 0;
+        menu.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        menu.addEventListener('touchmove', function(e) {
+            const touchY = e.touches[0].clientY;
+            const diff = touchStartY - touchY;
+            // Only allow scrolling if not at the top and pulling down
+            if (menu.scrollTop === 0 && diff > 0) {
+                e.preventDefault();
+            }
+        });
+        
+        // Fix for iOS overscroll
+        menu.addEventListener('touchmove', function(e) {
+            if (menu.scrollTop === 0 && e.touches[0].clientY > touchStartY) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     }
 
     // =========================================
