@@ -196,6 +196,52 @@
         right: 6px;
     }
 
+    /* Compact search toggle */
+    .search-toggle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .search-dropdown {
+        position: fixed;
+        top: auto;
+        right: var(--space-4);
+        bottom: var(--space-4);
+        left: var(--space-4);
+        min-width: auto;
+        margin-top: 0;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .search-dropdown .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-dropdown .filter-actions {
+        grid-column: span 1;
+    }
+
+    .search-dropdown .inline-note {
+        grid-column: span 1;
+    }
+
+    /* Header layout improvements for mobile */
+    .header-inner {
+        flex-wrap: nowrap;
+        overflow: hidden;
+    }
+
+    .main-nav {
+        order: 5;
+        margin-left: 0;
+    }
+
+    /* Ensure no horizontal overflow */
+    body {
+        overflow-x: hidden;
+    }
+
     /* Auth pages */
     .auth-page {
         min-height: calc(100vh - 140px);

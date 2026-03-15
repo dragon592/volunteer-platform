@@ -371,102 +371,99 @@
     }
 
     // =========================================
-    // Header Search & Filters
+    // Header Search & Filters - Compact Version
     // =========================================
     function setupHeaderSearch() {
-        const searchForm = document.querySelector('.header-search');
+        const searchContainer = document.querySelector('.header-search');
+        const searchToggle = document.querySelector('[data-search-toggle]');
+        const searchDropdown = document.querySelector('[data-search-dropdown]');
         const filterToggle = document.querySelector('[data-filter-toggle]');
         const filterDropdown = document.querySelector('[data-filter-dropdown]');
         
-        if (!searchForm || !filterToggle || !filterDropdown) {
-            return;
-        }
-
-        // Toggle filter dropdown
-        filterToggle.addEventListener('click', function (e) {
-            e.preventDefault();
-            const isActive = filterDropdown.classList.toggle('active');
-            filterToggle.setAttribute('aria-expanded', isActive);
-            
-            // Close on outside click
-            if (isActive) {
-                setTimeout(() => {
-                    document.addEventListener('click', closeFilterOutside);
-                }, 0);
-            } else {
-                document.removeEventListener('click', closeFilterOutside);
-            }
-        });
-
-        function closeFilterOutside(e) {
-            if (!searchForm.contains(e.target)) {
-                filterDropdown.classList.remove('active');
-                filterToggle.setAttribute('aria-expanded', 'false');
-                document.removeEventListener('click', closeFilterOutside);
-            }
-        }
-
-        // Mobile: show/hide search form
-        const mobileMenuToggle = document.querySelector('[data-menu-toggle]');
-        if (mobileMenuToggle && window.innerWidth <= 840) {
-            // Add search toggle button to mobile menu
-            const searchToggle = document.createElement('button');
-            searchToggle.className = 'mobile-search-toggle';
-            searchToggle.setAttribute('aria-label', 'Поиск событий');
-            searchToggle.innerHTML = `
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
-                </svg>
-            `;
-            // Insert before mobile menu overlay
-            const overlay = document.querySelector('.mobile-menu-overlay');
-            if (overlay) {
-                overlay.parentNode.insertBefore(searchToggle, overlay);
+        // Handle compact search toggle
+        if (searchToggle && searchDropdown) {
+            searchToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                const isActive = searchDropdown.classList.toggle('active');
+                searchToggle.setAttribute('aria-expanded', isActive);
                 
-                searchToggle.addEventListener('click', function () {
-                    searchForm.classList.toggle('active');
-                    if (searchForm.classList.contains('active')) {
-                        searchForm.querySelector('.search-input').focus();
-                    }
+                // Close on outside click
+                if (isActive) {
+                    setTimeout(() => {
+                        document.addEventListener('click', closeSearchOutside);
+                    }, 0);
+                } else {
+                    document.removeEventListener('click', closeSearchOutside);
+                }
+            });
+
+            function closeSearchOutside(e) {
+                if (!searchDropdown.contains(e.target) && e.target !== searchToggle) {
+                    searchDropdown.classList.remove('active');
+                    searchToggle.setAttribute('aria-expanded', 'false');
+                    document.removeEventListener('click', closeSearchOutside);
+                }
+            }
+        }
+
+        // Handle filter toggle inside search dropdown
+        if (filterToggle && filterDropdown) {
+            filterToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const isActive = filterDropdown.classList.toggle('active');
+                filterToggle.setAttribute('aria-expanded', isActive);
+            });
+
+            // Save filter state to localStorage
+            const inputs = filterDropdown.querySelectorAll('select, input');
+            inputs.forEach(function (input) {
+                const savedValue = localStorage.getItem('filter_' + input.name);
+                if (savedValue && input.value !== savedValue) {
+                    input.value = savedValue;
+                    updateFilterIndicator();
+                }
+                
+                input.addEventListener('change', function () {
+                    localStorage.setItem('filter_' + input.name, input.value);
+                    updateFilterIndicator();
+                });
+            });
+
+            function updateFilterIndicator() {
+                const hasActiveFilters = Array.from(inputs).some(input => input.value);
+                if (hasActiveFilters) {
+                    filterToggle.classList.add('active');
+                } else {
+                    filterToggle.classList.remove('active');
+                }
+            }
+
+            // Clear filters on reset button click
+            const resetLink = filterDropdown.querySelector('a[href*="event_list"]');
+            if (resetLink) {
+                resetLink.addEventListener('click', function () {
+                    inputs.forEach(function (input) {
+                        localStorage.removeItem('filter_' + input.name);
+                    });
+                    updateFilterIndicator();
                 });
             }
         }
 
-        // Save filter state to localStorage
-        const inputs = filterDropdown.querySelectorAll('select, input');
-        inputs.forEach(function (input) {
-            const savedValue = localStorage.getItem('filter_' + input.name);
-            if (savedValue && input.value !== savedValue) {
-                input.value = savedValue;
-                updateFilterIndicator();
+        // Close dropdowns on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                if (searchDropdown) {
+                    searchDropdown.classList.remove('active');
+                    if (searchToggle) searchToggle.setAttribute('aria-expanded', 'false');
+                }
+                if (filterDropdown) {
+                    filterDropdown.classList.remove('active');
+                    if (filterToggle) filterToggle.setAttribute('aria-expanded', 'false');
+                }
             }
-            
-            input.addEventListener('change', function () {
-                localStorage.setItem('filter_' + input.name, input.value);
-                updateFilterIndicator();
-            });
         });
-
-        function updateFilterIndicator() {
-            const hasActiveFilters = Array.from(inputs).some(input => input.value);
-            if (hasActiveFilters) {
-                filterToggle.classList.add('active');
-            } else {
-                filterToggle.classList.remove('active');
-            }
-        }
-
-        // Clear filters on reset button click
-        const resetLink = filterDropdown.querySelector('a[href="{% url "event_list" %}"]');
-        if (resetLink) {
-            resetLink.addEventListener('click', function () {
-                inputs.forEach(function (input) {
-                    localStorage.removeItem('filter_' + input.name);
-                });
-                updateFilterIndicator();
-            });
-        }
     }
 
     // =========================================
