@@ -96,6 +96,8 @@ def event_list(request):
                 | Q(registrations__volunteer__first_name__icontains=participant)
                 | Q(registrations__volunteer__last_name__icontains=participant)
             )
+        # Добавляем distinct для предотвращения дублирования
+        events = events.distinct()
     elif request.GET:
         messages.error(request, 'Проверьте корректность параметров фильтрации.')
 
@@ -167,7 +169,7 @@ def event_detail(request, pk):
             status__in=ACTIVE_REGISTRATION_STATUSES,
         ).exists()
         can_register = (
-            request.user.profile.is_volunteer
+            hasattr(request.user, 'profile') and request.user.profile.is_volunteer
             and not event.is_full
             and not active_registration_exists
             and event.date >= timezone.localdate()
@@ -192,7 +194,8 @@ def event_detail(request, pk):
 def event_register(request, pk):
     event = get_object_or_404(Event.objects.filter(is_active=True), pk=pk)
 
-    if not request.user.profile.is_volunteer:
+    # Проверяем наличие профиля и роль
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_volunteer:
         messages.error(request, 'Только волонтеры могут записываться на события.')
         return redirect('event_detail', pk=pk)
 
@@ -230,6 +233,9 @@ def event_register(request, pk):
 @require_POST
 def event_cancel_registration(request, pk):
     event = get_object_or_404(Event.objects.filter(is_active=True), pk=pk)
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_detail', pk=pk)
     registration = get_object_or_404(EventRegistration, event=event, volunteer=request.user)
     if registration.status in ['completed', 'rejected']:
         messages.error(request, 'Эту заявку нельзя отменить.')
@@ -245,7 +251,7 @@ def event_cancel_registration(request, pk):
 
 @login_required
 def event_create(request):
-    if not request.user.profile.is_organizer:
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_organizer:
         messages.error(request, 'Только организаторы могут создавать события.')
         return redirect('event_list')
 
@@ -272,7 +278,7 @@ def event_create(request):
 def event_edit(request, pk):
     event = get_object_or_404(Event.objects.filter(is_active=True), pk=pk)
 
-    if event.organizer != request.user:
+    if not hasattr(request.user, 'profile') or event.organizer != request.user:
         messages.error(request, 'Вы можете редактировать только свои события.')
         return redirect('event_detail', pk=pk)
 
@@ -298,7 +304,7 @@ def event_edit(request, pk):
 def event_manage_registrations(request, pk):
     event = get_object_or_404(Event.objects.filter(is_active=True), pk=pk)
 
-    if event.organizer != request.user:
+    if not hasattr(request.user, 'profile') or event.organizer != request.user:
         messages.error(request, 'Вы можете управлять только своими событиями.')
         return redirect('event_detail', pk=pk)
 
@@ -382,7 +388,7 @@ def event_manage_registrations(request, pk):
 def event_delete(request, pk):
     event = get_object_or_404(Event.objects.filter(is_active=True), pk=pk)
 
-    if event.organizer != request.user:
+    if not hasattr(request.user, 'profile') or event.organizer != request.user:
         messages.error(request, 'Вы можете удалять только свои события.')
         return redirect('event_detail', pk=pk)
 
@@ -396,6 +402,10 @@ def event_delete(request, pk):
 
 @login_required
 def my_events(request):
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_list')
+    
     if request.user.profile.is_organizer:
         events = Event.objects.filter(
             organizer=request.user,

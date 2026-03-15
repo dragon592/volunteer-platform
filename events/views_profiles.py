@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from .forms import UserProfileForm, VolunteerSearchForm
 from .models import Event, EventRegistration, UserProfile, VolunteerAchievement
@@ -8,6 +9,11 @@ from .models import Event, EventRegistration, UserProfile, VolunteerAchievement
 
 @login_required
 def profile_view(request):
+    # Проверяем наличие профиля
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_list')
+    
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile, user=request.user)
         if form.is_valid():
@@ -66,7 +72,7 @@ def profile_view(request):
 
 @login_required
 def volunteer_search(request):
-    if not request.user.profile.is_organizer:
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_organizer:
         messages.error(request, 'Только организаторы могут искать волонтеров.')
         return redirect('event_list')
 
@@ -93,7 +99,7 @@ def volunteer_search(request):
 
 @login_required
 def volunteer_profile(request, pk):
-    if not request.user.profile.is_organizer:
+    if not hasattr(request.user, 'profile') or not request.user.profile.is_organizer:
         messages.error(request, 'Доступ к профилям волонтеров доступен только организаторам.')
         return redirect('event_list')
 

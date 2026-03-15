@@ -1,4 +1,5 @@
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.socialaccount.models import SocialAccount
 from django.contrib import messages
 from django.contrib.auth.models import User
 
@@ -30,6 +31,11 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
             try:
                 # Проверяем, есть ли пользователь с таким email
                 existing_user = User.objects.get(email=email)
+                # Проверяем, не привязан ли уже этот социальный аккаунт к другому пользователю
+                if SocialAccount.objects.filter(provider=sociallogin.account.provider, uid=sociallogin.account.uid).exists():
+                    # Социальный аккаунт уже привязан - показываем ошибку
+                    messages.error(request, 'Этот Google аккаунт уже привязан к другому профилю.')
+                    return
                 # Связываем социальный аккаунт с существующим пользователем
                 sociallogin.connect(request, existing_user)
                 messages.success(

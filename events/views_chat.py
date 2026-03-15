@@ -12,12 +12,18 @@ from .services import add_approved_volunteers_to_channel
 
 @login_required
 def chat_channels(request):
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_list')
     channels = available_channels_for_user(request.user)
     return render(request, 'events/chat_channels.html', {'channels': channels})
 
 
 @login_required
 def chat_channel_detail(request, channel_id):
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_list')
     channel = get_object_or_404(ChatChannel.objects.select_related('event'), pk=channel_id, is_archived=False)
     channels_qs = available_channels_for_user(request.user)
     if not channels_qs.filter(pk=channel.pk).exists():
@@ -89,7 +95,7 @@ def chat_channel_detail(request, channel_id):
 @login_required
 def chat_create_channel(request, event_pk):
     event = get_object_or_404(Event, pk=event_pk)
-    if event.organizer != request.user:
+    if not hasattr(request.user, 'profile') or event.organizer != request.user:
         messages.error(request, 'Только организатор события может создавать каналы.')
         return redirect('event_detail', pk=event.pk)
 

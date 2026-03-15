@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from .models import (
     ChatChannel,
@@ -91,6 +92,14 @@ class UserProfileForm(forms.ModelForm):
         if 'avatar' in self.fields:
             _set_class(self.fields['avatar'], FILE_INPUT_CLASS)
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if self.user and email:
+            # Проверяем, не используется ли email другим пользователем
+            if User.objects.exclude(pk=self.user.pk).filter(email=email).exists():
+                raise forms.ValidationError('Этот email уже используется другим аккаунтом.')
+        return email
+
     def save(self, commit=True):
         profile = super().save(commit=False)
         if self.user:
@@ -132,6 +141,12 @@ class EventForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         _set_class_for_fields(self.fields, INPUT_CLASS, exclude=('required_skills',))
         
+    def clean_date(self):
+        date = self.cleaned_data.get('date')
+        if date and date < timezone.localdate():
+            raise forms.ValidationError('Дата события не может быть в прошлом.')
+        return date
+    
     def clean_max_volunteers(self):
         max_volunteers = self.cleaned_data.get('max_volunteers')
         if max_volunteers and max_volunteers < 1:
@@ -179,7 +194,7 @@ class EventListFilterForm(forms.Form):
         date_from = cleaned_data.get('date_from')
         date_to = cleaned_data.get('date_to')
         if date_from and date_to and date_from > date_to:
-            raise forms.ValidationError('Р”Р°С‚Р° "РѕС‚" РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїРѕР·Р¶Рµ РґР°С‚С‹ "РґРѕ".')
+            raise forms.ValidationError('Дата "от" не может быть позже даты "до".')
         return cleaned_data
 
 

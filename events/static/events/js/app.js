@@ -1,4 +1,7 @@
 (function () {
+    // =========================================
+    // Cookie helper
+    // =========================================
     function getCookie(name) {
         const cookies = document.cookie ? document.cookie.split(';') : [];
         for (const rawCookie of cookies) {
@@ -10,20 +13,34 @@
         return null;
     }
 
+    // =========================================
+    // Mobile menu toggle
+    // =========================================
     function setupMobileMenu() {
         const toggle = document.querySelector('[data-menu-toggle]');
         const menu = document.querySelector('[data-menu]');
-        if (!toggle || !menu) {
+        const overlay = document.querySelector('[data-menu-overlay]');
+        if (!toggle || !menu || !overlay) {
             return;
         }
 
         toggle.addEventListener('click', function () {
-            const expanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', String(!expanded));
-            menu.classList.toggle('open', !expanded);
+            const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', !isExpanded);
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function () {
+            toggle.setAttribute('aria-expanded', 'false');
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
         });
     }
 
+    // =========================================
+    // Password visibility toggle
+    // =========================================
     function setupPasswordToggles() {
         document.querySelectorAll('[data-toggle-password]').forEach(function (button) {
             button.addEventListener('click', function () {
@@ -39,21 +56,48 @@
         });
     }
 
-    function showToast(text, type) {
-        const root = document.getElementById('toast-root');
-        if (!root) {
-            return;
-        }
+    // =========================================
+    // Toast notifications
+    // =========================================
+    function showToast(message, type = 'info', duration = 5000) {
+        const container = document.getElementById('toast-root');
+        if (!container) return;
+
         const toast = document.createElement('div');
-        toast.className = 'toast ' + (type || 'info');
-        const icon = type === 'error' ? '❌' : type === 'success' ? '✅' : type === 'warning' ? '⚠️' : 'ℹ️';
-        toast.innerHTML = '<span>' + icon + '</span><div>' + text + '</div>';
-        root.appendChild(toast);
-        setTimeout(function () {
-            toast.remove();
-        }, 5000);
+        toast.className = `toast ${type}`;
+
+        const icons = {
+            success: '✅',
+            error: '❌',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+
+        toast.innerHTML = `
+            <span class="text-2xl">${icons[type] || icons.info}</span>
+            <div class="flex-1">
+                <p class="text-gray-800 font-medium">${message}</p>
+            </div>
+            <button class="toast-close" onclick="this.parentElement.remove()">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        `;
+
+        container.appendChild(toast);
+
+        if (duration > 0) {
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
     }
 
+    // =========================================
+    // Chat auto-scroll
+    // =========================================
     function setupChatAutoScroll() {
         const log = document.querySelector('[data-chat-log]');
         if (!log) {
@@ -62,13 +106,16 @@
         log.scrollTop = log.scrollHeight;
     }
 
+    // =========================================
+    // Notifications polling
+    // =========================================
     function setupNotifications() {
-        if (document.body.dataset.authenticated !== '1') {
+        if (document.body.getAttribute('data-authenticated') !== '1') {
             return;
         }
 
-        const countUrl = document.body.dataset.notificationsCountUrl;
-        const latestUrl = document.body.dataset.notificationsLatestUrl;
+        const countUrl = document.body.getAttribute('data-notifications-count-url');
+        const latestUrl = document.body.getAttribute('data-notifications-latest-url');
         const badge = document.getElementById('notification-count');
         if (!latestUrl || !badge) {
             return;
@@ -143,13 +190,32 @@
         setInterval(checkLatest, 30000);
     }
 
+    // =========================================
+    // Form helpers
+    // =========================================
+    function setupFormEnhancements() {
+        // Auto-hide success messages after 5 seconds
+        const successMessages = document.querySelectorAll('.flash-success, .messages .success');
+        successMessages.forEach(function (msg) {
+            setTimeout(() => {
+                msg.style.transition = 'opacity 0.5s';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            }, 5000);
+        });
+    }
+
+    // =========================================
+    // Initialize
+    // =========================================
     document.addEventListener('DOMContentLoaded', function () {
         setupMobileMenu();
         setupPasswordToggles();
         setupChatAutoScroll();
         setupNotifications();
+        setupFormEnhancements();
 
-        // Expose CSRF helper for inline page scripts that still use fetch + POST.
+        // Expose CSRF helper for inline page scripts
         window.getCookie = getCookie;
     });
 })();

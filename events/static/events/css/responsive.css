@@ -293,12 +293,6 @@ textarea {
     min-height: 44px;
 }
 
-/* Исключения для inline элементов */
-.btn-sm {
-    min-height: 36px;
-    min-width: 36px;
-}
-
 /* Формы - поля ввода */
 .input {
     min-height: 44px;

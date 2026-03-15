@@ -27,8 +27,13 @@ def remove_volunteer_from_event_channels(user, event):
 
 
 def submit_event_registration(form, event, volunteer, existing_registration=None):
+    """
+    Обрабатывает заявку на участие в событии.
+    Поддерживает повторную подачу заявки при статусе 'rejected' или 'cancelled'.
+    """
     should_notify_organizer = True
 
+    # Если есть существующая заявка в статусе для повторной подачи
     if existing_registration and existing_registration.status in REAPPLY_REGISTRATION_STATUSES:
         registration = existing_registration
         registration.status = 'pending'
@@ -39,14 +44,17 @@ def submit_event_registration(form, event, volunteer, existing_registration=None
         success_message = 'Заявка отправлена повторно.'
     else:
         try:
+            # Пытаемся создать новую заявку
             registration = form.save(commit=False)
             registration.event = event
             registration.volunteer = volunteer
             registration.save()
             success_message = 'Вы успешно записались на событие!'
         except IntegrityError:
+            # Заявка уже существует
             registration = EventRegistration.objects.get(event=event, volunteer=volunteer)
             if registration.status in REAPPLY_REGISTRATION_STATUSES:
+                # Повторная подача
                 registration.status = 'pending'
                 registration.message = form.cleaned_data['message']
                 registration.completed_at = None
@@ -54,9 +62,11 @@ def submit_event_registration(form, event, volunteer, existing_registration=None
                 remove_volunteer_from_event_channels(volunteer, event)
                 success_message = 'Заявка отправлена повторно.'
             else:
+                # Заявка уже есть в активном статусе
                 should_notify_organizer = False
                 success_message = 'Вы уже записаны на это событие.'
 
+    # Отправляем уведомления
     if should_notify_organizer:
         Notification.objects.create(
             user=event.organizer,
@@ -66,7 +76,6 @@ def submit_event_registration(form, event, volunteer, existing_registration=None
             related_event=event,
             related_registration=registration,
         )
-        # Уведомление для волонтера о成功ной заявке
         Notification.objects.create(
             user=volunteer,
             type='new_application',

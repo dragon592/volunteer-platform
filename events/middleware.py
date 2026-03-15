@@ -1,3 +1,4 @@
+import urllib.parse
 from django.shortcuts import redirect
 from django.urls import reverse
 
@@ -9,6 +10,7 @@ class LoginRequiredMiddleware:
     - Страницы allauth (/accounts/)
     - Статические файлы
     - Медиа файлы
+    - Health check endpoint
     """
     def __init__(self, get_response):
         self.get_response = get_response
@@ -19,6 +21,7 @@ class LoginRequiredMiddleware:
             '/register/',  # custom register view
             '/static/',
             '/media/',
+            '/health/',    # health check endpoint for Render
         ]
 
     def __call__(self, request):
@@ -41,6 +44,7 @@ class LoginRequiredMiddleware:
 
         # Если пользователь не аутентифицирован - перенаправляем на страницу входа
         if not request.user.is_authenticated:
-            return redirect(f'/login/?next={request.path}')
+            next_url = urllib.parse.quote(request.path)
+            return redirect(f'/login/?next={next_url}')
 
         return self.get_response(request)

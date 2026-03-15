@@ -39,6 +39,7 @@ def available_channels_for_user(user):
             ChatChannel.objects.filter(
                 Q(event__organizer=user) | Q(memberships__user=user),
                 is_archived=False,
+                event__isnull=False,  # Исключаем каналы без события
             )
             .select_related('event')
             .distinct()
@@ -53,6 +54,7 @@ def available_channels_for_user(user):
                 event__registrations__status__in=APPROVED_REGISTRATION_STATUSES,
             ),
             is_archived=False,
+            event__isnull=False,  # Исключаем каналы без события
         )
         .select_related('event')
         .distinct()

@@ -12,6 +12,9 @@ from .models import Notification
 
 @login_required
 def notifications_list(request):
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_list')
     notifications_qs = Notification.objects.filter(user=request.user).select_related('related_event')
     filter_type = request.GET.get('filter', 'all')
     if filter_type == 'unread':
@@ -35,6 +38,9 @@ def notifications_list(request):
 @login_required
 @require_POST
 def notification_mark_read(request, pk):
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_list')
     notification = get_object_or_404(Notification, pk=pk, user=request.user)
     notification.is_read = True
     notification.save(update_fields=['is_read'])
@@ -48,6 +54,9 @@ def notification_mark_read(request, pk):
 @login_required
 @require_POST
 def notification_mark_all_read(request):
+    if not hasattr(request.user, 'profile'):
+        messages.error(request, 'Профиль не найден.')
+        return redirect('event_list')
     Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -60,6 +69,8 @@ def notification_mark_all_read(request):
 @login_required
 @rate_limit('notifications_count', limit=180, window_seconds=60)
 def notifications_unread_count(request):
+    if not hasattr(request.user, 'profile'):
+        return JsonResponse({'count': 0}, status=200)
     count = Notification.objects.filter(user=request.user, is_read=False).count()
     return JsonResponse({'count': count})
 
@@ -67,6 +78,8 @@ def notifications_unread_count(request):
 @login_required
 @rate_limit('notifications_latest', limit=120, window_seconds=60)
 def notifications_latest(request):
+    if not hasattr(request.user, 'profile'):
+        return JsonResponse({'notifications': [], 'count': 0}, status=200)
     unread_qs = (
         Notification.objects.filter(user=request.user, is_read=False)
         .select_related('related_event')

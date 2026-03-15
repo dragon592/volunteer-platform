@@ -6,9 +6,8 @@ services:
       pip install -r requirements.txt
       python manage.py collectstatic --noinput --clear
       python manage.py migrate --noinput
-      python import_data.py data_dump.json
     startCommand: gunicorn volunteer.wsgi:application --log-file -
-    healthCheckPath: /
+    healthCheckPath: /health/
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -16,7 +15,7 @@ services:
           property: connectionString
       - key: DEBUG
         value: False
-            - key: SECRET_KEY
+      - key: SECRET_KEY
         generateValue: true
       - key: GOOGLE_CLIENT_ID
         value: "YOUR_GOOGLE_CLIENT_ID_HERE"
