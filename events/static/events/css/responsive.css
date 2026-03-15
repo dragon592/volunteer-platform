@@ -458,5 +458,4 @@ textarea {
 .event-cta:hover {
     color: #15803d;
 }
-@ m e d i a   ( m i n - w i d t h :   6 4 1 p x )   {   . m e n u - t o g g l e   {   d i s p l a y :   n o n e   ! i m p o r t a n t ;   }   }  
- 
+@media (min-width: 641px) { .menu-toggle { display: none !important; } }
