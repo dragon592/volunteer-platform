@@ -52,6 +52,171 @@
                 const show = field.type === 'password';
                 field.type = show ? 'text' : 'password';
                 button.textContent = show ? 'Скрыть' : 'Показать';
+                button.setAttribute('aria-label', show ? 'Скрыть пароль' : 'Показать пароль');
+                
+                // Add subtle animation
+                field.style.transition = 'all 0.2s ease';
+                field.style.boxShadow = show ? '0 0 0 4px rgba(28, 110, 91, 0.12)' : '';
+                setTimeout(() => {
+                    field.style.boxShadow = '';
+                }, 200);
+            });
+        });
+    }
+
+    // =========================================
+    // Auth page animations
+    // =========================================
+    function setupAuthAnimations() {
+        const authPage = document.querySelector('.auth-page');
+        if (!authPage) {
+            return;
+        }
+
+        // Animate form fields on focus
+        const fields = authPage.querySelectorAll('.field');
+        fields.forEach(function (field, index) {
+            field.style.animationDelay = (0.1 * (index + 1)) + 's';
+        });
+
+        // Smooth transition for error states
+        const errorContainers = authPage.querySelectorAll('.auth-errors');
+        errorContainers.forEach(function (error) {
+            error.style.animation = 'shake 0.5s ease';
+        });
+
+        // Add hover effect to role cards
+        const roleCards = authPage.querySelectorAll('.auth-role-card');
+        roleCards.forEach(function (card) {
+            card.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Stats cards hover effect
+        const statsCards = authPage.querySelectorAll('.auth-side-stats div');
+        statsCards.forEach(function (card) {
+            card.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    }
+
+    // =========================================
+    // Form validation enhancement
+    // =========================================
+    function setupAuthFormValidation() {
+        const authForm = document.querySelector('.auth-form-grid');
+        if (!authForm) {
+            return;
+        }
+
+        // Add real-time validation feedback
+        const inputs = authForm.querySelectorAll('input[required]');
+        inputs.forEach(function (input) {
+            input.addEventListener('blur', function () {
+                if (this.value.trim() === '') {
+                    this.style.borderColor = '#dc2626';
+                } else {
+                    this.style.borderColor = '';
+                }
+            });
+
+            input.addEventListener('input', function () {
+                if (this.style.borderColor === 'rgb(220, 38, 38)') {
+                    if (this.value.trim() !== '') {
+                        this.style.borderColor = '';
+                    }
+                }
+            });
+        });
+
+        // Smooth form submission
+        authForm.addEventListener('submit', function (e) {
+            const submitBtn = this.querySelector('.btn-primary');
+            if (submitBtn) {
+                submitBtn.style.pointerEvents = 'none';
+                submitBtn.style.opacity = '0.7';
+                
+                // Re-enable after 3 seconds in case of error
+                setTimeout(() => {
+                    submitBtn.style.pointerEvents = '';
+                    submitBtn.style.opacity = '';
+                }, 3000);
+            }
+        });
+    }
+
+    // =========================================
+    // Smooth scroll to errors
+    // =========================================
+    function setupErrorScrolling() {
+        const authForm = document.querySelector('.auth-form-grid');
+        if (!authForm) {
+            return;
+        }
+
+        const errorContainer = authForm.querySelector('.auth-errors');
+        if (errorContainer) {
+            errorContainer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+    }
+
+    // =========================================
+    // Role card selection enhancement
+    // =========================================
+    function setupRoleCardSelection() {
+        const roleCards = document.querySelectorAll('.auth-role-card');
+        roleCards.forEach(function (card) {
+            const radio = card.querySelector('input[type="radio"]');
+            if (!radio) return;
+
+            // Click entire card to select
+            card.addEventListener('click', function (e) {
+                if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                    radio.checked = true;
+                    // Trigger change event for any listeners
+                    radio.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+
+            // Keyboard accessibility
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('role', 'radio');
+            if (radio.checked) {
+                card.setAttribute('aria-checked', 'true');
+            } else {
+                card.setAttribute('aria-checked', 'false');
+            }
+
+            card.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+
+            radio.addEventListener('change', function () {
+                if (radio.checked) {
+                    card.setAttribute('aria-checked', 'true');
+                    // Add visual feedback
+                    card.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 200);
+                } else {
+                    card.setAttribute('aria-checked', 'false');
+                }
             });
         });
     }
@@ -310,6 +475,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         setupMobileMenu();
         setupPasswordToggles();
+        setupAuthAnimations();
+        setupAuthFormValidation();
+        setupErrorScrolling();
+        setupRoleCardSelection();
         setupChatAutoScroll();
         setupNotifications();
         setupFormEnhancements();
