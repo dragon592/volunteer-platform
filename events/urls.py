@@ -18,6 +18,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
     path('my-events/', views.my_events, name='my_events'),
+    path('leaderboard/', views.leaderboard_view, name='leaderboard'),
     path('volunteers/', views.volunteer_search, name='volunteer_search'),
     path('volunteers/<int:pk>/', views.volunteer_profile, name='volunteer_profile'),
     path('notifications/', views.notifications_list, name='notifications_list'),

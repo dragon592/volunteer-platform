@@ -1,0 +1,129 @@
+{% extends 'index.html' %}
+
+{% block title %}Рейтинг волонтеров - Open Hearts{% endblock %}
+
+{% block content %}
+<div class="container page-stack">
+    <section class="hero hero-leaderboard">
+        <div class="hero-copy">
+            <span class="hero-kicker">Open Hearts</span>
+            <h1>Рейтинг волонтеров</h1>
+            <p>Самые активные участники платформы. Рейтинг обновляется автоматически на основе завершенных событий и опыта.</p>
+            <div class="hero-metrics">
+                <div class="hero-metric">
+                    <strong>{{ total_volunteers }}</strong>
+                    <span>волонтеров</span>
+                </div>
+                <div class="hero-metric">
+                    <strong>{% if leaderboard %}{{ leaderboard.0.xp }}{% else %}0{% endif %}</strong>
+                    <span>максимум XP</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-orb hero-orb-one"></div>
+        <div class="hero-orb hero-orb-two"></div>
+    </section>
+
+    <section class="section">
+        <div class="leaderboard-container">
+            <!-- Top 3 Podium -->
+            {% if leaderboard|length >= 3 %}
+            <div class="leaderboard-podium">
+                {% for item in leaderboard|slice:"0:3" %}
+                <div class="podium-item podium-{{ forloop.counter }}">
+                    <div class="podium-avatar">
+                        {% if item.avatar %}
+                            <img src="{{ item.avatar }}" alt="{{ item.full_name }}">
+                        {% else %}
+                            <span class="avatar-fallback">{{ item.full_name|first|upper }}</span>
+                        {% endif %}
+                        <span class="podium-rank">{{ forloop.counter }}</span>
+                    </div>
+                    <div class="podium-info">
+                        <h3>{{ item.full_name }}</h3>
+                        <p>{{ item.level_name }} • Уровень {{ item.level }}</p>
+                        <div class="podium-stats">
+                            <span><strong>{{ item.xp }}</strong> XP</span>
+                            <span><strong>{{ item.completed_events }}</strong> событий</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Full Leaderboard Table -->
+            <div class="leaderboard-table-wrapper">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Волонтер</th>
+                            <th>Уровень</th>
+                            <th>XP</th>
+                            <th>Завершено событий</th>
+                            <th>Навыки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in leaderboard %}
+                        <tr class="{% if forloop.counter <= 3 %}top-three{% endif %}">
+                            <td class="rank-cell">
+                                <span class="rank-badge rank-{{ forloop.counter }}">{{ forloop.counter }}</span>
+                            </td>
+                            <td>
+                                <div class="volunteer-cell">
+                                    <div class="volunteer-avatar">
+                                        {% if item.avatar %}
+                                            <img src="{{ item.avatar }}" alt="{{ item.full_name }}">
+                                        {% else %}
+                                            <span class="avatar-fallback">{{ item.full_name|first|upper }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="volunteer-info">
+                                        <strong>{{ item.full_name }}</strong>
+                                        <span>@{{ item.username }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="level-badge">
+                                    <span class="level-icon">{{ item.level_icon }}</span>
+                                    <span>{{ item.level_name }}</span>
+                                </div>
+                            </td>
+                            <td><strong class="xp-value">{{ item.xp }}</strong></td>
+                            <td>{{ item.completed_events }}</td>
+                            <td>
+                                <div class="skills-list">
+                                    {% for skill in item.skills %}
+                                    <span class="skill-tag">{{ skill.name }}</span>
+                                    {% empty %}
+                                    <span class="muted">—</span>
+                                    {% endfor %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty-state">Нет волонтеров для отображения</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-refresh leaderboard every 30 seconds
+    setInterval(function() {
+        window.location.reload();
+    }, 30000);
+});
+</script>
+{% endblock %}

@@ -18,7 +18,7 @@ from .views_notifications import (
     notifications_list,
     notifications_unread_count,
 )
-from .views_profiles import profile_view, volunteer_profile, volunteer_search
+from .views_profiles import profile_view, volunteer_profile, volunteer_search, leaderboard_view
 
 __all__ = [
     'event_list',
@@ -34,6 +34,7 @@ __all__ = [
     'logout_view',
     'profile_view',
     'my_events',
+    'leaderboard_view',
     'volunteer_search',
     'volunteer_profile',
     'notifications_list',

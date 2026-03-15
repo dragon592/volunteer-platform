@@ -121,3 +121,55 @@ def volunteer_profile(request, pk):
         'achievements': achievements,
     }
     return render(request, 'events/volunteer_profile.html', context)
+
+
+@login_required
+def leaderboard_view(request):
+    from django.db.models import Count, Q, Prefetch
+    
+    # Получаем волонтеров с их статистикой
+    volunteers = UserProfile.objects.filter(role='volunteer').select_related('user')
+    
+    # Аннотируем количество завершенных событий
+    volunteers = volunteers.annotate(
+        completed_events_count=Count(
+            'user__event_registrations',
+            filter=Q(user__event_registrations__status='completed')
+        )
+    )
+    
+    # Сортируем по XP и завершенным событиям
+    volunteers = volunteers.order_by('-xp', '-completed_events_count', 'user__date_joined')
+    
+    # Prefetch skills для всех волонтеров
+    volunteers = volunteers.prefetch_related('skills')
+    
+    # Добавляем ранги
+    leaderboard_data = []
+    for idx, profile in enumerate(volunteers, start=1):
+        # Получаем аватар
+        avatar_url = None
+        if profile.avatar_url:
+            avatar_url = profile.avatar_url
+        elif profile.avatar:
+            avatar_url = profile.avatar.url
+        
+        leaderboard_data.append({
+            'rank': idx,
+            'profile': profile,
+            'username': profile.user.username,
+            'full_name': profile.user.get_full_name() or profile.user.username,
+            'avatar': avatar_url,
+            'xp': profile.xp,
+            'level': profile.level,
+            'level_name': profile.level_name,
+            'level_icon': profile.level_icon,
+            'completed_events': profile.completed_events_count,
+            'skills': list(profile.skills.all()[:3]),
+        })
+    
+    context = {
+        'leaderboard': leaderboard_data,
+        'total_volunteers': len(leaderboard_data),
+    }
+    return render(request, 'events/leaderboard.html', context)

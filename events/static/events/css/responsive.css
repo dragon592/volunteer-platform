@@ -255,6 +255,36 @@
         grid-template-columns: 1fr;
         gap: 24px;
     }
+
+    /* Mobile search toggle button */
+    .mobile-search-toggle {
+        position: fixed;
+        top: 80px;
+        right: 16px;
+        z-index: 45;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid var(--border);
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-search-toggle:hover {
+        background: var(--surface-soft);
+        transform: translateY(-2px);
+    }
+
+    .mobile-search-toggle.active {
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+    }
 }
 
 /* =========================================
@@ -566,6 +596,157 @@ textarea {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+/* =========================================
+   Мобильные улучшения для таблиц и карточек
+   ========================================= */
+@media (max-width: 640px) {
+    /* Leaderboard table mobile */
+    .leaderboard-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .leaderboard-table {
+        min-width: 600px;
+    }
+    
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+    
+    .volunteer-cell {
+        gap: 10px;
+    }
+    
+    .volunteer-avatar {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .volunteer-info strong {
+        font-size: 14px;
+    }
+    
+    .skills-list {
+        gap: 4px;
+    }
+    
+    .skill-tag {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+    
+    /* Event cards mobile spacing */
+    .event-card--enhanced {
+        margin-bottom: 16px;
+    }
+    
+    .event-cover--enhanced {
+        height: 160px;
+    }
+    
+    .event-content--enhanced {
+        padding: 16px;
+    }
+    
+    .event-title {
+        font-size: 1rem;
+    }
+    
+    .event-meta-list {
+        gap: 8px;
+        font-size: 0.8rem;
+    }
+    
+    /* Form improvements */
+    .field {
+        margin-bottom: 16px;
+    }
+    
+    .input,
+    select,
+    textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 12px 14px;
+    }
+    
+    /* Button improvements */
+    .btn {
+        min-height: 48px;
+        padding: 12px 16px;
+        font-size: 16px;
+    }
+    
+    /* Header search mobile */
+    .header-search {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .search-wrapper {
+        height: 48px;
+    }
+    
+    .search-input {
+        font-size: 16px;
+        height: 100%;
+    }
+    
+    /* Filter dropdown mobile */
+    .filter-dropdown {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90vw;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 1000;
+        border-radius: 20px;
+    }
+    
+    /* Touch-friendly spacing */
+    .main-nav a {
+        min-height: 48px;
+        padding: 14px 16px;
+        font-size: 16px;
+    }
+    
+    .icon-link {
+        min-width: 48px;
+        min-height: 48px;
+    }
+    
+    .user-chip {
+        min-height: 48px;
+        padding: 8px 12px;
+    }
+}
+
+/* =========================================
+   Планшетные устройства (768px+)
+   ========================================= */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        width: min(100%, calc(100vw - 32px));
+    }
+    
+    .event-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    
+    .leaderboard-podium {
+        gap: 12px;
+    }
+    
+    .filter-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .toast {
