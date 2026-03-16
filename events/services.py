@@ -152,7 +152,7 @@ def notify_event_updated(event, participants=None):
     notifications = [
         Notification(
             user=participant,
-            type='new_event',
+            type='new_event',  # TODO: Создать отдельный тип 'event_updated' в модели Notification
             title='Событие обновлено',
             message=f'Событие "{event.title}" было обновлено организатором.',
             related_event=event,
