@@ -3,6 +3,7 @@ from django.db import models, transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.urls import reverse
 from .constants import VOLUNTEER_LEVELS
 
 
@@ -411,6 +412,12 @@ class Notification(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.title}'
+
+    def get_absolute_url(self):
+        """Возвращает URL для уведомления (событие если есть, иначе список уведомлений)"""
+        if self.related_event:
+            return reverse('event_detail', kwargs={'pk': self.related_event.pk})
+        return reverse('notifications_list')
 
     @property
     def icon(self):

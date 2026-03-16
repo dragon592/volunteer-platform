@@ -147,11 +147,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h3>Организатор</h3>
                     <div class="organizer-row">
                         {% if event.organizer.profile.avatar %}
-                            <img class="avatar-md" src="{{ event.organizer.profile.avatar.url }}" alt="{{ event.organizer.get_full_name }}">
+                            <img class="avatar-md" src="{{ event.organizer.profile.avatar.url }}" alt="{{ event.organizer.get_full_name|default:event.organizer.username }}">
                         {% elif event.organizer.profile.avatar_url %}
-                            <img class="avatar-md" src="{{ event.organizer.profile.avatar_url }}" alt="{{ event.organizer.get_full_name }}">
+                            <img class="avatar-md" src="{{ event.organizer.profile.avatar_url }}" alt="{{ event.organizer.get_full_name|default:event.organizer.username }}">
                         {% else %}
-                            <span class="avatar-fallback">{{ event.organizer.first_name|first|upper }}{{ event.organizer.last_name|first|upper }}</span>
+                            <span class="avatar-fallback avatar-md">{{ event.organizer.first_name|first|upper }}{{ event.organizer.last_name|first|upper }}</span>
                         {% endif %}
                         <div>
                             <strong>{{ event.organizer.get_full_name|default:event.organizer.username }}</strong>

@@ -62,16 +62,16 @@
                                 <div class="progress-ring">
                                     <svg viewBox="0 0 36 36">
                                         <path class="progress-ring__bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                        <path class="progress-ring__circle" stroke-dasharray="{{ event.approved_participants|default:event.registered_count }}, {{ event.max_volunteers }}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                        <path class="progress-ring__circle" stroke-dasharray="{{ event.registered_count }}, {{ event.max_volunteers }}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
                                     </svg>
                                     <div class="progress-ring__text">
-                                        <span class="progress-count">{{ event.approved_participants|default:event.registered_count }}</span>
+                                        <span class="progress-count">{{ event.registered_count }}</span>
                                         <span class="progress-max">/ {{ event.max_volunteers }}</span>
                                     </div>
                                 </div>
                             </div>
                             <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary">
-                                Участвовать
+                                {% if event.is_full %}Полный{% else %}Участвовать{% endif %}
                             </a>
                         </div>
                     </div>

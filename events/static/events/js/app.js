@@ -1,4 +1,81 @@
+/**
+ * Open Hearts - Main Application JavaScript
+ * Модульная архитектура с разделением на сервисы, компоненты и хуки
+ */
+
 (function () {
+    // =========================================
+    // Импорт модулей (в будущем можно использовать ES6 modules)
+    // =========================================
+    
+    // Подключаем API сервис
+    const EventAPI = window.EventAPI || (() => {
+        // Встроенная версия если внешний скрипт не загружен
+        const API_BASE_URL = window.location.origin;
+        
+        function getCSRFToken() {
+            const name = 'csrftoken';
+            const cookies = document.cookie ? document.cookie.split(';') : [];
+            for (const cookie of cookies) {
+                const c = cookie.trim();
+                if (c.startsWith(name + '=')) {
+                    return decodeURIComponent(c.slice(name.length + 1));
+                }
+            }
+            return null;
+        }
+        
+        async function apiRequest(endpoint, options = {}) {
+            const url = `${API_BASE_URL}${endpoint}`;
+            const csrfToken = getCSRFToken();
+            
+            const defaultHeaders = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            };
+            
+            if (csrfToken) {
+                defaultHeaders['X-CSRFToken'] = csrfToken;
+            }
+            
+            const config = {
+                ...options,
+                headers: { ...defaultHeaders, ...options.headers },
+                credentials: 'include',
+            };
+            
+            try {
+                const response = await fetch(url, config);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const error = new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+                    error.status = response.status;
+                    error.data = errorData;
+                    throw error;
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('API Request failed:', error);
+                throw error;
+            }
+        }
+        
+        return {
+            getEvents: (params) => {
+                const queryString = new URLSearchParams(params).toString();
+                return apiRequest(queryString ? `/events/?${queryString}` : '/events/');
+            },
+            getEvent: (id) => apiRequest(`/events/${id}/`),
+            registerForEvent: (id, message) => 
+                apiRequest(`/events/${id}/register/`, {
+                    method: 'POST',
+                    body: JSON.stringify({ message }),
+                }),
+            cancelRegistration: (id) =>
+                apiRequest(`/events/${id}/cancel/`, { method: 'POST' }),
+        };
+    })();
+
     // =========================================
     // Cookie helper
     // =========================================
@@ -24,12 +101,10 @@
             return;
         }
     
-        // Ensure menu starts closed
         menu.classList.remove('active');
         overlay.classList.remove('active');
         toggle.setAttribute('aria-expanded', 'false');
         
-        // Ensure proper z-index stacking
         const header = document.querySelector('.site-header');
         if (header) {
             header.style.position = 'relative';
@@ -45,11 +120,9 @@
             if (newState) {
                 menu.classList.add('active');
                 overlay.classList.add('active');
-                // Prevent body scroll when menu is open
                 document.body.style.overflow = 'hidden';
                 document.body.style.position = 'fixed';
                 document.body.style.width = '100%';
-                // Ensure proper z-index
                 toggle.style.zIndex = '1003';
                 menu.style.zIndex = '1002';
                 overlay.style.zIndex = '1001';
@@ -73,7 +146,6 @@
             document.body.style.width = '';
         });
     
-        // Close menu when clicking on a link
         menu.addEventListener('click', function (e) {
             if (e.target.tagName === 'A' && !e.target.hasAttribute('data-menu-toggle')) {
                 toggle.setAttribute('aria-expanded', 'false');
@@ -85,7 +157,6 @@
             }
         });
     
-        // Close menu on escape key
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
                 toggle.setAttribute('aria-expanded', 'false');
@@ -97,7 +168,6 @@
             }
         });
         
-        // Handle touch events for better mobile experience
         let touchStartY = 0;
         menu.addEventListener('touchstart', function(e) {
             touchStartY = e.touches[0].clientY;
@@ -106,13 +176,11 @@
         menu.addEventListener('touchmove', function(e) {
             const touchY = e.touches[0].clientY;
             const diff = touchStartY - touchY;
-            // Only allow scrolling if not at the top and pulling down
             if (menu.scrollTop === 0 && diff > 0) {
                 e.preventDefault();
             }
         });
         
-        // Fix for iOS overscroll
         menu.addEventListener('touchmove', function(e) {
             if (menu.scrollTop === 0 && e.touches[0].clientY > touchStartY) {
                 e.preventDefault();
@@ -136,7 +204,6 @@
                 button.textContent = show ? 'Скрыть' : 'Показать';
                 button.setAttribute('aria-label', show ? 'Скрыть пароль' : 'Показать пароль');
                 
-                // Add subtle animation
                 field.style.transition = 'all 0.2s ease';
                 field.style.boxShadow = show ? '0 0 0 4px rgba(28, 110, 91, 0.12)' : '';
                 setTimeout(() => {
@@ -155,19 +222,16 @@
             return;
         }
 
-        // Animate form fields on focus
         const fields = authPage.querySelectorAll('.field');
         fields.forEach(function (field, index) {
             field.style.animationDelay = (0.1 * (index + 1)) + 's';
         });
 
-        // Smooth transition for error states
         const errorContainers = authPage.querySelectorAll('.auth-errors');
         errorContainers.forEach(function (error) {
             error.style.animation = 'shake 0.5s ease';
         });
 
-        // Add hover effect to role cards
         const roleCards = authPage.querySelectorAll('.auth-role-card');
         roleCards.forEach(function (card) {
             card.addEventListener('mouseenter', function () {
@@ -178,7 +242,6 @@
             });
         });
 
-        // Stats cards hover effect
         const statsCards = authPage.querySelectorAll('.auth-side-stats div');
         statsCards.forEach(function (card) {
             card.addEventListener('mouseenter', function () {
@@ -199,7 +262,7 @@
             return;
         }
 
-        // Add real-time validation feedback
+        // Real-time validation feedback
         const inputs = authForm.querySelectorAll('input[required]');
         inputs.forEach(function (input) {
             input.addEventListener('blur', function () {
@@ -225,8 +288,6 @@
             if (submitBtn) {
                 submitBtn.style.pointerEvents = 'none';
                 submitBtn.style.opacity = '0.7';
-                
-                // Re-enable after 3 seconds in case of error
                 setTimeout(() => {
                     submitBtn.style.pointerEvents = '';
                     submitBtn.style.opacity = '';
@@ -262,16 +323,13 @@
             const radio = card.querySelector('input[type="radio"]');
             if (!radio) return;
 
-            // Click entire card to select
             card.addEventListener('click', function (e) {
                 if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
                     radio.checked = true;
-                    // Trigger change event for any listeners
                     radio.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             });
 
-            // Keyboard accessibility
             card.setAttribute('tabindex', '0');
             card.setAttribute('role', 'radio');
             if (radio.checked) {
@@ -291,7 +349,6 @@
             radio.addEventListener('change', function () {
                 if (radio.checked) {
                     card.setAttribute('aria-checked', 'true');
-                    // Add visual feedback
                     card.style.transform = 'scale(1.02)';
                     setTimeout(() => {
                         card.style.transform = '';
@@ -441,7 +498,6 @@
     // Form helpers
     // =========================================
     function setupFormEnhancements() {
-        // Auto-hide success messages after 5 seconds
         const successMessages = document.querySelectorAll('.flash-success, .messages .success');
         successMessages.forEach(function (msg) {
             setTimeout(() => {
@@ -453,7 +509,7 @@
     }
 
     // =========================================
-    // Header Search & Filters - Compact Version
+    // Header Search & Filters
     // =========================================
     function setupHeaderSearch() {
         const searchContainer = document.querySelector('.header-search');
@@ -462,14 +518,12 @@
         const filterToggle = document.querySelector('[data-filter-toggle]');
         const filterDropdown = document.querySelector('[data-filter-dropdown]');
         
-        // Handle compact search toggle
         if (searchToggle && searchDropdown) {
             searchToggle.addEventListener('click', function (e) {
                 e.preventDefault();
                 const isActive = searchDropdown.classList.toggle('active');
                 searchToggle.setAttribute('aria-expanded', isActive);
                 
-                // Close on outside click
                 if (isActive) {
                     setTimeout(() => {
                         document.addEventListener('click', closeSearchOutside);
@@ -488,7 +542,6 @@
             }
         }
 
-        // Handle filter toggle inside search dropdown
         if (filterToggle && filterDropdown) {
             filterToggle.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -497,7 +550,6 @@
                 filterToggle.setAttribute('aria-expanded', isActive);
             });
 
-            // Save filter state to localStorage
             const inputs = filterDropdown.querySelectorAll('select, input');
             inputs.forEach(function (input) {
                 const savedValue = localStorage.getItem('filter_' + input.name);
@@ -521,7 +573,6 @@
                 }
             }
 
-            // Clear filters on reset button click
             const resetLink = filterDropdown.querySelector('a[href*="event_list"]');
             if (resetLink) {
                 resetLink.addEventListener('click', function () {
@@ -533,7 +584,6 @@
             }
         }
 
-        // Close dropdowns on escape key
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 if (searchDropdown) {
@@ -549,91 +599,6 @@
     }
 
     // =========================================
-    // Initialize
-    // =========================================
-    document.addEventListener('DOMContentLoaded', function () {
-        setupMobileMenu();
-        setupPasswordToggles();
-        setupAuthAnimations();
-        setupAuthFormValidation();
-        setupErrorScrolling();
-        setupRoleCardSelection();
-        setupChatAutoScroll();
-        setupNotifications();
-        setupFormEnhancements();
-        setupHeaderSearch();
-
-        // Expose CSRF helper for inline page scripts
-        window.getCookie = getCookie;
-    });
-
-    // =========================================
-    // Search & Filters Toggle
-    // =========================================
-    function setupSearchFilters() {
-        const searchToggle = document.querySelector('[data-search-toggle]');
-        const searchDropdown = document.querySelector('[data-search-dropdown]');
-        const searchClose = document.querySelector('[data-search-close]');
-        
-        if (!searchToggle || !searchDropdown) {
-            return;
-        }
-
-        // Toggle dropdown/modal
-        searchToggle.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const isActive = searchDropdown.classList.contains('active');
-            
-            if (isActive) {
-                closeSearchFilters();
-            } else {
-                openSearchFilters();
-            }
-        });
-
-        // Close button
-        if (searchClose) {
-            searchClose.addEventListener('click', closeSearchFilters);
-        }
-
-        // Close on overlay click (for mobile modal)
-        searchDropdown.addEventListener('click', function (e) {
-            if (e.target === searchDropdown) {
-                closeSearchFilters();
-            }
-        });
-
-        // Close on escape key
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && searchDropdown.classList.contains('active')) {
-                closeSearchFilters();
-            }
-        });
-
-        function openSearchFilters() {
-            searchDropdown.classList.add('active');
-            searchToggle.setAttribute('aria-expanded', 'true');
-            
-            // For mobile modal, prevent body scroll
-            if (window.innerWidth <= 767) {
-                document.body.style.overflow = 'hidden';
-                document.body.style.position = 'fixed';
-                document.body.style.width = '100%';
-            }
-        }
-
-        function closeSearchFilters() {
-            searchDropdown.classList.remove('active');
-            searchToggle.setAttribute('aria-expanded', 'false');
-            
-            // Restore body scroll
-            document.body.style.overflow = '';
-            document.body.style.position = '';
-            document.body.style.width = '';
-        }
-    }
-
-    // =========================================
     // Profile Dropdown
     // =========================================
     function setupProfileDropdown() {
@@ -645,14 +610,12 @@
             return;
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function (e) {
             if (!wrapper.contains(e.target)) {
                 closeProfileDropdown();
             }
         });
 
-        // Toggle dropdown
         toggle.addEventListener('click', function (e) {
             e.stopPropagation();
             const isActive = menu.classList.contains('active');
@@ -664,7 +627,6 @@
             }
         });
 
-        // Close on escape key
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && menu.classList.contains('active')) {
                 closeProfileDropdown();
@@ -693,18 +655,10 @@
             return;
         }
 
-        // Initialize search state from URL params
         const urlParams = new URLSearchParams(window.location.search);
         const searchValue = urlParams.get('search') || '';
         searchInput.value = searchValue;
 
-        // Update form on change
-        searchInput.addEventListener('input', function (e) {
-            // The form will be submitted via the "Применить" button
-            // This listener ensures the input is controlled
-        });
-
-        // Auto-submit on Enter key
         searchInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -713,7 +667,95 @@
         });
     }
 
-    // Initialize search filters
+    // =========================================
+    // Event Registration with API
+    // =========================================
+    function setupEventRegistration() {
+        const registrationForms = document.querySelectorAll('[data-event-registration]');
+        
+        registrationForms.forEach(function (form) {
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                
+                const eventId = this.dataset.eventId;
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                
+                try {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Отправка...';
+                    
+                    const message = this.querySelector('[name="message"]')?.value || '';
+                    const result = await EventAPI.registerForEvent(eventId, message);
+                    
+                    if (result.success) {
+                        showToast(result.message || 'Заявка отправлена!', 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    } else {
+                        throw new Error(result.error?.message || 'Ошибка регистрации');
+                    }
+                } catch (error) {
+                    showToast(error.message || 'Ошибка регистрации', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                }
+            });
+        });
+    }
+
+    // =========================================
+    // Infinite Scroll for Events (опционально)
+    // =========================================
+    function setupInfiniteScroll() {
+        const container = document.querySelector('.events-grid');
+        if (!container) return;
+        
+        let loading = false;
+        let page = 1;
+        let hasMore = true;
+        
+        async function loadMore() {
+            if (loading || !hasMore) return;
+            
+            loading = true;
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('page', page + 1);
+            
+            try {
+                const result = await EventAPI.getEvents(Object.fromEntries(urlParams));
+                if (result.events && result.events.length > 0) {
+                    result.events.forEach(event => {
+                        const card = new EventCard(event);
+                        card.mount(container);
+                    });
+                    page++;
+                } else {
+                    hasMore = false;
+                }
+            } catch (error) {
+                console.error('Failed to load more events:', error);
+            } finally {
+                loading = false;
+            }
+        }
+        
+        window.addEventListener('scroll', function () {
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const clientHeight = document.documentElement.clientHeight;
+            
+            if (scrollTop + clientHeight >= scrollHeight - 100) {
+                loadMore();
+            }
+        });
+    }
+
+    // =========================================
+    // Initialize
+    // =========================================
     document.addEventListener('DOMContentLoaded', function () {
         setupMobileMenu();
         setupPasswordToggles();
@@ -727,8 +769,78 @@
         setupHeaderSearch();
         setupProfileDropdown();
         setupSearchInput();
-
-        // Expose CSRF helper for inline page scripts
+        setupEventRegistration();
+        // setupInfiniteScroll(); // Раскомментировать для бесконечной прокрутки
+        
+        // Expose CSRF helper
         window.getCookie = getCookie;
+        
+        console.log('Open Hearts app initialized');
     });
+
+    // =========================================
+    // Search & Filters Toggle (legacy)
+    // =========================================
+    function setupSearchFilters() {
+        const searchToggle = document.querySelector('[data-search-toggle]');
+        const searchDropdown = document.querySelector('[data-search-dropdown]');
+        const searchClose = document.querySelector('[data-search-close]');
+        
+        if (!searchToggle || !searchDropdown) {
+            return;
+        }
+
+        searchToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isActive = searchDropdown.classList.contains('active');
+            
+            if (isActive) {
+                closeSearchFilters();
+            } else {
+                openSearchFilters();
+            }
+        });
+
+        if (searchClose) {
+            searchClose.addEventListener('click', closeSearchFilters);
+        }
+
+        searchDropdown.addEventListener('click', function (e) {
+            if (e.target === searchDropdown) {
+                closeSearchFilters();
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && searchDropdown.classList.contains('active')) {
+                closeSearchFilters();
+            }
+        });
+
+        function openSearchFilters() {
+            searchDropdown.classList.add('active');
+            searchToggle.setAttribute('aria-expanded', 'true');
+            
+            if (window.innerWidth <= 767) {
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+            }
+        }
+
+        function closeSearchFilters() {
+            searchDropdown.classList.remove('active');
+            searchToggle.setAttribute('aria-expanded', 'false');
+            
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+        }
+    }
+
+    // Инициализация дублирующегося кода (уже есть выше, но оставим для совместимости)
+    document.addEventListener('DOMContentLoaded', function () {
+        setupSearchFilters();
+    });
+
 })();

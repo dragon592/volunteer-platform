@@ -141,6 +141,15 @@
                                             </select>
                                         </div>
                                         <div class="filter-field">
+                                            <label for="filter-skill">Навыки</label>
+                                            <select id="filter-skill" name="skill">
+                                                <option value="">Все навыки</option>
+                                                {% for skill in skills %}
+                                                    <option value="{{ skill.pk }}" {% if selected_skill == skill.pk|stringformat:"s" %}selected{% endif %}>{{ skill.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="filter-field">
                                             <label for="filter-date-from">Дата от</label>
                                             <input type="date" id="filter-date-from" name="date_from" value="{{ selected_date_from|default:'' }}">
                                         </div>
