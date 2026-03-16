@@ -300,47 +300,10 @@
         padding: var(--space-4);
     }
 
-    /* Event cards */
+    /* Event cards - using BEM classes from app.css */
     .event-grid {
         grid-template-columns: 1fr;
-        gap: var(--space-5);
-        margin-top: var(--space-5);
-    }
-
-    .event-card {
-        border-radius: var(--radius-lg);
-    }
-
-    .event-cover {
-        height: 180px;
-    }
-
-    .event-content {
-        padding: var(--space-5);
-    }
-
-    .event-title {
-        font-size: var(--font-size-lg);
-        margin-bottom: var(--space-3);
-    }
-
-    .event-description {
-        font-size: var(--font-size-sm);
-        margin-bottom: var(--space-4);
-    }
-
-    .event-meta {
-        margin-bottom: var(--space-4);
-        padding-bottom: var(--space-4);
-    }
-
-    .event-tags {
-        margin-bottom: var(--space-4);
-    }
-
-    .tag {
-        font-size: var(--font-size-xs);
-        padding: 3px 8px;
+        gap: var(--space-4);
     }
 
     /* Forms */
@@ -454,9 +417,13 @@
         padding-right: var(--space-6);
     }
 
+    .events-layout {
+        grid-template-columns: 1fr;
+    }
+    
     .event-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-6);
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
     }
 
     .header-search {
@@ -485,8 +452,13 @@
         padding-right: var(--space-8);
     }
 
+    .events-layout {
+        grid-template-columns: 1fr;
+    }
+    
     .event-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
     }
 
     .header-search {
@@ -822,8 +794,17 @@ textarea:focus-visible {
         width: min(100%, calc(100vw - 32px));
     }
     
+    .events-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .filter-card {
+        position: static;
+    }
+    
     .event-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 16px;
     }
     
