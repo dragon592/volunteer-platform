@@ -79,7 +79,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'events.middleware.LoginRequiredMiddleware',  # Custom middleware for login requirement
-    'events.middleware.error_handler.ErrorHandlerMiddleware',  # Global error handler
+    'events.error_handler.ErrorHandlerMiddleware',  # Global error handler
 ]
 
 ROOT_URLCONF = 'volunteer.urls'
@@ -168,7 +168,7 @@ REST_FRAMEWORK = {
         'anon': '100/day',
         'user': '1000/day'
     },
-    'EXCEPTION_HANDLER': 'events.middleware.error_handler.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'events.rest_exception_handler.custom_exception_handler',
 }
 
 # Database

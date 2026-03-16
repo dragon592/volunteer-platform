@@ -1,12 +1,19 @@
 """
 Кастомный обработчик исключений для Django REST Framework.
 """
-from rest_framework.views import exception_handler
-from rest_framework.response import Response
-from rest_framework import status
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Безопасный импорт DRF
+try:
+    from rest_framework.views import exception_handler
+    from rest_framework.response import Response
+    from rest_framework import status
+    DRF_AVAILABLE = True
+except ImportError:
+    DRF_AVAILABLE = False
+    exception_handler = None
 
 
 def custom_exception_handler(exc, context):
@@ -14,6 +21,10 @@ def custom_exception_handler(exc, context):
     Кастомный обработчик исключений DRF.
     Логирует ошибки и возвращает структурированный JSON ответ.
     """
+    # Если DRF не установлен, возвращаем None
+    if not DRF_AVAILABLE:
+        return None
+    
     # Сначала вызываем стандартный обработчик
     response = exception_handler(exc, context)
     
