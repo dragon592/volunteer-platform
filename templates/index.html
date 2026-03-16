@@ -79,75 +79,91 @@
                 <button
                     type="button"
                     class="search-toggle"
-                    aria-label="Поиск"
+                    aria-label="Поиск и фильтры"
                     data-search-toggle
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
+                    <span>Поиск и фильтры</span>
                 </button>
 
                 <div class="search-dropdown" data-search-dropdown>
                     <form method="get" action="{% url 'event_list' %}">
-                        <div class="search-wrapper">
-                            <span class="search-icon-inside">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </span>
-                            <input
-                                type="text"
-                                name="search"
-                                class="search-input"
-                                placeholder="Поиск событий..."
-                                value="{{ request.GET.search|default:'' }}"
-                                aria-label="Поиск событий"
-                            >
-                        </div>
-                        
-                        <div class="filter-dropdown" data-filter-dropdown>
-                            <div class="filter-grid">
-                                <div class="filter-field">
-                                    <label for="filter-type">Тип события</label>
-                                    <select id="filter-type" name="event_type">
-                                        <option value="">Все типы</option>
-                                        {% for type_key, type_label in event_type_choices %}
-                                            <option value="{{ type_key }}" {% if selected_type == type_key %}selected{% endif %}>{{ type_label }}</option>
-                                        {% endfor %}
-                                    </select>
+                        <div class="filters-panel">
+                            <div class="filters-header">
+                                <h3>Поиск и фильтры</h3>
+                                <button type="button" class="filters-close" data-search-close aria-label="Закрыть">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="filters-content">
+                                <div class="filters-section">
+                                    <label class="filters-label">Поиск события</label>
+                                    <div class="search-field">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                        <input
+                                            type="text"
+                                            name="search"
+                                            class="filters-input"
+                                            placeholder="Введите название события..."
+                                            value="{{ request.GET.search|default:'' }}"
+                                        >
+                                    </div>
                                 </div>
-                                <div class="filter-field">
-                                    <label for="filter-city">Город</label>
-                                    <select id="filter-city" name="city">
-                                        <option value="">Все города</option>
-                                        {% for city in cities %}
-                                            <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>{{ city }}</option>
-                                        {% endfor %}
-                                    </select>
+
+                                <div class="filters-section">
+                                    <label class="filters-label">Фильтры</label>
+                                    <div class="filter-grid">
+                                        <div class="filter-field">
+                                            <label for="filter-type">Тип события</label>
+                                            <select id="filter-type" name="event_type">
+                                                <option value="">Все типы</option>
+                                                {% for type_key, type_label in event_type_choices %}
+                                                    <option value="{{ type_key }}" {% if selected_type == type_key %}selected{% endif %}>{{ type_label }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="filter-field">
+                                            <label for="filter-city">Город</label>
+                                            <select id="filter-city" name="city">
+                                                <option value="">Все города</option>
+                                                {% for city in cities %}
+                                                    <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>{{ city }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="filter-field">
+                                            <label for="filter-date-from">Дата от</label>
+                                            <input type="date" id="filter-date-from" name="date_from" value="{{ selected_date_from|default:'' }}">
+                                        </div>
+                                        <div class="filter-field">
+                                            <label for="filter-date-to">Дата до</label>
+                                            <input type="date" id="filter-date-to" name="date_to" value="{{ selected_date_to|default:'' }}">
+                                        </div>
+                                        <div class="filter-field">
+                                            <label for="filter-status">Статус</label>
+                                            <select id="filter-status" name="status">
+                                                <option value="">Все</option>
+                                                <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Открыт набор</option>
+                                                <option value="full" {% if selected_status == 'full' %}selected{% endif %}>Мест нет</option>
+                                                {% if user.is_authenticated %}
+                                                    <option value="mine" {% if selected_status == 'mine' %}selected{% endif %}>Мои события</option>
+                                                {% endif %}
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="filter-field">
-                                    <label for="filter-date-from">Дата от</label>
-                                    <input type="date" id="filter-date-from" name="date_from" value="{{ selected_date_from|default:'' }}">
-                                </div>
-                                <div class="filter-field">
-                                    <label for="filter-date-to">Дата до</label>
-                                    <input type="date" id="filter-date-to" name="date_to" value="{{ selected_date_to|default:'' }}">
-                                </div>
-                                <div class="filter-field">
-                                    <label for="filter-status">Статус</label>
-                                    <select id="filter-status" name="status">
-                                        <option value="">Все</option>
-                                        <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Открыт набор</option>
-                                        <option value="full" {% if selected_status == 'full' %}selected{% endif %}>Мест нет</option>
-                                        {% if user.is_authenticated %}
-                                            <option value="mine" {% if selected_status == 'mine' %}selected{% endif %}>Мои события</option>
-                                        {% endif %}
-                                    </select>
-                                </div>
-                                <div class="filter-actions">
-                                    <button type="submit" class="btn btn-primary">Применить</button>
-                                    <a href="{% url 'event_list' %}" class="btn btn-secondary">Сбросить</a>
-                                </div>
+                            </div>
+                            
+                            <div class="filters-footer">
+                                <button type="submit" class="btn btn-primary btn-block">Применить фильтры</button>
+                                <a href="{% url 'event_list' %}" class="btn btn-secondary btn-block">Сбросить все</a>
                             </div>
                         </div>
                     </form>

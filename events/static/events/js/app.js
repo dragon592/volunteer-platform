@@ -566,4 +566,75 @@
         // Expose CSRF helper for inline page scripts
         window.getCookie = getCookie;
     });
+
+    // =========================================
+    // Search & Filters Toggle
+    // =========================================
+    function setupSearchFilters() {
+        const searchToggle = document.querySelector('[data-search-toggle]');
+        const searchDropdown = document.querySelector('[data-search-dropdown]');
+        const searchClose = document.querySelector('[data-search-close]');
+        
+        if (!searchToggle || !searchDropdown) {
+            return;
+        }
+
+        // Toggle dropdown/modal
+        searchToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isActive = searchDropdown.classList.contains('active');
+            
+            if (isActive) {
+                closeSearchFilters();
+            } else {
+                openSearchFilters();
+            }
+        });
+
+        // Close button
+        if (searchClose) {
+            searchClose.addEventListener('click', closeSearchFilters);
+        }
+
+        // Close on overlay click (for mobile modal)
+        searchDropdown.addEventListener('click', function (e) {
+            if (e.target === searchDropdown) {
+                closeSearchFilters();
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && searchDropdown.classList.contains('active')) {
+                closeSearchFilters();
+            }
+        });
+
+        function openSearchFilters() {
+            searchDropdown.classList.add('active');
+            searchToggle.setAttribute('aria-expanded', 'true');
+            
+            // For mobile modal, prevent body scroll
+            if (window.innerWidth <= 767) {
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+            }
+        }
+
+        function closeSearchFilters() {
+            searchDropdown.classList.remove('active');
+            searchToggle.setAttribute('aria-expanded', 'false');
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+        }
+    }
+
+    // Initialize search filters
+    document.addEventListener('DOMContentLoaded', function () {
+        setupSearchFilters();
+    });
 })();

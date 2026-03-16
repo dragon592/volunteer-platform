@@ -822,6 +822,72 @@ html {
     }
 }
 
+/* =========================================
+   Mobile Filters Modal (fullscreen)
+   ========================================= */
+@media (max-width: 767px) {
+    .search-dropdown {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        max-width: 100%;
+        margin-top: 0;
+        border-radius: 0;
+        overflow-y: auto;
+        z-index: 2000;
+    }
+    
+    .search-dropdown.active {
+        display: block;
+    }
+    
+    .filters-panel {
+        padding: 20px;
+        min-height: 100%;
+    }
+    
+    .filters-header {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+    }
+    
+    .filters-header h3 {
+        font-size: var(--font-size-xl);
+    }
+    
+    .filters-content {
+        margin-bottom: 24px;
+    }
+    
+    .filters-section {
+        margin-bottom: 24px;
+    }
+    
+    .filters-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--surface);
+        padding: 16px 20px;
+        margin: 0 -20px -20px -20px;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .filter-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .search-field .filters-input {
+        font-size: var(--font-size-lg);
+        min-height: 52px;
+    }
+}
+
 /* Body for auth pages */
 .auth-page-body {
     background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);

@@ -16,130 +16,77 @@
         </div>
     </section>
 
-    <div class="events-layout">
-        <aside class="events-filters">
-            <div class="filter-card">
-                <h3 class="filter-card__title">Фильтры</h3>
-                <form method="get" action="{% url 'event_list' %}">
-                    <div class="filter-grid">
-                        <div class="filter-field">
-                            <label for="filter-type">Тип события</label>
-                            <select id="filter-type" name="event_type">
-                                <option value="">Все типы</option>
-                                {% for type_key, type_label in event_type_choices %}
-                                    <option value="{{ type_key }}" {% if selected_type == type_key %}selected{% endif %}>{{ type_label }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="filter-field">
-                            <label for="filter-city">Город</label>
-                            <select id="filter-city" name="city">
-                                <option value="">Все города</option>
-                                {% for city in cities %}
-                                    <option value="{{ city }}" {% if selected_city == city %}selected{% endif %}>{{ city }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="filter-field">
-                            <label for="filter-date-from">Дата от</label>
-                            <input type="date" id="filter-date-from" name="date_from" value="{{ selected_date_from|default:'' }}">
-                        </div>
-                        <div class="filter-field">
-                            <label for="filter-date-to">Дата до</label>
-                            <input type="date" id="filter-date-to" name="date_to" value="{{ selected_date_to|default:'' }}">
-                        </div>
-                        <div class="filter-field">
-                            <label for="filter-status">Статус</label>
-                            <select id="filter-status" name="status">
-                                <option value="">Все</option>
-                                <option value="open" {% if selected_status == 'open' %}selected{% endif %}>Открыт набор</option>
-                                <option value="full" {% if selected_status == 'full' %}selected{% endif %}>Мест нет</option>
-                                {% if user.is_authenticated %}
-                                    <option value="mine" {% if selected_status == 'mine' %}selected{% endif %}>Мои события</option>
-                                {% endif %}
-                            </select>
-                        </div>
-                        <div class="filter-actions">
-                            <button type="submit" class="btn btn-primary">Применить</button>
-                            <a href="{% url 'event_list' %}" class="btn btn-secondary">Сбросить</a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </aside>
-
-        <section class="section events-section">
-            {% if events %}
-                <div class="event-grid">
-                {% for event in events %}
-                    <article class="event-card">
-                        <a href="{% url 'event_detail' event.pk %}" class="event-card__link">
-                            <div class="event-card__image">
-                                {% if event.image_url %}
-                                    <img src="{{ event.image_url }}" alt="{{ event.title }}" loading="lazy">
-                                {% else %}
-                                    <div class="event-card__placeholder">
-                                        <span>Open Hearts</span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="event-card__content">
-                                <h3 class="event-card__title">{{ event.title }}</h3>
-                                <p class="event-card__description">{{ event.description|truncatewords:20 }}</p>
-                                
-                                <div class="event-card__meta">
-                                    <div class="event-card__info">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span>{{ event.date|date:"d.m.Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}</span>
-                                    </div>
-                                    <div class="event-card__info">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                            <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        </svg>
-                                        <span>{{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}</span>
-                                    </div>
+    <section class="section events-section">
+        {% if events %}
+            <div class="event-grid">
+            {% for event in events %}
+                <article class="event-card">
+                    <a href="{% url 'event_detail' event.pk %}" class="event-card__link">
+                        <div class="event-card__image">
+                            {% if event.image_url %}
+                                <img src="{{ event.image_url }}" alt="{{ event.title }}" loading="lazy">
+                            {% else %}
+                                <div class="event-card__placeholder">
+                                    <span>Open Hearts</span>
                                 </div>
+                            {% endif %}
+                        </div>
+                        <div class="event-card__content">
+                            <h3 class="event-card__title">{{ event.title }}</h3>
+                            <p class="event-card__description">{{ event.description|truncatewords:20 }}</p>
+                            
+                            <div class="event-card__meta">
+                                <div class="event-card__info">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <span>{{ event.date|date:"d.m.Y" }}{% if event.time %}, {{ event.time|time:"H:i" }}{% endif %}</span>
+                                </div>
+                                <div class="event-card__info">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                        <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    <span>{{ event.location }}{% if event.city %}, {{ event.city }}{% endif %}</span>
+                                </div>
+                            </div>
 
-                                <div class="event-card__footer">
-                                    <div class="event-card__participants">
-                                        <div class="progress-circle" data-progress="{{ event.approved_participants|default:event.registered_count }}" data-max="{{ event.max_volunteers }}">
-                                            <svg viewBox="0 0 36 36" class="circular-chart">
-                                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                                <path class="circle" stroke-dasharray="{{ event.approved_participants|default:event.registered_count }}, {{ event.max_volunteers }}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                            </svg>
-                                            <div class="progress-text">
-                                                <span class="progress-count">{{ event.approved_participants|default:event.registered_count }}</span>
-                                                <span class="progress-max">/ {{ event.max_volunteers }}</span>
-                                            </div>
+                            <div class="event-card__footer">
+                                <div class="event-card__participants">
+                                    <div class="progress-circle" data-progress="{{ event.approved_participants|default:event.registered_count }}" data-max="{{ event.max_volunteers }}">
+                                        <svg viewBox="0 0 36 36" class="circular-chart">
+                                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                            <path class="circle" stroke-dasharray="{{ event.approved_participants|default:event.registered_count }}, {{ event.max_volunteers }}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                        </svg>
+                                        <div class="progress-text">
+                                            <span class="progress-count">{{ event.approved_participants|default:event.registered_count }}</span>
+                                            <span class="progress-max">/ {{ event.max_volunteers }}</span>
                                         </div>
                                     </div>
-                                    <div class="event-card__badges">
-                                        <span class="badge badge-accent">{{ event.xp_reward }} XP</span>
-                                        <span class="badge badge-soft">{{ event.get_event_type_display }}</span>
-                                    </div>
                                 </div>
-
-                                <div class="event-card__actions">
-                                    <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary btn-block">
-                                        Присоединиться
-                                    </a>
+                                <div class="event-card__badges">
+                                    <span class="badge badge-accent">{{ event.xp_reward }} XP</span>
+                                    <span class="badge badge-soft">{{ event.get_event_type_display }}</span>
                                 </div>
                             </div>
-                        </a>
-                    </article>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="empty">
-                <h3>События не найдены</h3>
-                <p>Попробуйте ослабить фильтры или переключиться между текущими и архивными событиями.</p>
-                <a class="btn btn-primary" href="?tab={{ tab }}">Показать все</a>
-            </div>
-        {% endif %}
-    </section>
+
+                            <div class="event-card__actions">
+                                <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary btn-block">
+                                    Присоединиться
+                                </a>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">
+            <h3>События не найдены</h3>
+            <p>Попробуйте ослабить фильтры или переключиться между текущими и архивными событиями.</p>
+            <a class="btn btn-primary" href="?tab={{ tab }}">Показать все</a>
+        </div>
+    {% endif %}
 </div>
 </div>
 {% endblock %}
