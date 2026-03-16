@@ -397,6 +397,68 @@
         font-size: var(--font-size-2xl);
     }
 
+    .hero-metrics {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    /* Events grid */
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Volunteer grid */
+    .volunteer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Chat channel grid */
+    .chat-channel-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Leaderboard */
+    .leaderboard-podium {
+        grid-template-columns: 1fr;
+    }
+
+    .leaderboard-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .leaderboard-table {
+        min-width: 600px;
+    }
+
+    .volunteer-cell {
+        gap: 8px;
+    }
+
+    /* My events */
+    .my-event-head {
+        flex-direction: column;
+    }
+
+    .my-event-cover {
+        height: 120px;
+    }
+
+    /* Form grid */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Volunteer search layout */
+    .volunteer-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .volunteer-filter-panel {
+        position: static;
+        margin-bottom: var(--space-4);
+    }
+
     /* Toast notifications */
     .toast-root {
         left: var(--space-4);

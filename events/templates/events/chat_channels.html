@@ -3,19 +3,10 @@
 {% block title %}Чаты - Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container page-stack chat-page">
-    <section class="hero chat-hero">
-        <div class="hero-copy">
-            <span class="hero-kicker">Коммуникация</span>
-            <h1>Каналы чата</h1>
-            <p>Здесь собраны каналы ваших событий. Открывайте обсуждения, следите за обновлениями и поддерживайте команду.</p>
-            <div class="hero-metrics chat-hero-metrics">
-                <div class="hero-metric">
-                    <strong>{{ channels|length }}</strong>
-                    <span>доступных каналов</span>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <section class="page-header">
+        <h1>Каналы чата</h1>
+        <p class="text-secondary">Здесь собраны каналы ваших событий. Открывайте обсуждения, следите за обновлениями и поддерживайте команду.</p>
     </section>
 
     <section class="section">

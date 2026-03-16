@@ -50,8 +50,9 @@
     <link rel="stylesheet" href="{% static 'events/css/responsive.css' %}">
 </head>
 <body{% if not user.is_authenticated %} class="auth-page-body"{% endif %}>
-    <header class="site-header{% if not user.is_authenticated and request.resolver_match.url_name in 'login register' %} auth-header{% endif %}">
-        <div class="container header-inner">
+    <div class="layout">
+        <header class="site-header{% if not user.is_authenticated and request.resolver_match.url_name in 'login register' %} auth-header{% endif %}">
+            <div class="container header-inner">
             <a href="{% if user.is_authenticated %}{% url 'event_list' %}{% else %}/{% endif %}" class="brand">
                 <span class="brand-mark">❤</span>
                 <span class="brand-text">Open Hearts</span>

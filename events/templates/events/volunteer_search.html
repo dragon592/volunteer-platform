@@ -3,23 +3,10 @@
 {% block title %}Поиск волонтёров — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container page-stack volunteer-search-page">
-    <section class="hero volunteer-hero">
-        <div class="hero-copy">
-            <span class="hero-kicker">Команда</span>
-            <h1>Найдите подходящих волонтёров</h1>
-            <p>Фильтруйте кандидатов по навыкам и городу, чтобы быстрее собрать сильную команду под ваше событие.</p>
-            <div class="hero-metrics volunteer-hero-metrics">
-                <div class="hero-metric">
-                    <strong>{{ volunteers.count }}</strong>
-                    <span>волонтёров в выдаче</span>
-                </div>
-                <div class="hero-metric">
-                    <strong>{{ form.skills.field.queryset.count }}</strong>
-                    <span>доступных навыков</span>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <section class="page-header">
+        <h1>Найдите подходящих волонтёров</h1>
+        <p class="text-secondary">Фильтруйте кандидатов по навыкам и городу, чтобы быстрее собрать сильную команду под ваше событие.</p>
     </section>
 
     <section class="volunteer-layout section">

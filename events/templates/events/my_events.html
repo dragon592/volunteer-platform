@@ -4,31 +4,23 @@
 {% block title %}Мои события — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container page-stack my-events-page">
-    <section class="hero my-events-hero">
-        <div class="hero-copy">
-            <span class="hero-kicker">Личный кабинет</span>
-            <h1>Мои события</h1>
-            {% if user.profile.is_organizer %}
-                <p>Управляйте своими событиями, проверяйте заявки и редактируйте карточки в пару кликов.</p>
-            {% else %}
-                <p>Следите за статусами ваших заявок и возвращайтесь к важным событиям в одном месте.</p>
-            {% endif %}
-            <div class="hero-metrics my-events-metrics">
-                <div class="hero-metric">
-                    <strong>{{ events|length }}</strong>
-                    <span>событий в списке</span>
-                </div>
-                <div class="hero-metric">
-                    <strong>{% if user.profile.is_organizer %}организатор{% else %}волонтёр{% endif %}</strong>
-                    <span>ваша роль</span>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <section class="page-header">
+        <h1>Мои события</h1>
         {% if user.profile.is_organizer %}
-            <a href="{% url 'event_create' %}" class="btn btn-primary hero-action-btn">Создать событие</a>
+            <p class="text-secondary">Управляйте своими событиями, проверяйте заявки и редактируйте карточки в пару кликов.</p>
+        {% else %}
+            <p class="text-secondary">Следите за статусами ваших заявок и возвращайтесь к важным событиям в одном месте.</p>
         {% endif %}
     </section>
+
+    {% if user.profile.is_organizer %}
+    <section class="section">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <a href="{% url 'event_create' %}" class="btn btn-primary">Создать событие</a>
+        </div>
+    </section>
+    {% endif %}
 
     <section class="section">
         {% if events %}

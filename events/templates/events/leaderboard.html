@@ -3,26 +3,39 @@
 {% block title %}Рейтинг волонтеров - Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container page-stack">
-    <section class="hero hero-leaderboard">
-        <div class="hero-copy">
-            <span class="hero-kicker">Open Hearts</span>
-            <h1>Рейтинг волонтеров</h1>
-            <p>Самые активные участники платформы. Рейтинг обновляется автоматически на основе завершенных событий и опыта.</p>
-            <div class="hero-metrics">
-                <div class="hero-metric">
-                    <strong>{{ total_volunteers }}</strong>
-                    <span>волонтеров</span>
-                </div>
-                <div class="hero-metric">
-                    <strong>{% if leaderboard %}{{ leaderboard.0.xp }}{% else %}0{% endif %}</strong>
-                    <span>максимум XP</span>
-                </div>
-            </div>
-        </div>
-        <div class="hero-orb hero-orb-one"></div>
-        <div class="hero-orb hero-orb-two"></div>
+<div class="container">
+    <section class="page-header">
+        <h1>Рейтинг волонтеров</h1>
+        <p class="text-secondary">Самые активные участники платформы. Рейтинг обновляется автоматически на основе завершенных событий и опыта.</p>
     </section>
+
+    <section class="section">
+        <div class="leaderboard-container">
+            <!-- Top 3 Podium -->
+            {% if leaderboard|length >= 3 %}
+            <div class="leaderboard-podium">
+                {% for item in leaderboard|slice:"0:3" %}
+                <div class="podium-item podium-{{ forloop.counter }}">
+                    <div class="podium-avatar">
+                        {% if item.avatar %}
+                            <img src="{{ item.avatar }}" alt="{{ item.full_name }}">
+                        {% else %}
+                            <span class="avatar-fallback">{{ item.full_name|first|upper }}</span>
+                        {% endif %}
+                        <span class="podium-rank">{{ forloop.counter }}</span>
+                    </div>
+                    <div class="podium-info">
+                        <h3>{{ item.full_name }}</h3>
+                        <p>{{ item.level_name }} • Уровень {{ item.level }}</p>
+                        <div class="podium-stats">
+                            <span><strong>{{ item.xp }}</strong> XP</span>
+                            <span><strong>{{ item.completed_events }}</strong> событий</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
 
     <section class="section">
         <div class="leaderboard-container">
@@ -73,7 +86,7 @@
                             </td>
                             <td>
                                 <div class="volunteer-cell">
-                                    <div class="volunteer-avatar">
+                                    <div class="volunteer-avatar avatar">
                                         {% if item.avatar %}
                                             <img src="{{ item.avatar }}" alt="{{ item.full_name }}">
                                         {% else %}

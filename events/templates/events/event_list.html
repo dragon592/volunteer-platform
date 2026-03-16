@@ -18,7 +18,7 @@
 
     <section class="section events-section">
         {% if events %}
-            <div class="event-grid">
+            <div class="events-grid">
             {% for event in events %}
                 <article class="event-card">
                     <a href="{% url 'event_detail' event.pk %}" class="event-card__link">

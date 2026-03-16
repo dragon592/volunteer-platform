@@ -3,24 +3,14 @@
 {% block title %}{{ title }} — Open Hearts{% endblock %}
 
 {% block content %}
-<div class="container page-stack event-form-page">
-    <section class="panel event-form-hero">
-        <div class="panel-body event-form-hero-body">
-            <a
-                href="{% if event %}{% url 'event_detail' event.pk %}{% else %}{% url 'event_list' %}{% endif %}"
-                class="btn btn-ghost btn-sm"
-            >
-                ← Назад
-            </a>
-
-            <div class="event-form-hero-copy">
-                <h1>{{ title }}</h1>
-                <p>Заполните карточку события. Поля с датой, местом, лимитом и навыками определяют видимость и подбор волонтёров.</p>
-            </div>
-        </div>
+<div class="container">
+    <section class="page-header">
+        <h1>{{ title }}</h1>
+        <p class="text-secondary">Заполните карточку события. Поля с датой, местом, лимитом и навыками определяют видимость и подбор волонтёров.</p>
     </section>
 
-    <section class="panel event-form-card section">
+    <section class="section">
+        <div class="panel event-form-card">
         <div class="panel-body">
             <form method="POST" class="form-grid event-form-grid">
                 {% csrf_token %}
