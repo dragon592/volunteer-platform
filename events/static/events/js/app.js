@@ -633,8 +633,102 @@
         }
     }
 
+    // =========================================
+    // Profile Dropdown
+    // =========================================
+    function setupProfileDropdown() {
+        const wrapper = document.querySelector('[data-profile-dropdown]');
+        const toggle = document.querySelector('[data-profile-toggle]');
+        const menu = document.querySelector('[data-profile-dropdown-menu]');
+        
+        if (!wrapper || !toggle || !menu) {
+            return;
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!wrapper.contains(e.target)) {
+                closeProfileDropdown();
+            }
+        });
+
+        // Toggle dropdown
+        toggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const isActive = menu.classList.contains('active');
+            
+            if (isActive) {
+                closeProfileDropdown();
+            } else {
+                openProfileDropdown();
+            }
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && menu.classList.contains('active')) {
+                closeProfileDropdown();
+            }
+        });
+
+        function openProfileDropdown() {
+            menu.classList.add('active');
+            toggle.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeProfileDropdown() {
+            menu.classList.remove('active');
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    // =========================================
+    // Search Input State Management
+    // =========================================
+    function setupSearchInput() {
+        const searchInput = document.querySelector('[data-search-input]');
+        const searchForm = document.querySelector('[data-search-form]');
+        
+        if (!searchInput || !searchForm) {
+            return;
+        }
+
+        // Initialize search state from URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchValue = urlParams.get('search') || '';
+        searchInput.value = searchValue;
+
+        // Update form on change
+        searchInput.addEventListener('input', function (e) {
+            // The form will be submitted via the "Применить" button
+            // This listener ensures the input is controlled
+        });
+
+        // Auto-submit on Enter key
+        searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchForm.submit();
+            }
+        });
+    }
+
     // Initialize search filters
     document.addEventListener('DOMContentLoaded', function () {
-        setupSearchFilters();
+        setupMobileMenu();
+        setupPasswordToggles();
+        setupAuthAnimations();
+        setupAuthFormValidation();
+        setupErrorScrolling();
+        setupRoleCardSelection();
+        setupChatAutoScroll();
+        setupNotifications();
+        setupFormEnhancements();
+        setupHeaderSearch();
+        setupProfileDropdown();
+        setupSearchInput();
+
+        // Expose CSRF helper for inline page scripts
+        window.getCookie = getCookie;
     });
 })();
